@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="Mixdown">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -173,7 +174,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 15</p>
+  <p class="ver">Version 16</p>
   <div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div>
   <p class="sub">Line up to six tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -186,6 +187,8 @@ body.force2 .cols > .panel{margin-top:14px}
       <li>Adjust each track's volume, pan, and fades, then shape the whole mix in <b>EQ and spectrum</b>.</li>
       <li>Under <b>Export</b>, press <b>Export WAV</b>, then tap <b>Save</b>. If nothing happens, press and hold Save and choose <b>Download link</b>.</li>
     </ul>
+    <h3>Projects</h3>
+    <p>Name your project and tap <b>Save project</b>, then <b>Save</b>. You get one <b>.mixdown.zip</b> file with everything: tracks, clips, edits, recordings, tones, EQs, effects, mastering settings, song details, cover art, and the audio itself. <b>Open project</b> brings it all back, on this device or another one. <b>New project</b> starts fresh.</p>
     <h3>Editing</h3>
     <p>Tap a track's waveform to make it the active track. In <b>Select</b> mode, drag across it to select a section. Then:</p>
     <ul>
@@ -207,7 +210,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Binaural beats only work in stereo. If a phone speaker or app plays your song in mono, they disappear; monaural and isochronic tones survive.</p>
     <h3>Mastering</h3>
     <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it.</p>
-    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
+    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with an optional moving waveform or spectrum bars in your color). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
     <h3>Editing tags only</h3>
     <p>In Export, check <b>Only edit the tags of a song I already have</b>, then <b>Open a song</b> (WAV, MP3, M4A, or MP4). Its details and cover art fill in under Song details. Change them and tap <b>Save tagged copy</b>; it makes a new file with "-tagged" added to the name, without re-encoding the audio. Uncheck the box to go back to exporting your mix.</p>
     <p>Music players show cover art in their own frame, usually a square, whatever shape the picture is. For a full-screen look, use the MP4 video export in the shape you want.</p>
@@ -220,6 +223,20 @@ body.force2 .cols > .panel{margin-top:14px}
       <li>The <b>Peak</b> reading after export tells you if the mix clips (goes over 0 dB). Turn on mastering to keep the export from clipping.</li>
     </ul>
   </details>
+
+  <div class="panel" data-sec="project">
+    <h2>Project</h2>
+    <div class="field"><label for="projName">Project name</label><input type="text" id="projName" placeholder="Untitled project" autocomplete="off"></div>
+    <div class="row">
+      <button id="projSave">Save project</button>
+      <span class="pick" style="display:block"><span class="pickface" style="display:block;text-align:center">Open project</span><input type="file" id="projOpen" accept=".zip,.mixdown,application/zip"></span>
+    </div>
+    <button id="projNew" style="width:100%;margin-top:10px">New project</button>
+    <div class="progress" id="projProg" hidden><div></div></div>
+    <div class="status" id="projStatus" role="status"></div>
+    <a class="savebtn" id="projSaveBtn" href="#" hidden>Save</a>
+    <p class="hint">A project file keeps everything in one place: every track, clip, edit, recording, tone, EQ, effect, mastering setting, and song detail, plus the audio itself. Open it later on any device to pick up where you left off.</p>
+  </div>
 
   <div class="panel" data-sec="tracks">
     <h2>Tracks</h2>
@@ -430,6 +447,16 @@ body.force2 .cols > .panel{margin-top:14px}
         </div>
       </div>
       <label class="check" id="vTextRow" style="margin-bottom:12px" hidden><input type="checkbox" id="vText" checked> Show the title and artist with the art</label>
+      <div class="row" id="vVisRow" hidden>
+        <div class="field">
+          <label for="vVis">Moving visual</label>
+          <select id="vVis"><option value="none">None</option><option value="wave">Waveform</option><option value="bars">Spectrum bars</option><option value="mirror">Mirrored bars</option></select>
+        </div>
+        <div class="field">
+          <label for="vColor">Visual color</label>
+          <input type="color" id="vColor" value="#F2A541">
+        </div>
+      </div>
       <div class="row">
         <div class="field" id="bitsBox">
           <label for="bits">Bit depth</label>
@@ -545,6 +572,9 @@ const trackStart = t => t.clips.length ? Math.min(...t.clips.map(c=>c.offset)) :
 const trackEnd = t => t.clips.length ? Math.max(...t.clips.map(clipEnd)) : 0;
 const projectLen = () => Math.max(tracks.reduce((m,t)=>Math.max(m,trackEnd(t)),0), recording?playhead:0);
 const newClip = (buf,peaks,segs,offset,name) => ({id:nextClip++, buf, peaks, segs, offset, name});
+// Where each audio buffer came from, so projects can save it: {id, name, bytes (original file), kind}
+const sources=new Map(); let nextSrc=1; const bufSrc=new WeakMap();
+function registerSource(buf, name, bytes, kind){ const id=nextSrc++; sources.set(id,{id,name,bytes,kind,buf}); bufSrc.set(buf,id); return id; }
 const findClip = id => { for(const t of tracks){ const c=t.clips.find(x=>x.id===id); if(c) return {t,c}; } return null; };
 function clipAt(t,time){ for(let i=t.clips.length-1;i>=0;i--){ const c=t.clips[i]; if(time>=c.offset && time<clipEnd(c)) return c; } return null; }
 const activeTrack = () => tracks.find(t=>t.id===activeId)||null;
@@ -834,8 +864,9 @@ function renderAll(){ renderLanes(); renderTrackPanels(); renderShowRow(); rende
 async function loadFile(t,f){
   const a=ctx(); status(`Loading ${f.name}…`, true);
   try{
-    const ab=await f.arrayBuffer();
+    const ab=await f.arrayBuffer(); const keep=new Uint8Array(ab.slice(0));
     const buf=await new Promise((res,rej)=>{ const p=a.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
+    registerSource(buf, f.name, keep, 'file');
     const nm=f.name.replace(/\.[^.]+$/,'').slice(0,40);
     pushUndo();
     const at = hasAudio(t) ? playhead : 0;
@@ -1001,7 +1032,7 @@ function genTone(set, dur, sr){
 function toneName(set){ const nz={white:'White',pink:'Pink',brown:'Brown'}; if(set.type==='noise') return `${nz[set.noise==='off'?'pink':set.noise]} noise`; const kind={binaural:'Binaural',monaural:'Monaural',isochronic:'Isochronic'}[set.type]; return `${kind} ${set.beat}${set.sweep?'→'+set.beat2:''} Hz`+(set.noise!=='off'?` + ${set.noise}`:''); }
 function applyTone(t, quiet){
   const set=t.tone; const dur=Math.max(1,Math.min(900,set.len||Math.max(projectLen()-set.start,60)));
-  const buf=genTone(set,dur,ctx().sampleRate);
+  const buf=genTone(set,dur,ctx().sampleRate); set.genDur=dur;
   if(t.clips.length && !quiet) pushUndo();
   t.clips=[newClip(buf, computePeaks(buf), [{s:0,e:buf.duration}], Math.max(0,set.start), toneName(set))];
   if(/^Tone( track)?$|^(Binaural|Monaural|Isochronic) |^(White|Pink|Brown) noise$/.test(t.name)) t.name=toneName(set);
@@ -1477,6 +1508,7 @@ function stopRecording(){
   if(len<0.05){ $('recStatus').textContent='The take was too short to keep.'; playhead=r.p0; drawAll(); return; }
   const t=tracks.find(x=>x.id===r.trackId) || activeTrack();
   pushUndo();
+  registerSource(buf, 'take-'+takeNo+'.wav', null, 'take');
   const cl=newClip(buf, computePeaks(buf), [{s:skip, e:buf.duration}], Math.max(0,zero+skip), 'Take '+(takeNo++));
   t.clips.push(cl); activeClipId=cl.id;
   playhead=Math.max(0,endPlayhead); renderAll();
@@ -1796,11 +1828,13 @@ async function pickAvc(W,H,fps){
     try{ const r=await VideoEncoder.isConfigSupported(cfg); if(r&&r.supported) return cfg; }catch(e){} }
   return null;
 }
-async function drawCoverFrame(W,H,v){
+async function drawCoverFrame(W,H,v,vis){
   const c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
   g.fillStyle='#000'; g.fillRect(0,0,W,H);
   const showText=$('vText').checked && (v.tgTitle||v.tgArtist);
-  const textH = showText ? (H>W ? 260 : 170) : 0;
+  const textH0 = showText ? (H>W ? 260 : 170) : 0;
+  const bandH = vis ? Math.round(H*(H>W?0.14:0.2)) : 0;
+  const textH = textH0 + bandH; c.band={y:H-textH0-bandH, h:bandH};
   if(cover){
     const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime}));
     // fit the whole picture into the space above the text, using the frame's real shape
@@ -1809,26 +1843,70 @@ async function drawCoverFrame(W,H,v){
   }
   if(showText){
     g.textAlign='center'; g.fillStyle='#fff';
-    const y0 = H - textH + (H>W ? 70 : 60);
+    const y0 = H - textH0 + (H>W ? 70 : 60);
     g.font=`700 ${H>W?64:52}px Fraunces, Georgia, serif`; fitText(g,v.tgTitle||'',W*0.9); g.fillText(v.tgTitle||'',W/2,y0);
     g.fillStyle='rgba(255,255,255,.75)'; g.font=`500 ${H>W?44:36}px Figtree, sans-serif`; g.fillText(v.tgArtist||'',W/2,y0+(H>W?70:56));
   }
   return c;
 }
 function fitText(g,t,max){ let m=g.measureText(t).width; if(m>max){ const px=parseFloat(g.font.match(/(\d+)px/)[1]); g.font=g.font.replace(/\d+px/, Math.floor(px*max/m)+'px'); } }
+// in-place radix-2 FFT (re, im length = power of two)
+function fft(re,im){ const n=re.length;
+  for(let i=1,j=0;i<n;i++){ let bit=n>>1; for(;j&bit;bit>>=1) j^=bit; j^=bit; if(i<j){ [re[i],re[j]]=[re[j],re[i]]; [im[i],im[j]]=[im[j],im[i]]; } }
+  for(let len=2;len<=n;len<<=1){ const ang=-2*Math.PI/len, wr=Math.cos(ang), wi=Math.sin(ang);
+    for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let k=0;k<len/2;k++){ const a=i+k, b=a+len/2, xr=re[b]*cr-im[b]*ci, xi=re[b]*ci+im[b]*cr;
+      re[b]=re[a]-xr; im[b]=im[a]-xi; re[a]+=xr; im[a]+=xi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
+function makeVisualizer(kind, mono, sr, W, band, color){
+  const N=2048, NB=kind==='wave'?0:(W>1200?72:48), hann=new Float32Array(N); for(let i=0;i<N;i++) hann[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
+  const re=new Float32Array(N), im=new Float32Array(N), prev=new Float32Array(NB);
+  const edges=[]; for(let i=0;i<=NB;i++) edges.push(40*Math.pow(16000/40,i/NB));
+  return (g,t)=>{
+    const c0=Math.round(t*sr)-N/2;
+    const pad=W*0.06, x0=pad, x1=W-pad, w=x1-x0, y0=band.y, h=band.h, mid=y0+h/2;
+    g.save(); g.fillStyle=color; g.strokeStyle=color; g.shadowColor=color; g.shadowBlur=18;
+    if(kind==='wave'){
+      g.lineWidth=Math.max(3,W/400); g.beginPath();
+      for(let i=0;i<N;i+=4){ const v=mono[c0+i]||0, x=x0+w*i/N, y=mid-Math.max(-1,Math.min(1,v*1.6))*h*0.45; i?g.lineTo(x,y):g.moveTo(x,y); }
+      g.stroke();
+    } else {
+      for(let i=0;i<N;i++){ re[i]=(mono[c0+i]||0)*hann[i]; im[i]=0; }
+      fft(re,im);
+      const binHz=sr/N, bw=w/NB;
+      for(let b=0;b<NB;b++){
+        let m=0; const i0=Math.max(1,Math.floor(edges[b]/binHz)), i1=Math.max(i0+1,Math.ceil(edges[b+1]/binHz));
+        for(let i=i0;i<i1;i++){ const mag=Math.hypot(re[i],im[i]); if(mag>m) m=mag; }
+        let db=20*Math.log10(m/(N/4)+1e-9); let val=Math.max(0,Math.min(1,(db+60)/60));
+        val=Math.max(val, prev[b]*0.88); prev[b]=val;
+        const bh=Math.max(4,val*h*(kind==='mirror'?0.5:0.95)), x=x0+b*bw+bw*0.18, bwid=bw*0.64;
+        if(kind==='mirror') g.fillRect(x, mid-bh, bwid, bh*2); else g.fillRect(x, y0+h-bh, bwid, bh);
+      }
+    }
+    g.restore();
+  };
+}
 async function makeVideo(buf, v, prog){
-  const shp=$('vShape').value, W=shp==='h'?1920:1080, H=shp==='v'?1920:1080, fps=15;
+  const vis=$('vVis').value!=='none' ? $('vVis').value : null;
+  const shp=$('vShape').value, W=shp==='h'?1920:1080, H=shp==='v'?1920:1080, fps=vis?30:15;
   const vcfg=await pickAvc(W,H,fps); if(!vcfg) throw new Error('noavc');
   const acfg=await pickAac(buf.sampleRate); if(!acfg) throw new Error('noaac');
   const b=await resampleTo(buf,acfg.sampleRate);
-  const frame=await drawCoverFrame(W,H,v);
+  const frame=await drawCoverFrame(W,H,v,vis);
+  let draw=null, live=null, lg=null;
+  if(vis){
+    const mono=new Float32Array(b.length), L=b.getChannelData(0), R=b.getChannelData(b.numberOfChannels>1?1:0);
+    for(let i=0;i<mono.length;i++) mono[i]=(L[i]+R[i])/2;
+    draw=makeVisualizer(vis, mono, b.sampleRate, W, frame.band, $('vColor').value);
+    live=document.createElement('canvas'); live.width=W; live.height=H; lg=live.getContext('2d');
+  }
   const muxer=new Mp4Muxer.Muxer({target:new Mp4Muxer.ArrayBufferTarget(), video:{codec:'avc',width:W,height:H,frameRate:fps}, audio:{codec:'aac',numberOfChannels:2,sampleRate:acfg.sampleRate}, fastStart:false});
   let failed=null; const venc=new VideoEncoder({output:(c,m)=>muxer.addVideoChunk(c,m), error:e=>failed=e});
   venc.configure(vcfg);
   const total=Math.max(1,Math.ceil(b.duration*fps)), us=1e6/fps;
   for(let f=0;f<total;f++){
     if(failed) throw failed;
-    const vf=new VideoFrame(frame,{timestamp:Math.round(f*us),duration:Math.round(us)}); venc.encode(vf,{keyFrame:f%(fps*2)===0}); vf.close();
+    let src=frame;
+    if(draw){ lg.drawImage(frame,0,0); draw(lg,f/fps); src=live; }
+    const vf=new VideoFrame(src,{timestamp:Math.round(f*us),duration:Math.round(us)}); venc.encode(vf,{keyFrame:f%(fps*2)===0}); vf.close();
     while(venc.encodeQueueSize>6){ await new Promise(r=>setTimeout(r,4)); if(failed) throw failed; }
     if(f%30===0){ prog(0.6+0.25*f/total,`Making the video… ${Math.round(f/total*100)}%`); await sleep(); }
   }
@@ -1840,11 +1918,11 @@ async function makeVideo(buf, v, prog){
 function syncFmt(){
   const f=$('fmt').value;
   $('bitsBox').style.visibility = f==='wav'?'visible':'hidden';
-  $('shapeBox').hidden = f!=='mp4'; $('vTextRow').hidden = f!=='mp4';
+  $('shapeBox').hidden = f!=='mp4'; $('vTextRow').hidden = f!=='mp4'; $('vVisRow').hidden = f!=='mp4';
   $('exportWav').textContent = f==='wav'?'Export WAV':f==='m4a'?'Export M4A':'Export video';
   $('fmtHint').textContent = f==='wav' ? 'Lossless, full quality. Best for keeping and for distribution.' :
     f==='m4a' ? 'AAC at 256 kbps: much smaller and good for sharing or playing on phones.' :
-    'Your cover art (or black if there is none) with the song, ready to post. Add cover art under Song details.';
+    'Your cover art (or black if there is none) with the song, ready to post. Add cover art under Song details. A moving visual makes a 30 fps video, so it takes a little longer to build.';
 }
 $('fmt').onchange=()=>{ syncFmt(); try{ localStorage.setItem('mixdown-fmt',$('fmt').value); }catch(e){} };
 try{ const f=localStorage.getItem('mixdown-fmt'); if(f) $('fmt').value=f; }catch(e){}
@@ -2006,6 +2084,88 @@ async function saveTo(btn, name, blob){
     h.onclick=tog; h.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tog(); } };
   });
 })();
+
+// ---------- projects ----------
+const PROJ_FIELDS=['projName','fileName','fmt','vShape','vText','vVis','vColor','bits','rate','bpm','countIn','playAlong','mOn','mTarget','mCeil','mType','mTP','mLook','mRel','tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
+function fieldVals(){ const o={}; PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el) o[id]= el.type==='checkbox'?el.checked:el.value; }); return o; }
+function setFields(o){ PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el && id in o){ if(el.type==='checkbox') el.checked=!!o[id]; else el.value=o[id]; } }); }
+const b64=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode(...u8.subarray(i,i+0x8000)); return btoa(s); };
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+function projStatus(m, quiet){ $('projStatus').textContent=m; if(!quiet) toast(m); }
+const projSlug=()=>(($('projName').value||'untitled').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'untitled');
+$('projSave').onclick=async()=>{
+  if(!window.JSZip){ projStatus('Saving projects needs one online visit first, so the app can download its zip tool.'); return; }
+  if(recording){ projStatus('Stop recording first.'); return; }
+  pause(); const zip=new JSZip(), used=new Set();
+  $('projSave').disabled=true; $('projSaveBtn').hidden=true; setProg($('projProg'),0.05); projStatus('Packing your project…', true); await sleep();
+  try{
+    const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs,
+      tracks:tracks.map(t=>({id:t.id,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
+        clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null}; })})),
+      sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
+    let k=0;
+    for(const sid of used){
+      const src=sources.get(sid); let bytes=src.bytes;
+      if(!bytes){ bytes=new Uint8Array(await encodeWav(src.buf,24,null).arrayBuffer()); src.bytes=bytes; }
+      const path=`audio/${sid}-${src.name.replace(/[^\w.\-]+/g,'_')}`;
+      zip.file(path, bytes); data.sources.push({id:sid,name:src.name,kind:src.kind,path});
+      setProg($('projProg'),0.1+0.6*(++k/Math.max(1,used.size))); await sleep();
+    }
+    zip.file('project.json', JSON.stringify(data));
+    const blob=await zip.generateAsync({type:'blob',compression:'STORE'},m=>setProg($('projProg'),0.7+m.percent/400));
+    await saveTo($('projSaveBtn'), projSlug()+'.mixdown.zip', blob);
+    projStatus('Project ready. Tap Save below to keep it.', true);
+  }catch(e){ projStatus('The project couldn’t be saved on this device.'); }
+  setProg($('projProg'),null); $('projSave').disabled=false;
+};
+function clearProject(){
+  pause(); tracks=[]; undoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
+  eqs={mix:eqs.mix}; sources.clear();
+}
+$('projNew').onclick=()=>{
+  if(tracks.some(hasAudio) && !confirm('Start a new project? Save this one first if you want to keep it.')) return;
+  clearProject(); nextId=1; tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
+  $('projName').value=''; renderAll(); setZoomFromSlider(); projStatus('New project started.');
+};
+$('projOpen').onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  if(!window.JSZip){ projStatus('Opening projects needs one online visit first, so the app can download its zip tool.'); return; }
+  if(tracks.some(hasAudio) && !confirm('Open this project? Anything unsaved in the current one will be replaced.')) return;
+  setProg($('projProg'),0.05); projStatus('Opening '+f.name+'…', true);
+  try{
+    const zip=await JSZip.loadAsync(f), data=JSON.parse(await zip.file('project.json').async('string'));
+    if(data.app!=='mixdown') throw new Error('notproj');
+    clearProject(); const a=ctx(), bufs={};
+    let k=0;
+    for(const sd of data.sources){
+      const bytes=await zip.file(sd.path).async('uint8array');
+      const buf=await new Promise((res,rej)=>{ const p=a.decodeAudioData(bytes.slice(0).buffer,res,rej); if(p&&p.then) p.then(res,rej); });
+      registerSource(buf, sd.name, bytes, sd.kind); bufs[sd.id]={buf, peaks:computePeaks(buf)};
+      setProg($('projProg'),0.1+0.7*(++k/Math.max(1,data.sources.length))); await sleep();
+    }
+    setFields(data.fields||{}); masterDb=data.masterDb||0; if(data.latencyMs!=null) latencyMs=data.latencyMs;
+    tracks=[]; let maxT=0, maxC=0;
+    for(const td of data.tracks){
+      const t={...newTrack(), id:td.id, name:td.name, gainDb:td.gainDb, pan:td.pan, mute:td.mute, solo:td.solo, fadeIn:td.fadeIn, fadeOut:td.fadeOut, colorVar:td.colorVar, clips:[]};
+      if(td.fx) t.fx=td.fx;
+      if(td.tone){
+        t.tone=td.tone; const dur=td.tone.genDur||Math.max(1,td.tone.len||60);
+        const buf=genTone(t.tone,dur,a.sampleRate), pk=computePeaks(buf);
+        t.clips=td.clips.map(c=>({id:c.id,buf,peaks:pk,segs:c.segs,offset:c.offset,name:c.name}));
+      } else {
+        t.clips=td.clips.filter(c=>bufs[c.src]).map(c=>({id:c.id,buf:bufs[c.src].buf,peaks:bufs[c.src].peaks,segs:c.segs,offset:c.offset,name:c.name}));
+      }
+      tracks.push(t); maxT=Math.max(maxT,td.id); td.clips.forEach(c=>maxC=Math.max(maxC,c.id));
+    }
+    nextId=maxT+1; nextClip=maxC+1; activeId=tracks[0]?.id||null;
+    eqs={mix:(data.eqs&&data.eqs.mix)||eqs.mix}; if(data.eqs) Object.keys(data.eqs).forEach(key=>{ if(key!=='mix') eqs[key]=data.eqs[key]; });
+    showCover(data.cover ? {mime:data.cover.mime, bytes:unb64(data.cover.data)} : null);
+    saveEq(); syncM(); syncFmt(); syncLatency(); renderAll(); renderBands(); syncBand(); setZoomFromSlider(); drawSpec();
+    if(!$('projName').value) $('projName').value=f.name.replace(/(\.mixdown)?\.zip$/i,'');
+    projStatus(`Opened ${$('projName').value}.`);
+  }catch(err){ projStatus(err&&err.message==='notproj'?'That zip isn’t a Mixdown project.':'That project couldn’t be opened.'); }
+  setProg($('projProg'),null);
+};
 
 // ---------- layout ----------
 function applyLayout(v){ document.body.classList.toggle('force1',v==='one'); document.body.classList.toggle('force2',v==='two'); setTimeout(()=>{ setZoomFromSlider(); drawSpec(); },50); }
