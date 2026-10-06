@@ -164,12 +164,17 @@ details.guide summary{cursor:pointer;font-weight:600}
 @media (min-width:900px){ body:not(.force1) .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start} .cols > .panel{margin-top:14px} }
 body.force2 .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
 body.force2 .cols > .panel{margin-top:14px}
+.layoutseg{display:inline-flex;align-items:center;gap:0;margin:2px 0 12px;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+.layoutseg span{padding:6px 10px;color:var(--muted);font-weight:600}
+.layoutseg button{border:0;border-left:1px solid var(--line);border-radius:0;padding:6px 12px;font-size:13px;font-weight:600;background:var(--panel);color:var(--ink)}
+.layoutseg button.on{background:var(--accent);color:var(--accent-ink)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><select id="layoutSel" aria-label="Layout" style="width:auto;padding:6px 8px;font-size:13px"><option value="auto">Layout: Auto</option><option value="one">One column</option><option value="two">Two columns</option></select><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 14</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
+  <p class="ver">Version 15</p>
+  <div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div>
   <p class="sub">Line up to six tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
   <details class="guide">
@@ -207,7 +212,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>In Export, check <b>Only edit the tags of a song I already have</b>, then <b>Open a song</b> (WAV, MP3, M4A, or MP4). Its details and cover art fill in under Song details. Change them and tap <b>Save tagged copy</b>; it makes a new file with "-tagged" added to the name, without re-encoding the audio. Uncheck the box to go back to exporting your mix.</p>
     <p>Music players show cover art in their own frame, usually a square, whatever shape the picture is. For a full-screen look, use the MP4 video export in the shape you want.</p>
     <h3>Layout</h3>
-    <p>The <b>Layout</b> menu at the top switches between <b>Auto</b> (side by side on wide screens), <b>One column</b>, and <b>Two columns</b>, whatever your screen size. Your choice is remembered.</p>
+    <p>The <b>Layout</b> buttons under the title switch between <b>Auto</b> (side by side on wide screens), <b>1 column</b>, and <b>2 columns</b>, whatever your screen size. Your choice is remembered.</p>
     <h3>Good to know</h3>
     <ul>
       <li>Your audio never leaves your device. Files aren't saved when you close the app, so choose them again next time.</li>
@@ -2004,8 +2009,10 @@ async function saveTo(btn, name, blob){
 
 // ---------- layout ----------
 function applyLayout(v){ document.body.classList.toggle('force1',v==='one'); document.body.classList.toggle('force2',v==='two'); setTimeout(()=>{ setZoomFromSlider(); drawSpec(); },50); }
-try{ const v=localStorage.getItem('mixdown-layout'); if(v){ $('layoutSel').value=v; } }catch(e){}
-$('layoutSel').onchange=e=>{ applyLayout(e.target.value); try{ localStorage.setItem('mixdown-layout',e.target.value); }catch(err){} };
+let layoutPref='auto'; try{ const v=localStorage.getItem('mixdown-layout'); if(v) layoutPref=v; }catch(e){}
+function markLayout(){ document.querySelectorAll('.layoutseg button').forEach(b=>b.classList.toggle('on',b.dataset.v===layoutPref)); }
+document.querySelectorAll('.layoutseg button').forEach(b=>b.onclick=()=>{ layoutPref=b.dataset.v; markLayout(); applyLayout(layoutPref); try{ localStorage.setItem('mixdown-layout',layoutPref); }catch(err){} });
+markLayout();
 
 // ---------- installable app ----------
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !window.claude){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
@@ -2016,7 +2023,7 @@ window.addEventListener('appinstalled',()=>{ $('installBtn').hidden=true; });
 
 // ---------- start ----------
 tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
-renderAll(); renderBands(); setEditing(false); syncLatency(); applyLayout($('layoutSel').value); setZoomFromSlider(); drawSpec();
+renderAll(); renderBands(); setEditing(false); syncLatency(); applyLayout(layoutPref); setZoomFromSlider(); drawSpec();
 window.addEventListener('resize',()=>{ setZoomFromSlider(); drawSpec(); });
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{ renderAll(); drawSpec(); });
 </script>
