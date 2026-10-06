@@ -133,6 +133,7 @@ button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var
 .bands button{min-width:44px;padding:8px 10px}
 .bands button.off{opacity:.55}
 button.rec{color:#E5484D}
+.micchip{margin-left:auto;padding:6px 10px;font-size:12px;font-weight:700;border-radius:99px;background:#E5484D;color:#fff;border:0;white-space:nowrap}
 button.rec.on{background:#E5484D;color:#fff;border-color:#E5484D}
 .clock.recording{color:#E5484D}
 .meter{height:14px;border-radius:7px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
@@ -160,13 +161,15 @@ details.guide summary{cursor:pointer;font-weight:600}
 .guide p,.guide li{font-size:15px;max-width:68ch}
 .guide ul{padding-left:20px}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;max-width:min(560px,92vw);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px}
-@media (min-width:900px){ .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start} .cols > .panel{margin-top:14px} }
+@media (min-width:900px){ body:not(.force1) .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start} .cols > .panel{margin-top:14px} }
+body.force2 .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+body.force2 .cols > .panel{margin-top:14px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><button id="installBtn" hidden>Install app</button></div>
-  <p class="ver">Version 12</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><select id="layoutSel" aria-label="Layout" style="width:auto;padding:6px 8px;font-size:13px"><option value="auto">Layout: Auto</option><option value="one">One column</option><option value="two">Two columns</option></select><button id="installBtn" hidden>Install app</button></span></div>
+  <p class="ver">Version 14</p>
   <p class="sub">Line up to six tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
   <details class="guide">
@@ -189,7 +192,7 @@ details.guide summary{cursor:pointer;font-weight:600}
     <p><b>Undo</b> steps back through your last 60 edits. Edits never change your original files.</p>
     <h3>Recording</h3>
     <p>Open <b>Recording</b> and tap <b>Turn on microphone</b>. Use wired headphones so the music doesn't leak into your take; Bluetooth adds delay. Tap the track to record onto, move the playhead to where you want to start, and press the red <b>record</b> button. After the count-in, sing or play along; press the red button or <b>Stop</b> to finish. Each take becomes its own clip, so you can split, trim, move, and duplicate it.</p>
-    <p>Run <b>Measure latency</b> once per phone or mic (speaker on, no headphones). It sets the <b>Timing fix</b> so takes line up with the music. If a take still sounds early or late, adjust the slider and record again.</p>
+    <p>To stop the microphone, tap <b>Turn off microphone</b> or the red <b>Mic on</b> button in the player bar. It also turns off by itself when you leave the app, unless you're recording. Run <b>Measure latency</b> once per phone or mic (speaker on, no headphones). It sets the <b>Timing fix</b> so takes line up with the music. If a take still sounds early or late, adjust the slider and record again.</p>
     <h3>EQ</h3>
     <p>Choose what to EQ in <b>EQ for</b>: the whole mix or any single track, each with its own 8 bands. The EQ is locked so scrolling can't bump it; tap <b>Edit EQ</b> to change it, and <b>Done</b> when finished. All bands that are on work together. Pick a band (1 to 8) to see or edit it, and set its type, frequency, gain, and width (Q). <b>Reset band</b> puts one band back to its starting setting. While editing, you can also drag a band's dot on the display. The amber line shows your EQ curve over the live spectrum while the mix plays. The buttons under the display choose which spectrums to show: the whole mix (shaded) and each track (a line in its color). Your EQ is remembered on this device.</p>
     <h3>Effects</h3>
@@ -199,9 +202,12 @@ details.guide summary{cursor:pointer;font-weight:600}
     <p>Binaural beats only work in stereo. If a phone speaker or app plays your song in mono, they disappear; monaural and isochronic tones survive.</p>
     <h3>Mastering</h3>
     <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it.</p>
-    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square or 9:16, ready to post). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
-    <h3>Tag editor</h3>
-    <p>Open any WAV, MP3, M4A, or MP4 to see and change its details and cover art. <b>Save tagged copy</b> makes a new file with "-tagged" added to the name; the audio isn't re-encoded and your original stays untouched.</p>
+    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
+    <h3>Editing tags only</h3>
+    <p>In Export, check <b>Only edit the tags of a song I already have</b>, then <b>Open a song</b> (WAV, MP3, M4A, or MP4). Its details and cover art fill in under Song details. Change them and tap <b>Save tagged copy</b>; it makes a new file with "-tagged" added to the name, without re-encoding the audio. Uncheck the box to go back to exporting your mix.</p>
+    <p>Music players show cover art in their own frame, usually a square, whatever shape the picture is. For a full-screen look, use the MP4 video export in the shape you want.</p>
+    <h3>Layout</h3>
+    <p>The <b>Layout</b> menu at the top switches between <b>Auto</b> (side by side on wide screens), <b>One column</b>, and <b>Two columns</b>, whatever your screen size. Your choice is remembered.</p>
     <h3>Good to know</h3>
     <ul>
       <li>Your audio never leaves your device. Files aren't saved when you close the app, so choose them again next time.</li>
@@ -255,7 +261,8 @@ details.guide summary{cursor:pointer;font-weight:600}
       <button id="measureLat" style="width:100%">Measure latency</button>
       <p class="hint">Unplug headphones and turn the volume up for this test. The app plays a few clicks through the speaker, listens with the mic, and sets the timing fix for you. Do it once per phone or mic.</p>
       <div class="status" id="recStatus" role="status"></div>
-      <button class="small" id="micStop" style="margin-top:6px">Turn off microphone</button>
+      <button id="micStop" style="margin-top:8px;width:100%">Turn off microphone</button>
+      <p class="hint">The microphone also turns off by itself when you leave the app or switch to another app, unless you're recording.</p>
     </div>
   </div>
 
@@ -269,6 +276,7 @@ details.guide summary{cursor:pointer;font-weight:600}
       <button class="icon" id="fwd10" aria-label="Forward 10 seconds" title="Forward 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 5v14l8.5-7zM12.5 5v14L21 12z" fill="currentColor"/></svg></button>
       <button class="icon" id="toEnd" aria-label="Go to end" title="Go to end"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5v14l10.5-7z" fill="currentColor"/><rect x="16.5" y="5" width="2.5" height="14" fill="currentColor"/></svg></button>
       <span class="clock" id="clock">0:00.0 <small>/ 0:00.0</small></span>
+      <button class="micchip" id="micChip" hidden title="Microphone is on. Tap to turn it off.">Mic on ✕</button>
     </div>
   </div>
 
@@ -405,6 +413,7 @@ details.guide summary{cursor:pointer;font-weight:600}
         <label for="master">Master volume <span class="val" id="masterV"></span></label>
         <input type="range" id="master" min="-24" max="12" step="0.1" value="0">
       </div>
+      <div id="exportOnly">
       <div class="row">
         <div class="field">
           <label for="fmt">Format</label>
@@ -412,7 +421,7 @@ details.guide summary{cursor:pointer;font-weight:600}
         </div>
         <div class="field" id="shapeBox" hidden>
           <label for="vShape">Video shape</label>
-          <select id="vShape"><option value="sq">Square</option><option value="v">9:16</option></select>
+          <select id="vShape"><option value="sq">Square 1080×1080</option><option value="v">9:16 1080×1920</option><option value="h">16:9 1920×1080</option></select>
         </div>
       </div>
       <label class="check" id="vTextRow" style="margin-bottom:12px" hidden><input type="checkbox" id="vText" checked> Show the title and artist with the art</label>
@@ -430,7 +439,16 @@ details.guide summary{cursor:pointer;font-weight:600}
         <label for="fileName">File name</label>
         <input type="text" id="fileName" placeholder="my-mix" autocomplete="off">
       </div>
-      <details class="tags">
+      </div>
+      <label class="check" style="margin:4px 0 12px"><input type="checkbox" id="tagOnly"> Only edit the tags of a song I already have</label>
+      <div id="tagOnlyBox" hidden>
+        <p class="hint" style="margin:0 0 10px">Open a WAV, MP3, M4A, or MP4. Its details and cover art fill in below; change them and tap <b>Save tagged copy</b>. The audio isn't touched.</p>
+        <div class="field" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <span class="pick"><span class="pickface">Open a song</span><input type="file" id="teFile" accept="audio/*,video/mp4,.wav,.mp3,.m4a,.mp4,.aac"></span>
+          <span class="hint" id="teName" style="margin:0"></span>
+        </div>
+      </div>
+      <details class="tags" id="tagsBox">
         <summary>Song details (tags)</summary>
         <div class="field"><label for="tgTitle">Title</label><input type="text" id="tgTitle" autocomplete="off"></div>
         <div class="row">
@@ -455,44 +473,12 @@ details.guide summary{cursor:pointer;font-weight:600}
         <p class="hint">Saved inside the file: WAV gets two tag formats so more players can read them; M4A and MP4 get standard music tags. The video uses this cover art. Artist, album, genre, and year are remembered on this device.</p>
       </details>
       <button class="primary" id="exportWav" style="width:100%;margin-top:12px">Export WAV</button>
+      <button class="primary" id="teSave" style="width:100%;margin-top:12px" hidden>Save tagged copy</button>
       <p class="hint" id="fmtHint"></p>
       <p class="hint">With <b>Master when exporting</b> on, the file uses your mastering settings. If you already pressed Master now and haven't changed anything since, it reuses that master.</p>
       <div class="progress" id="progress" hidden><div></div></div>
       <div class="status" id="status" role="status"></div>
       <a class="savebtn" id="saveBtn" href="#" hidden>Save</a>
-    </div>
-    <div class="panel" data-sec="tageditor">
-      <h2>Tag editor</h2>
-      <p class="hint" style="margin:0 0 10px">Change the details and cover art on a song you already have, without touching the audio. Works with WAV, MP3, M4A, and MP4.</p>
-      <div class="field" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <span class="pick"><span class="pickface">Open a song</span><input type="file" id="teFile" accept="audio/*,video/mp4,.wav,.mp3,.m4a,.mp4,.aac"></span>
-        <span class="hint" id="teName" style="margin:0"></span>
-      </div>
-      <div id="teForm" hidden>
-        <div class="field"><label for="teTitle">Title</label><input type="text" id="teTitle" autocomplete="off"></div>
-        <div class="row">
-          <div class="field"><label for="teArtist">Artist</label><input type="text" id="teArtist" autocomplete="off"></div>
-          <div class="field"><label for="teAlbum">Album</label><input type="text" id="teAlbum" autocomplete="off"></div>
-        </div>
-        <div class="row3">
-          <div class="field"><label for="teYear">Year</label><input type="text" id="teYear" inputmode="numeric" autocomplete="off"></div>
-          <div class="field"><label for="teTrack">Track #</label><input type="text" id="teTrack" inputmode="numeric" autocomplete="off"></div>
-          <div class="field"><label for="teGenre">Genre</label><input type="text" id="teGenre" autocomplete="off"></div>
-        </div>
-        <div class="field"><label for="teComment">Comment</label><input type="text" id="teComment" autocomplete="off"></div>
-        <div class="field"><label for="teLyrics">Lyrics</label><textarea id="teLyrics" rows="5"></textarea></div>
-        <div class="field">
-          <label>Cover art</label>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <span class="pick"><span class="pickface">Choose picture</span><input type="file" id="teCover" accept="image/jpeg,image/png"></span>
-            <canvas id="teThumb" class="thumb" width="64" height="64" hidden></canvas>
-            <button class="small" id="teCoverClear" hidden>Remove</button>
-          </div>
-        </div>
-        <button class="primary" id="teSave" style="width:100%">Save tagged copy</button>
-        <div class="status" id="teStatus" role="status"></div>
-        <a class="savebtn" id="teSaveBtn" href="#" hidden>Save</a>
-      </div>
     </div>
   </div>
 </div>
@@ -1415,7 +1401,7 @@ async function openMic(deviceId){
   }
   micSrc=c.createMediaStreamSource(micStream);
   micAn=c.createAnalyser(); micAn.fftSize=2048; micSrc.connect(micAn);
-  $('micOff').hidden=true; $('micOn').hidden=false;
+  $('micOff').hidden=true; $('micOn').hidden=false; $('micChip').hidden=false;
   // list inputs (names only show after permission)
   try{
     const devs=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput');
@@ -1425,9 +1411,12 @@ async function openMic(deviceId){
   }catch(e){}
   cancelAnimationFrame(meterRAF); meter(); updateRecTarget(); return true;
 }
-function closeMic(){ if(recording) stopRecording(); if(micStream) micStream.getTracks().forEach(t=>t.stop()); micStream=null; micSrc=null; micAn=null; cancelAnimationFrame(meterRAF); $('micOn').hidden=true; $('micOff').hidden=false; }
+function closeMic(quiet){ if(recording) stopRecording(); if(micStream) micStream.getTracks().forEach(t=>t.stop()); if(micSrc){ try{ micSrc.disconnect(); }catch(e){} } micStream=null; micSrc=null; micAn=null; cancelAnimationFrame(meterRAF); $('micOn').hidden=true; $('micOff').hidden=false; $('micChip').hidden=true; if(!quiet) toast('Microphone off.'); }
+$('micChip').onclick=()=>closeMic();
+// release the mic when the app is hidden (switching apps, locking the screen), unless recording
+document.addEventListener('visibilitychange',()=>{ if(document.hidden && micStream && !recording) closeMic(true); });
 $('micAllow').onclick=()=>openMic();
-$('micStop').onclick=closeMic;
+$('micStop').onclick=()=>closeMic();
 $('micSel').onchange=e=>openMic(e.target.value);
 let meterBuf=null, peakHold=-100, peakHoldT=0;
 function meter(){
@@ -1809,9 +1798,9 @@ async function drawCoverFrame(W,H,v){
   const textH = showText ? (H>W ? 260 : 170) : 0;
   if(cover){
     const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime}));
-    const box=Math.min(W, H-textH- (H>W?120:0)), sc=Math.min(box/bmp.width, box/bmp.height), dw=bmp.width*sc, dh=bmp.height*sc;
-    const top = H>W ? (H-textH-dh)/2 : (H-textH-dh)/2;
-    g.drawImage(bmp,(W-dw)/2,Math.max(0,top),dw,dh);
+    // fit the whole picture into the space above the text, using the frame's real shape
+    const availW=W, availH=H-textH, sc=Math.min(availW/bmp.width, availH/bmp.height), dw=bmp.width*sc, dh=bmp.height*sc;
+    g.drawImage(bmp,(W-dw)/2,(availH-dh)/2,dw,dh);
   }
   if(showText){
     g.textAlign='center'; g.fillStyle='#fff';
@@ -1823,7 +1812,7 @@ async function drawCoverFrame(W,H,v){
 }
 function fitText(g,t,max){ let m=g.measureText(t).width; if(m>max){ const px=parseFloat(g.font.match(/(\d+)px/)[1]); g.font=g.font.replace(/\d+px/, Math.floor(px*max/m)+'px'); } }
 async function makeVideo(buf, v, prog){
-  const W=1080, H=$('vShape').value==='v'?1920:1080, fps=15;
+  const shp=$('vShape').value, W=shp==='h'?1920:1080, H=shp==='v'?1920:1080, fps=15;
   const vcfg=await pickAvc(W,H,fps); if(!vcfg) throw new Error('noavc');
   const acfg=await pickAac(buf.sampleRate); if(!acfg) throw new Error('noaac');
   const b=await resampleTo(buf,acfg.sampleRate);
@@ -1856,8 +1845,8 @@ $('fmt').onchange=()=>{ syncFmt(); try{ localStorage.setItem('mixdown-fmt',$('fm
 try{ const f=localStorage.getItem('mixdown-fmt'); if(f) $('fmt').value=f; }catch(e){}
 syncFmt();
 
-// ---------- tag editor ----------
-let te=null; // {bytes, kind, name, cover}
+// ---------- tag-only editing (inside Export) ----------
+let te=null; // {bytes, kind, name}
 const TE=['Title','Artist','Album','Year','Track','Genre','Comment','Lyrics'];
 function decodeText(b,enc){ try{
   if(enc===0) return new TextDecoder('latin1').decode(b);
@@ -1909,8 +1898,19 @@ function readWavTags(b){
     } }
   return out;
 }
-function teThumb(cv){ const c=$('teThumb'); if(!cv){ c.hidden=true; $('teCoverClear').hidden=true; return; }
-  createImageBitmap(new Blob([cv.bytes],{type:cv.mime})).then(bmp=>{ const g=c.getContext('2d'), s=Math.min(bmp.width,bmp.height); g.clearRect(0,0,64,64); g.drawImage(bmp,(bmp.width-s)/2,(bmp.height-s)/2,s,s,0,0,64,64); c.hidden=false; $('teCoverClear').hidden=false; }).catch(()=>{}); }
+function showCover(cv){
+  cover=cv; const c=$('tgThumb');
+  if(!cv){ c.hidden=true; $('tgCoverClear').hidden=true; return; }
+  createImageBitmap(new Blob([cv.bytes],{type:cv.mime})).then(bmp=>{ const g=c.getContext('2d'), s=Math.min(bmp.width,bmp.height); g.clearRect(0,0,64,64); g.drawImage(bmp,(bmp.width-s)/2,(bmp.height-s)/2,s,s,0,0,64,64); c.hidden=false; $('tgCoverClear').hidden=false; }).catch(()=>{});
+}
+let savedDetails=null;
+$('tagOnly').onchange=e=>{
+  const on=e.target.checked;
+  $('tagOnlyBox').hidden=!on; $('exportOnly').hidden=on; $('exportWav').hidden=on; $('teSave').hidden=!on||!te;
+  $('saveBtn').hidden=true;
+  if(on){ savedDetails={v:tagValues(), cover}; $('tagsBox').open=!!te; }
+  else { te=null; $('teName').textContent=''; if(savedDetails){ TE.forEach(k=>$('tg'+k).value=savedDetails.v['tg'+k]||''); showCover(savedDetails.cover); } }
+};
 $('teFile').onchange=async e=>{
   const f=e.target.files[0]; e.target.value=''; if(!f) return;
   const bytes=new Uint8Array(await f.arrayBuffer()); let kind=null, tags={};
@@ -1920,36 +1920,30 @@ $('teFile').onchange=async e=>{
     else if(head.slice(4,8)==='ftyp'){ kind='mp4'; tags=readIlst(bytes); }
     else if(head.startsWith('ID3') || (bytes[0]===0xFF && (bytes[1]&0xE0)===0xE0)){ kind='mp3'; tags=readId3(bytes)||{}; }
   }catch(err){ tags={}; }
-  if(!kind){ $('teName').textContent='That file type isn’t supported. Use WAV, MP3, M4A, or MP4.'; $('teForm').hidden=true; return; }
-  te={bytes,kind,name:f.name,cover:tags.cover||null};
-  TE.forEach(k=>$('te'+k).value=tags[k]||'');
-  teThumb(te.cover); $('teForm').hidden=false; $('teSaveBtn').hidden=true; $('teStatus').textContent='';
+  if(!kind){ $('teName').textContent='That file type isn’t supported. Use WAV, MP3, M4A, or MP4.'; return; }
+  te={bytes,kind,name:f.name};
+  TE.forEach(k=>$('tg'+k).value=tags[k]||''); showCover(tags.cover||null);
+  $('tagsBox').open=true; $('teSave').hidden=false; $('saveBtn').hidden=true;
   $('teName').textContent=`${f.name} (${kind.toUpperCase()})`;
 };
-$('teCover').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f||!te) return; te.cover={bytes:new Uint8Array(await f.arrayBuffer()), mime:f.type==='image/png'?'image/png':'image/jpeg'}; teThumb(te.cover); };
-$('teCoverClear').onclick=()=>{ if(te){ te.cover=null; teThumb(null); } };
 $('teSave').onclick=async()=>{
   if(!te) return;
-  const v={}; TE.forEach(k=>v['tg'+k]=$('te'+k).value.trim());
-  let out;
+  const v=tagValues(); let out;
   try{
     if(te.kind==='mp3'){
       let start=0; const old=readId3(te.bytes); if(old) start=old._size;
-      const tag=id3Tag(v,te.cover)||new Uint8Array(0); out=new Blob([tag, te.bytes.subarray(start)],{type:'audio/mpeg'});
+      out=new Blob([id3Tag(v,cover)||new Uint8Array(0), te.bytes.subarray(start)],{type:'audio/mpeg'});
     } else if(te.kind==='wav'){
       const keep=riffChunks(te.bytes).filter(c=>!(c.id.toLowerCase()==='id3 ' || (c.id==='LIST' && String.fromCharCode(...te.bytes.subarray(c.start+8,c.start+12))==='INFO')));
-      const info=infoList(v), id3=id3Tag(v,te.cover);
+      const info=infoList(v), id3=id3Tag(v,cover);
       const parts=[...keep.map(c=>te.bytes.subarray(c.start,c.end)), info];
       if(id3){ const h=new Uint8Array(8); h.set(tb('id3 ')); new DataView(h.buffer).setUint32(4,id3.length,true); parts.push(h,id3); if(id3.length%2) parts.push(new Uint8Array(1)); }
       const body=cat8(parts), hdr=new Uint8Array(12); hdr.set(tb('RIFF')); new DataView(hdr.buffer).setUint32(4,4+body.length,true); hdr.set(tb('WAVE'),8);
       out=new Blob([hdr,body],{type:'audio/wav'});
-    } else {
-      out=new Blob([injectTags(te.bytes, udtaFor(v,te.cover))],{type:te.name.toLowerCase().endsWith('.mp4')?'video/mp4':'audio/mp4'});
-    }
-  }catch(err){ $('teStatus').textContent='This file’s layout couldn’t be updated. Nothing was changed.'; return; }
-  const name=te.name.replace(/(\.[^.]+)$/,'-tagged$1');
-  await saveTo($('teSaveBtn'), name, out, m=>{ $('teStatus').textContent=m; });
-  $('teStatus').textContent='Ready. Tap Save below. Your original file is unchanged.';
+    } else out=new Blob([injectTags(te.bytes, udtaFor(v,cover))],{type:te.name.toLowerCase().endsWith('.mp4')?'video/mp4':'audio/mp4'});
+  }catch(err){ status('This file’s layout couldn’t be updated. Nothing was changed.'); return; }
+  await saveBlob(te.name.replace(/(\.[^.]+)$/,'-tagged$1'), out);
+  status('Ready. Tap Save below. Your original file is unchanged.', true);
 };
 
 // ---------- export ----------
@@ -2008,6 +2002,11 @@ async function saveTo(btn, name, blob){
   });
 })();
 
+// ---------- layout ----------
+function applyLayout(v){ document.body.classList.toggle('force1',v==='one'); document.body.classList.toggle('force2',v==='two'); setTimeout(()=>{ setZoomFromSlider(); drawSpec(); },50); }
+try{ const v=localStorage.getItem('mixdown-layout'); if(v){ $('layoutSel').value=v; } }catch(e){}
+$('layoutSel').onchange=e=>{ applyLayout(e.target.value); try{ localStorage.setItem('mixdown-layout',e.target.value); }catch(err){} };
+
 // ---------- installable app ----------
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !window.claude){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
 let installEvt=null;
@@ -2016,8 +2015,8 @@ $('installBtn').onclick=async()=>{ if(!installEvt) return; installEvt.prompt(); 
 window.addEventListener('appinstalled',()=>{ $('installBtn').hidden=true; });
 
 // ---------- start ----------
-tracks.push(newTrack(), newTrack()); activeId=tracks[0].id;
-renderAll(); renderBands(); setEditing(false); syncLatency(); setZoomFromSlider(); drawSpec();
+tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
+renderAll(); renderBands(); setEditing(false); syncLatency(); applyLayout($('layoutSel').value); setZoomFromSlider(); drawSpec();
 window.addEventListener('resize',()=>{ setZoomFromSlider(); drawSpec(); });
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{ renderAll(); drawSpec(); });
 </script>
