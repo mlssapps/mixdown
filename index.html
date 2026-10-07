@@ -192,7 +192,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 19</p>
+  <p class="ver">Version 22</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="1">100%</button><button type="button" data-z="0.85">85%</button><button type="button" data-z="0.7">70%</button></div></div>
   <p class="sub">Line up to six tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -215,6 +215,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <li><b>Delete and close gap</b> removes it and slides everything after it left. <b>Silence</b> mutes it in place. <b>Trim to selection</b> keeps only the selected part of that track.</li>
     </ul>
     <p><b>Split at playhead</b> cuts the clip under the playhead into two clips. In <b>Move</b> mode, tap a clip to select it, then drag it sideways to move it. To put it on another track, pick the track in the selected clip's <b>Track</b> menu under the edit buttons, where you can also type its exact start time. <b>Track lock</b> (next to Loop) decides what touches on the tracks do: <b>On</b> (the default) makes selecting and moving reliable, including dragging a clip up or down onto another track, and you scroll the page by swiping outside the tracks; <b>Off</b> lets up-and-down swipes over the tracks scroll the page instead.</p>
+    <p><b>Clip fades and crossfades:</b> select a clip in Move mode and set its <b>Fade in</b> and <b>Fade out</b> (seconds) under the edit buttons. To crossfade, overlap two clips, on the same track or different tracks, and give the first a fade out and the second a matching fade in. <b>Crossfade into next clip</b> does it automatically on the same track. Fades use an equal-power curve, so the loudness stays steady through the blend.</p>
     <p><b>Undo</b> steps back through your last 60 edits. Edits never change your original files.</p>
     <h3>Recording</h3>
     <p>Open <b>Recording</b> and tap <b>Turn on microphone</b>. Use wired headphones so the music doesn't leak into your take; Bluetooth adds delay. Tap the track to record onto, move the playhead to where you want to start, and press the red <b>record</b> button. After the count-in, sing or play along; press the red button or <b>Stop</b> to finish. Each take becomes its own clip, so you can split, trim, move, and duplicate it.</p>
@@ -228,7 +229,9 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Binaural beats only work in stereo. If a phone speaker or app plays your song in mono, they disappear; monaural and isochronic tones survive.</p>
     <h3>Mastering</h3>
     <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it.</p>
-    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with an optional moving waveform or spectrum bars in your color). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
+    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with optional visual rows in your color: a live waveform, a slow waveform that shows beats and pulses, spectrum bars, and a whole-song waveform with a progress marker; check any combination). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
+    <h3>Repeat and seamless loops</h3>
+    <p>In Export, <b>Repeat</b> plays the song 2, 3, or 5 times in one file, or <b>fills</b> 3 to 30 minutes, ending with a gentle fade. <b>Seamless loop</b> blends the ending into the beginning over the <b>Blend length</b>, so repeats flow without a click or gap. With Repeat off, Seamless loop makes a single file that loops perfectly when a player repeats it. Great for tone and noise tracks. Long files are large, so M4A is a good choice for them.</p>
     <h3>Editing tags only</h3>
     <p>In Export, check <b>Only edit the tags of a song I already have</b>, then <b>Open a song</b> (WAV, MP3, M4A, or MP4). Its details and cover art fill in under Song details. Change them and tap <b>Save tagged copy</b>; it makes a new file with "-tagged" added to the name, without re-encoding the audio. Uncheck the box to go back to exporting your mix.</p>
     <p>Music players show cover art in their own frame, usually a square, whatever shape the picture is. For a full-screen look, use the MP4 video export in the shape you want.</p>
@@ -360,6 +363,10 @@ body.force2 .cols > .panel{margin-top:14px}
       <button class="small" id="clipToPh">Move to playhead</button>
       <label class="inl">Track <select id="clipTrack" style="width:auto"></select></label>
       <button class="small" id="clipDel">Remove clip</button>
+      <label class="inl">Fade in <input type="number" id="clipFi" min="0" max="60" step="0.1" inputmode="decimal"> s</label>
+      <label class="inl">Fade out <input type="number" id="clipFo" min="0" max="60" step="0.1" inputmode="decimal"> s</label>
+      <button class="small" id="clipXf">Crossfade into next clip</button>
+      <span class="hint" style="margin:0;width:100%">Clip fades shape just this clip. Overlap two clips (on the same track or different tracks) and give the first a fade out and the second a matching fade in to crossfade them. <b>Crossfade into next clip</b> does it for you on this track: it slides the next clip back to overlap by the fade-out length (2 s if none) and sets both fades.</span>
     </div>
   </div>
 
@@ -460,6 +467,22 @@ body.force2 .cols > .panel{margin-top:14px}
       <div id="exportOnly">
       <div class="row">
         <div class="field">
+          <label for="rep">Repeat</label>
+          <select id="rep"><option value="1">Off</option><option value="2">2 times</option><option value="3">3 times</option><option value="5">5 times</option><option value="fill">Fill to a length</option></select>
+        </div>
+        <div class="field" id="repLenBox" hidden>
+          <label for="repLen">Total length</label>
+          <select id="repLen"><option value="180">3 minutes</option><option value="240">4 minutes</option><option value="300">5 minutes</option><option value="360">6 minutes</option><option value="600">10 minutes</option><option value="900">15 minutes</option><option value="1200">20 minutes</option><option value="1800">30 minutes</option></select>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="seam"> Seamless loop: blend the ending into the beginning</label>
+      <div class="field" id="seamBox" hidden>
+        <label for="seamLen">Blend length <span class="val" id="seamLenV"></span></label>
+        <input type="range" id="seamLen" min="0.5" max="10" step="0.5" value="3">
+      </div>
+      <p class="hint" id="loopHint"></p>
+      <div class="row">
+        <div class="field">
           <label for="fmt">Format</label>
           <select id="fmt"><option value="wav">WAV (lossless)</option><option value="m4a">M4A (smaller)</option><option value="mp4">MP4 cover art video</option></select>
         </div>
@@ -469,12 +492,16 @@ body.force2 .cols > .panel{margin-top:14px}
         </div>
       </div>
       <label class="check" id="vTextRow" style="margin-bottom:12px" hidden><input type="checkbox" id="vText" checked> Show the title and artist with the art</label>
-      <div class="row" id="vVisRow" hidden>
-        <div class="field">
-          <label for="vVis">Moving visual</label>
-          <select id="vVis"><option value="none">None</option><option value="wave">Waveform</option><option value="bars">Spectrum bars</option><option value="mirror">Mirrored bars</option></select>
+      <div id="vVisRow" hidden>
+        <label style="margin-bottom:4px">Visuals (stacked in rows under the art; check any)</label>
+        <label class="check"><input type="checkbox" id="vWave"> Live waveform: the sound right now</label>
+        <label class="check"><input type="checkbox" id="vSlow"> Slow waveform: half a second at a time, so beats and pulses show</label>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <label class="check" style="margin:0"><input type="checkbox" id="vBars"> Spectrum</label>
+          <select id="vBarStyle" style="width:auto"><option value="bars">Bars</option><option value="mirror">Mirrored bars</option></select>
         </div>
-        <div class="field">
+        <label class="check" style="margin-top:8px"><input type="checkbox" id="vSong"> Whole-song waveform with a progress marker</label>
+        <div class="field" style="margin-top:8px;max-width:220px">
           <label for="vColor">Visual color</label>
           <input type="color" id="vColor" value="#F2A541">
         </div>
@@ -701,6 +728,7 @@ function drawLane(t){
           r=Math.sqrt(r/Math.max(1,rc));
           const u=(ta+tb)/2 - T0;
           let f=1; if(t.fadeIn>0 && u<t.fadeIn) f=Math.max(0,u/t.fadeIn); if(t.fadeOut>0 && u>T-t.fadeOut) f=Math.min(f,Math.max(0,(T-u)/t.fadeOut));
+          if(cl.fi>0||cl.fo>0) f*=clipFadeAt(cl,(ta+tb)/2);
           const k=(h/2-4)*dbToGain(t.gainDb)*f;
           // light = peaks, solid = average loudness (RMS), so the shape of the song stays readable
           g.globalAlpha=.45; g.fillRect(x, mid-Math.min(hi*k,mid), 1, Math.max(1,Math.min((hi-lo)*k,h)));
@@ -727,6 +755,7 @@ function updateSelInfo(){
   const ac=activeClipId && findClip(activeClipId);
   $('clipRow').hidden=!ac;
   if(ac){ $('clipLabel').textContent=`Selected clip: ${ac.c.name} on ${ac.t.name}, ${fmt(clipLen(ac.c))} long`; if(document.activeElement!==$('clipStart')) $('clipStart').value=ac.c.offset.toFixed(2);
+    if(document.activeElement!==$('clipFi')) $('clipFi').value=(ac.c.fi||0).toFixed(1); if(document.activeElement!==$('clipFo')) $('clipFo').value=(ac.c.fo||0).toFixed(1);
     const cs=$('clipTrack'); if(document.activeElement!==cs){ cs.innerHTML=tracks.map(t=>`<option value="${t.id}"></option>`).join(''); [...cs.options].forEach((o,i)=>o.textContent=tracks[i].name); cs.value=String(ac.t.id); } }
   $('selInfo').textContent = has ? `Selected ${fmt(Math.min(sel.a,sel.b))} to ${fmt(Math.max(sel.a,sel.b))} (${(Math.abs(sel.b-sel.a)).toFixed(2)} s) on ${t.name}.` :
     (t ? `Active track: ${t.name}. ${mode==='select'?'Drag across its waveform to select, or tap to move the playhead.':'Tap a clip to select it, then drag it sideways. Use its Track menu below to move it to another track.'}` : '');
@@ -1148,7 +1177,7 @@ $('dupBtn').onclick=()=>{
     pushUndo(); const made=pasteAt(t,B,cb); activeClipId=made[0]?.id||null; afterEdit('Duplicated the selection right after itself.'); return;
   }
   const ac=(activeClipId&&findClip(activeClipId)) || (clipAt(t,playhead)&&{t,c:clipAt(t,playhead)}); if(!ac) return;
-  pushUndo(); const c=ac.c, d=newClip(c.buf,c.peaks,JSON.parse(JSON.stringify(c.segs)),clipEnd(c),c.name); ac.t.clips.push(d); activeClipId=d.id;
+  pushUndo(); const c=ac.c, d=newClip(c.buf,c.peaks,JSON.parse(JSON.stringify(c.segs)),clipEnd(c),c.name); d.fi=c.fi||0; d.fo=c.fo||0; ac.t.clips.push(d); activeClipId=d.id;
   afterEdit('Duplicated the clip right after itself.');
 };
 $('splitBtn').onclick=()=>{
@@ -1156,6 +1185,7 @@ $('splitBtn').onclick=()=>{
   const u=playhead-c.offset, L=clipLen(c); if(u<0.01||u>L-0.01){ toast('Move the playhead inside the clip to split it.'); return; }
   pushUndo();
   const right=newClip(c.buf,c.peaks,cutSegs(c.segs,u,L,'keep'),c.offset+u,c.name);
+  right.fo=c.fo||0; c.fo=0; right.fi=0;
   c.segs=cutSegs(c.segs,0,u,'keep'); t.clips.push(right); activeClipId=right.id;
   afterEdit('Split. Switch to Move to drag either part.');
 };
@@ -1164,6 +1194,17 @@ $('undo').onclick=()=>{ const u=undoStack.pop(); if(!u) return; restore(u); if(a
 $('clipStart').onchange=e=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.c.offset=Math.max(0,+e.target.value||0); restartIfPlaying(); drawAll(); };
 $('clipToPh').onclick=()=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.c.offset=playhead; restartIfPlaying(); drawAll(); };
 $('clipTrack').onchange=e=>{ const ac=findClip(activeClipId), to=tracks.find(t=>t.id===+e.target.value); if(!ac||!to||to===ac.t) return; pushUndo(); ac.t.clips=ac.t.clips.filter(x=>x!==ac.c); to.clips.push(ac.c); setActive(to.id); afterEdit(`Moved the clip to ${to.name}.`); };
+const clipFadeSet=(key,el)=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.c[key]=Math.max(0,Math.min(clipLen(ac.c),parseFloat(String(el.value).replace(',','.'))||0)); restartIfPlaying(); drawAll(); };
+$('clipFi').onchange=e=>clipFadeSet('fi',e.target);
+$('clipFo').onchange=e=>clipFadeSet('fo',e.target);
+$('clipXf').onclick=()=>{
+  const ac=findClip(activeClipId); if(!ac) return;
+  const c=ac.c, next=ac.t.clips.filter(x=>x!==c && x.offset>c.offset).sort((a,b)=>a.offset-b.offset)[0];
+  if(!next){ toast('There’s no later clip on this track to crossfade into.'); return; }
+  const X=Math.min(c.fo>0?c.fo:2, clipLen(c)/2, clipLen(next)/2);
+  pushUndo(); next.offset=Math.max(0,clipEnd(c)-X); c.fo=X; next.fi=X;
+  restartIfPlaying(); drawAll(); toast(`Crossfaded over ${X.toFixed(1)} s.`);
+};
 $('clipDel').onclick=()=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.t.clips=ac.t.clips.filter(x=>x!==ac.c); activeClipId=null; afterEdit('Removed the clip.'); };
 $('modeSel').onclick=()=>{ mode='select'; activeClipId=null; drawAll(); $('modeSel').classList.add('on'); $('modeMove').classList.remove('on'); updateSelInfo(); };
 $('modeMove').onclick=()=>{ mode='move'; $('modeMove').classList.add('on'); $('modeSel').classList.remove('on'); updateSelInfo(); };
@@ -1350,6 +1391,20 @@ function fadePoints(t){
 }
 function valueAt(pts,t){ if(t<=pts[0][0]) return pts[0][1]; for(let i=1;i<pts.length;i++){ if(t<=pts[i][0]){ const [a,va]=pts[i-1],[b,vb]=pts[i]; return b>a? va+(vb-va)*(t-a)/(b-a) : vb; } } return pts[pts.length-1][1]; }
 // schedule one track into a context. at = timeline position matching ctx time `when0`.
+// Clip fades use an equal-power curve, so two overlapping clips crossfade without a dip in loudness.
+function clipFadeAt(cl,time){ const s0=cl.offset, e0=clipEnd(cl), u=time-s0; let g=1;
+  if(cl.fi>0 && u<cl.fi) g*=Math.sin(Math.max(0,u)/cl.fi*Math.PI/2);
+  if(cl.fo>0 && time>e0-cl.fo) g*=Math.sin(Math.max(0,e0-time)/cl.fo*Math.PI/2);
+  return Math.max(0,Math.min(1,g)); }
+function clipFadeGain(c, cl, dest, at, when0){
+  const gn=c.createGain(); gn.connect(dest);
+  const s0=cl.offset, e0=clipEnd(cl), pts=[s0];
+  const N=24; if(cl.fi>0) for(let i=1;i<=N;i++) pts.push(s0+cl.fi*i/N);
+  if(cl.fo>0) for(let i=0;i<=N;i++) pts.push(e0-cl.fo+cl.fo*i/N);
+  gn.gain.setValueAtTime(clipFadeAt(cl,at), when0);
+  pts.sort((a,b)=>a-b).forEach(pt=>{ if(pt>at) gn.gain.linearRampToValueAtTime(clipFadeAt(cl,pt), when0+(pt-at)); });
+  return gn;
+}
 function scheduleTrack(c, t, dest, at, when0){
   const fade=c.createGain(), vol=c.createGain(), pan=c.createStereoPanner ? c.createStereoPanner() : null;
   vol.gain.value = audible(t) ? dbToGain(t.gainDb) : 0;
@@ -1364,10 +1419,11 @@ function scheduleTrack(c, t, dest, at, when0){
   const srcs=[];
   for(const cl of t.clips){
     let pos=0;
+    const cg = (cl.fi>0||cl.fo>0) ? clipFadeGain(c, cl, fade, at, when0) : fade;
     for(const g of cl.segs){
       const L=segLen(g), gs=cl.offset+pos, ge=gs+L; pos+=L;
       if(g.sil!=null || ge<=at) continue;
-      const skip=Math.max(0,at-gs), src=c.createBufferSource(); src.buffer=cl.buf; src.connect(fade);
+      const skip=Math.max(0,at-gs), src=c.createBufferSource(); src.buffer=cl.buf; src.connect(cg);
       src.start(when0+Math.max(0,gs-at), g.s+skip, L-skip); srcs.push(src);
     }
   }
@@ -1680,7 +1736,7 @@ function limiterGain(p, sr, gain, set, out, work){
   return out;
 }
 let masterBuf=null, masterSig='', listenMaster=false;
-function mixSignature(sr){ return JSON.stringify({bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
+function mixSignature(sr){ return JSON.stringify({bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
 async function renderMix(sr){
   const tail=Math.max(0,...tracks.filter(hasAudio).map(fxTail));
   const L=projectLen()+tail, oc=new OfflineAudioContext(2, Math.max(1,Math.ceil(L*sr)), sr);
@@ -1779,6 +1835,55 @@ function infoList(v){
   return out;
 }
 
+// ---------- repeat and seamless loop ----------
+function loopSettings(){
+  const r=$('rep').value, seam=$('seam').checked;
+  return {on: r!=='1' || seam, reps: r==='fill'?0:+r, fill: r==='fill'?+$('repLen').value:0, seam, xf: seam?+$('seamLen').value:0};
+}
+function syncLoop(){
+  const lp=loopSettings();
+  $('repLenBox').hidden=!lp.fill; $('seamBox').hidden=!lp.seam; $('seamLenV').textContent=(+$('seamLen').value).toFixed(1)+' s';
+  $('loopHint').textContent = !lp.on ? '' :
+    lp.seam && lp.reps===1 ? 'Makes a file whose ending flows straight into its beginning, so it loops without a click or gap when a player repeats it. Best with WAV or M4A.' :
+    (lp.fill ? `Repeats the song to fill ${lp.fill/60} minutes, ending with a gentle fade.` : `Plays the song ${lp.reps} times in one file.`) + (lp.seam ? ' Each repeat blends smoothly into the next.' : ' Repeats join back to back.') + ' Long files are large; M4A keeps them smaller.';
+}
+['rep','repLen','seam','seamLen'].forEach(id=>$(id).addEventListener('input',syncLoop));
+// Build the repeated/looped audio. Natural start and ending; joins crossfade when seamless.
+function loopify(buf, lp, ceil){
+  const sr=buf.sampleRate, n=buf.length, ch=buf.numberOfChannels;
+  const xf=Math.min(Math.floor(lp.xf*sr), Math.floor(n/3));
+  const unitLen=n-xf;                                  // one seamless cycle
+  const src=[]; for(let c=0;c<ch;c++) src.push(buf.getChannelData(c));
+  // the loop unit: first xf samples are the old ending fading out over the old beginning fading in
+  const unitAt=(d,i)=> i<xf ? d[n-xf+i]*Math.cos(i/xf*Math.PI/2) + d[i]*Math.sin(i/xf*Math.PI/2) : d[i];
+  let total, plan;
+  if(lp.seam && lp.reps===1){ total=unitLen; plan='unit'; }
+  else {
+    const cyc = xf ? unitLen : n;
+    const reps = lp.fill ? Math.max(1,Math.ceil((lp.fill*sr - xf)/cyc)) : lp.reps;
+    total = xf ? n + (reps-1)*unitLen : n*reps; plan='repeat';
+    if(lp.fill) total=Math.min(total, Math.round(lp.fill*sr));
+  }
+  const out=new AudioBuffer({length:total, numberOfChannels:ch, sampleRate:sr});
+  for(let c=0;c<ch;c++){
+    const d=src[c], o=out.getChannelData(c);
+    if(plan==='unit'){ for(let i=0;i<total;i++) o[i]=unitAt(d,i); }
+    else if(!xf){ for(let i=0;i<total;i++) o[i]=d[i%n]; }
+    else {
+      // original beginning (up to the blend), then whole loop units, then the original ending
+      for(let i=0;i<total;i++){
+        if(i<unitLen) o[i]=d[i];
+        else { const k=(i-unitLen)%unitLen; o[i]=unitAt(d,k); }
+      }
+      if(!lp.fill){ const tailStart=total-xf; for(let i=0;i<xf;i++) o[tailStart+i]=d[n-xf+i]; }
+    }
+    // keep blends under the ceiling, and fade out the end of a filled length
+    if(xf) for(let i=0;i<total;i++){ const a=o[i]; if(a>ceil) o[i]=ceil; else if(a<-ceil) o[i]=-ceil; }
+    if(lp.fill){ const f=Math.min(total,Math.round(3*sr)); for(let i=0;i<f;i++) o[total-1-i]*=i/f; }
+  }
+  return out;
+}
+
 // ---------- MP4/M4A boxes and music tags ----------
 const tb=t=>Uint8Array.from([...t].map(c=>c.charCodeAt(0)&255));
 const u32=n=>new Uint8Array([(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255]);
@@ -1855,7 +1960,9 @@ async function drawCoverFrame(W,H,v,vis){
   g.fillStyle='#000'; g.fillRect(0,0,W,H);
   const showText=$('vText').checked && (v.tgTitle||v.tgArtist);
   const textH0 = showText ? (H>W ? 260 : 170) : 0;
-  const bandH = vis ? Math.round(H*(H>W?0.14:0.2)) : 0;
+  const nRows = Array.isArray(vis) ? vis.length : (vis?1:0);
+  const rowH = Math.round(H*(H>W?0.1:(nRows>2?0.11:0.14)));
+  const bandH = nRows*rowH;
   const textH = textH0 + bandH; c.band={y:H-textH0-bandH, h:bandH};
   if(cover){
     const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime}));
@@ -1878,37 +1985,65 @@ function fft(re,im){ const n=re.length;
   for(let len=2;len<=n;len<<=1){ const ang=-2*Math.PI/len, wr=Math.cos(ang), wi=Math.sin(ang);
     for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let k=0;k<len/2;k++){ const a=i+k, b=a+len/2, xr=re[b]*cr-im[b]*ci, xi=re[b]*ci+im[b]*cr;
       re[b]=re[a]-xr; im[b]=im[a]-xi; re[a]+=xr; im[a]+=xi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
-function makeVisualizer(kind, mono, sr, W, band, color){
-  const N=2048, NB=kind==='wave'?0:(W>1200?72:48), hann=new Float32Array(N); for(let i=0;i<N;i++) hann[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
-  const re=new Float32Array(N), im=new Float32Array(N), prev=new Float32Array(NB);
-  const edges=[]; for(let i=0;i<=NB;i++) edges.push(40*Math.pow(16000/40,i/NB));
+// Stacked visual rows for the cover art video. kinds: 'wave' | 'slow' | 'bars' | 'mirror' | 'song'
+function makeVisualizer(kinds, mono, sr, W, band, color){
+  const rowH=band.h/kinds.length, pad=W*0.06, x0=pad, w=W-2*pad;
+  const N=2048, hann=new Float32Array(N); for(let i=0;i<N;i++) hann[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
+  const re=new Float32Array(N), im=new Float32Array(N);
+  // whole-song overview (computed once)
+  let overview=null;
+  if(kinds.includes('song')){
+    const cols=Math.round(w/3); overview={mn:new Float32Array(cols), mx:new Float32Array(cols)};
+    const per=mono.length/cols;
+    for(let c=0;c<cols;c++){ let lo=0,hi=0; const a=Math.floor(c*per), b=Math.floor((c+1)*per); for(let i=a;i<b;i++){ const v=mono[i]; if(v<lo) lo=v; if(v>hi) hi=v; } overview.mn[c]=lo; overview.mx[c]=hi; }
+    let pk=1e-6; for(let c=0;c<cols;c++) pk=Math.max(pk,-overview.mn[c],overview.mx[c]); overview.norm=1/pk;
+  }
+  const bandsN=W>1200?72:48, edges=[]; for(let i=0;i<=bandsN;i++) edges.push(40*Math.pow(16000/40,i/bandsN));
+  const prev=new Float32Array(bandsN), dur=mono.length/sr;
   return (g,t)=>{
-    const c0=Math.round(t*sr)-N/2;
-    const pad=W*0.06, x0=pad, x1=W-pad, w=x1-x0, y0=band.y, h=band.h, mid=y0+h/2;
-    g.save(); g.fillStyle=color; g.strokeStyle=color; g.shadowColor=color; g.shadowBlur=18;
-    if(kind==='wave'){
-      g.lineWidth=Math.max(3,W/400); g.beginPath();
-      for(let i=0;i<N;i+=4){ const v=mono[c0+i]||0, x=x0+w*i/N, y=mid-Math.max(-1,Math.min(1,v*1.6))*h*0.45; i?g.lineTo(x,y):g.moveTo(x,y); }
-      g.stroke();
-    } else {
-      for(let i=0;i<N;i++){ re[i]=(mono[c0+i]||0)*hann[i]; im[i]=0; }
-      fft(re,im);
-      const binHz=sr/N, bw=w/NB;
-      for(let b=0;b<NB;b++){
-        let m=0; const i0=Math.max(1,Math.floor(edges[b]/binHz)), i1=Math.max(i0+1,Math.ceil(edges[b+1]/binHz));
-        for(let i=i0;i<i1;i++){ const mag=Math.hypot(re[i],im[i]); if(mag>m) m=mag; }
-        let db=20*Math.log10(m/(N/4)+1e-9); let val=Math.max(0,Math.min(1,(db+60)/60));
-        val=Math.max(val, prev[b]*0.88); prev[b]=val;
-        const bh=Math.max(4,val*h*(kind==='mirror'?0.5:0.95)), x=x0+b*bw+bw*0.18, bwid=bw*0.64;
-        if(kind==='mirror') g.fillRect(x, mid-bh, bwid, bh*2); else g.fillRect(x, y0+h-bh, bwid, bh);
+    g.save(); g.fillStyle=color; g.strokeStyle=color; g.shadowColor=color;
+    kinds.forEach((k,ri)=>{
+      const y0=band.y+ri*rowH, h=rowH*0.86, mid=y0+rowH/2;
+      g.shadowBlur=16;
+      if(k==='wave'){
+        const c0=Math.round(t*sr)-N/2;
+        g.lineWidth=Math.max(3,W/400); g.beginPath();
+        for(let i=0;i<N;i+=4){ const v=mono[c0+i]||0, x=x0+w*i/N, y=mid-Math.max(-1,Math.min(1,v*1.6))*h*0.5; i?g.lineTo(x,y):g.moveTo(x,y); }
+        g.stroke();
+      } else if(k==='slow'){
+        // half a second of sound as a mirrored envelope, so slow beats and pulses are visible
+        const span=Math.round(sr*0.5), c0=Math.round(t*sr)-span/2, cols=Math.round(w/4), per=span/cols;
+        g.beginPath();
+        const top=[], bot=[];
+        for(let c=0;c<cols;c++){ let m=0; const a=c0+Math.floor(c*per), b=c0+Math.floor((c+1)*per); for(let i=a;i<b;i+=2){ const v=Math.abs(mono[i]||0); if(v>m) m=v; } const a2=Math.min(1,m*1.6)*h*0.5, x=x0+w*c/cols; top.push([x,mid-a2]); bot.push([x,mid+a2]); }
+        top.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y)); for(let i=bot.length-1;i>=0;i--) g.lineTo(bot[i][0],bot[i][1]); g.closePath();
+        g.globalAlpha=0.85; g.fill(); g.globalAlpha=1;
+      } else if(k==='bars'||k==='mirror'){
+        const c0=Math.round(t*sr)-N/2;
+        for(let i=0;i<N;i++){ re[i]=(mono[c0+i]||0)*hann[i]; im[i]=0; }
+        fft(re,im);
+        const binHz=sr/N, bw=w/bandsN;
+        for(let b=0;b<bandsN;b++){
+          let m=0; const i0=Math.max(1,Math.floor(edges[b]/binHz)), i1=Math.max(i0+1,Math.ceil(edges[b+1]/binHz));
+          for(let i=i0;i<i1;i++){ const mag=Math.hypot(re[i],im[i]); if(mag>m) m=mag; }
+          let val=Math.max(0,Math.min(1,(20*Math.log10(m/(N/4)+1e-9)+60)/60)); val=Math.max(val,prev[b]*0.88); prev[b]=val;
+          const bh=Math.max(4,val*h*(k==='mirror'?0.5:1)), x=x0+b*bw+bw*0.18, bwid=bw*0.64;
+          if(k==='mirror') g.fillRect(x, mid-bh, bwid, bh*2); else g.fillRect(x, y0+(rowH-h)/2+h-bh, bwid, bh);
+        }
+      } else if(k==='song' && overview){
+        const cols=overview.mn.length, done=Math.round(cols*Math.min(1,t/dur)), cw=w/cols;
+        g.shadowBlur=0;
+        for(let c=0;c<cols;c++){ const hi=overview.mx[c]*overview.norm, lo=overview.mn[c]*overview.norm; g.globalAlpha=c<done?1:0.3; g.fillRect(x0+c*cw, mid-hi*h*0.5, Math.max(1,cw*0.7), Math.max(2,(hi-lo)*h*0.5)); }
+        g.globalAlpha=1; g.shadowBlur=12; g.fillRect(x0+done*cw-1.5, y0+(rowH-h)/2, 3, h);
       }
-    }
+    });
     g.restore();
   };
 }
 async function makeVideo(buf, v, prog){
-  const vis=$('vVis').value!=='none' ? $('vVis').value : null;
-  const shp=$('vShape').value, W=shp==='h'?1920:1080, H=shp==='v'?1920:1080, fps=vis?30:15;
+  const kinds=[]; if($('vWave').checked) kinds.push('wave'); if($('vSlow').checked) kinds.push('slow'); if($('vBars').checked) kinds.push($('vBarStyle').value); if($('vSong').checked) kinds.push('song');
+  const vis=kinds.length?kinds:null, moving=kinds.some(k=>k!=='song');
+  const shp=$('vShape').value, W=shp==='h'?1920:1080, H=shp==='v'?1920:1080, fps=moving?30:15;
   const vcfg=await pickAvc(W,H,fps); if(!vcfg) throw new Error('noavc');
   const acfg=await pickAac(buf.sampleRate); if(!acfg) throw new Error('noaac');
   const b=await resampleTo(buf,acfg.sampleRate);
@@ -1917,7 +2052,7 @@ async function makeVideo(buf, v, prog){
   if(vis){
     const mono=new Float32Array(b.length), L=b.getChannelData(0), R=b.getChannelData(b.numberOfChannels>1?1:0);
     for(let i=0;i<mono.length;i++) mono[i]=(L[i]+R[i])/2;
-    draw=makeVisualizer(vis, mono, b.sampleRate, W, frame.band, $('vColor').value);
+    draw=makeVisualizer(kinds, mono, b.sampleRate, W, frame.band, $('vColor').value);
     live=document.createElement('canvas'); live.width=W; live.height=H; lg=live.getContext('2d');
   }
   const muxer=new Mp4Muxer.Muxer({target:new Mp4Muxer.ArrayBufferTarget(), video:{codec:'avc',width:W,height:H,frameRate:fps}, audio:{codec:'aac',numberOfChannels:2,sampleRate:acfg.sampleRate}, fastStart:false});
@@ -1944,7 +2079,7 @@ function syncFmt(){
   $('exportWav').textContent = f==='wav'?'Export WAV':f==='m4a'?'Export M4A':'Export video';
   $('fmtHint').textContent = f==='wav' ? 'Lossless, full quality. Best for keeping and for distribution.' :
     f==='m4a' ? 'AAC at 256 kbps: much smaller and good for sharing or playing on phones.' :
-    'Your cover art (or black if there is none) with the song, ready to post. Add cover art under Song details. A moving visual makes a 30 fps video, so it takes a little longer to build.';
+    'Your cover art (or black if there is none) with the song, ready to post. Add cover art under Song details. Visuals stack in rows under the art. Moving visuals make a 30 fps video, so it takes a little longer to build.';
 }
 $('fmt').onchange=()=>{ syncFmt(); try{ localStorage.setItem('mixdown-fmt',$('fmt').value); }catch(e){} };
 try{ const f=localStorage.getItem('mixdown-fmt'); if(f) $('fmt').value=f; }catch(e){}
@@ -2068,15 +2203,17 @@ $('exportWav').onclick=async()=>{
       let peak=0; for(let c=0;c<2;c++){ const d=out.getChannelData(c); for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>peak) peak=a; } }
       note=peak>1?` Peak ${(20*Math.log10(peak)).toFixed(1)} dB: the mix clips. Turn on mastering or lower the master volume.`:` Peak ${(20*Math.log10(peak||1e-9)).toFixed(1)} dB.`;
     }
+    const lp=loopSettings();
+    if(lp.on){ prog(0.85,'Building the loop…'); await sleep(); try{ out=loopify(out,lp,$('mOn').checked?Math.pow(10,mSettings().ceil/20):1); }catch(err){ throw new Error('toolong'); } }
     const v=tagValues(), fmt=$('fmt').value; let blob;
     if(fmt==='wav'){ prog(0.95,'Writing the file…'); await sleep(); blob=encodeWav(out,bits,v); }
     else if(fmt==='m4a'){ prog(0.9,'Encoding M4A…'); blob=await makeM4a(out,v,prog); }
     else { prog(0.6,'Making the video…'); blob=await makeVideo(out,v,prog); }
     const base=(($('fileName').value||'my-mix').trim().replace(/[^\w\- ]+/g,'').replace(/\s+/g,'-')||'my-mix');
-    const name=base+(fmt==='wav'?'.wav':fmt==='m4a'?'.m4a':'.mp4');
+    const name=base+(lp.on?(lp.fill?`-${Math.round(lp.fill/60)}min`:lp.reps>1?`-x${lp.reps}`:'-loop'):'')+(fmt==='wav'?'.wav':fmt==='m4a'?'.m4a':'.mp4');
     await saveBlob(name, blob);
     status('Ready.'+note+' Tap Save below.', true);
-  }catch(e){ const m=e&&e.message; status(m==='silent'?'The mix is silent, so there’s nothing to export.': m==='noaac'?'This device can’t make AAC audio. Export WAV instead.': m==='noavc'?'This device can’t make H.264 video. Export WAV or M4A instead.':'Exporting failed on this device. Try 44.1 kHz or a shorter song.'); }
+  }catch(e){ const m=e&&e.message; status(m==='silent'?'The mix is silent, so there’s nothing to export.': m==='noaac'?'This device can’t make AAC audio. Export WAV instead.': m==='toolong'?'That length is too much for this device’s memory. Try a shorter total length, 44.1 kHz, or M4A.': m==='noavc'?'This device can’t make H.264 video. Export WAV or M4A instead.':'Exporting failed on this device. Try 44.1 kHz or a shorter song.'); }
   setProg($('progress'),null); $('exportWav').disabled=false;
 };
 let downloadsP=null;
@@ -2108,7 +2245,7 @@ async function saveTo(btn, name, blob){
 })();
 
 // ---------- projects ----------
-const PROJ_FIELDS=['projName','fileName','fmt','vShape','vText','vVis','vColor','bits','rate','bpm','countIn','playAlong','mOn','mTarget','mCeil','mType','mTP','mLook','mRel','tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
+const PROJ_FIELDS=['projName','fileName','fmt','vShape','vText','vWave','vSlow','vBars','vBarStyle','vSong','vColor','rep','repLen','seam','seamLen','bits','rate','bpm','countIn','playAlong','mOn','mTarget','mCeil','mType','mTP','mLook','mRel','tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
 function fieldVals(){ const o={}; PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el) o[id]= el.type==='checkbox'?el.checked:el.value; }); return o; }
 function setFields(o){ PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el && id in o){ if(el.type==='checkbox') el.checked=!!o[id]; else el.value=o[id]; } }); }
 const b64=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode(...u8.subarray(i,i+0x8000)); return btoa(s); };
@@ -2123,7 +2260,7 @@ $('projSave').onclick=async()=>{
   try{
     const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs,
       tracks:tracks.map(t=>({id:t.id,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
-        clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null}; })})),
+        clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0}; })})),
       sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
     let k=0;
     for(const sid of used){
@@ -2165,7 +2302,8 @@ $('projOpen').onchange=async e=>{
       registerSource(buf, sd.name, bytes, sd.kind); bufs[sd.id]={buf, peaks:computePeaks(buf)};
       setProg($('projProg'),0.1+0.7*(++k/Math.max(1,data.sources.length))); await sleep();
     }
-    setFields(data.fields||{}); masterDb=data.masterDb||0; if(data.latencyMs!=null) latencyMs=data.latencyMs;
+    setFields(data.fields||{});
+    if(data.fields && data.fields.vVis && !('vWave' in data.fields)){ const o=data.fields.vVis; $('vWave').checked=o==='wave'; $('vBars').checked=o==='bars'||o==='mirror'; if(o==='mirror') $('vBarStyle').value='mirror'; } masterDb=data.masterDb||0; if(data.latencyMs!=null) latencyMs=data.latencyMs;
     tracks=[]; let maxT=0, maxC=0;
     for(const td of data.tracks){
       const t={...newTrack(), id:td.id, name:td.name, gainDb:td.gainDb, pan:td.pan, mute:td.mute, solo:td.solo, fadeIn:td.fadeIn, fadeOut:td.fadeOut, colorVar:td.colorVar, clips:[]};
@@ -2173,16 +2311,16 @@ $('projOpen').onchange=async e=>{
       if(td.tone){
         t.tone=td.tone; const dur=td.tone.genDur||Math.max(1,td.tone.len||60);
         const buf=genTone(t.tone,dur,a.sampleRate), pk=computePeaks(buf);
-        t.clips=td.clips.map(c=>({id:c.id,buf,peaks:pk,segs:c.segs,offset:c.offset,name:c.name}));
+        t.clips=td.clips.map(c=>({id:c.id,buf,peaks:pk,segs:c.segs,offset:c.offset,name:c.name,fi:c.fi||0,fo:c.fo||0}));
       } else {
-        t.clips=td.clips.filter(c=>bufs[c.src]).map(c=>({id:c.id,buf:bufs[c.src].buf,peaks:bufs[c.src].peaks,segs:c.segs,offset:c.offset,name:c.name}));
+        t.clips=td.clips.filter(c=>bufs[c.src]).map(c=>({id:c.id,buf:bufs[c.src].buf,peaks:bufs[c.src].peaks,segs:c.segs,offset:c.offset,name:c.name,fi:c.fi||0,fo:c.fo||0}));
       }
       tracks.push(t); maxT=Math.max(maxT,td.id); td.clips.forEach(c=>maxC=Math.max(maxC,c.id));
     }
     nextId=maxT+1; nextClip=maxC+1; activeId=tracks[0]?.id||null;
     eqs={mix:(data.eqs&&data.eqs.mix)||eqs.mix}; if(data.eqs) Object.keys(data.eqs).forEach(key=>{ if(key!=='mix') eqs[key]=data.eqs[key]; });
     showCover(data.cover ? {mime:data.cover.mime, bytes:unb64(data.cover.data)} : null);
-    saveEq(); syncM(); syncFmt(); syncLatency(); renderAll(); renderBands(); syncBand(); setZoomFromSlider(); drawSpec();
+    saveEq(); syncM(); syncFmt(); syncLoop(); syncLatency(); renderAll(); renderBands(); syncBand(); setZoomFromSlider(); drawSpec();
     if(!$('projName').value) $('projName').value=f.name.replace(/(\.mixdown)?\.zip$/i,'');
     projStatus(`Opened ${$('projName').value}.`);
   }catch(err){ projStatus(err&&err.message==='notproj'?'That zip isn’t a Mixdown project.':'That project couldn’t be opened.'); }
@@ -2211,7 +2349,7 @@ window.addEventListener('appinstalled',()=>{ $('installBtn').hidden=true; });
 
 // ---------- start ----------
 tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
-renderAll(); renderBands(); setEditing(false); syncLatency(); applyLayout(layoutPref); setZoomFromSlider(); drawSpec();
+renderAll(); renderBands(); setEditing(false); syncLatency(); syncLoop(); applyLayout(layoutPref); setZoomFromSlider(); drawSpec();
 window.addEventListener('resize',()=>{ setZoomFromSlider(); drawSpec(); });
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{ renderAll(); drawSpec(); });
 
