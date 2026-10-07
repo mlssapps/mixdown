@@ -98,6 +98,7 @@ button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var
 .lane{position:relative;border-radius:8px;background:var(--lane);border:2px solid transparent;overflow:hidden}
 .lane.active{border-color:var(--accent)}
 .lane canvas{display:block;width:100%;height:116px;touch-action:pan-y}
+body.tracklock .lane canvas{touch-action:none}
 .lane .tag{position:absolute;left:8px;top:4px;font-size:12px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--panel);pointer-events:none;max-width:70%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .lane .tag.muted{opacity:.5;text-decoration:line-through}
 .viewrow{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
@@ -164,18 +165,35 @@ details.guide summary{cursor:pointer;font-weight:600}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;max-width:min(560px,92vw);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px}
 @media (min-width:900px){ body:not(.force1) .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start} .cols > .panel{margin-top:14px} }
 body.force2 .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+/* top half in two columns: Project | Recording, then Tracks across with its cards side by side */
+body.force2 .topgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+body.force2 .topgrid > .panel{margin-top:14px}
+body.force2 .topgrid > [data-sec="project"]{grid-column:1;grid-row:1}
+body.force2 .topgrid > [data-sec="record"]{grid-column:2;grid-row:1}
+body.force2 .topgrid > [data-sec="tracks"]{grid-column:1 / -1;grid-row:2}
+body.force2 .tracks{grid-template-columns:1fr 1fr}
+@media (min-width:900px){
+  body:not(.force1) .topgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  body:not(.force1) .topgrid > .panel{margin-top:14px}
+  body:not(.force1) .topgrid > [data-sec="project"]{grid-column:1;grid-row:1}
+  body:not(.force1) .topgrid > [data-sec="record"]{grid-column:2;grid-row:1}
+  body:not(.force1) .topgrid > [data-sec="tracks"]{grid-column:1 / -1;grid-row:2}
+  body:not(.force1) .tracks{grid-template-columns:1fr 1fr}
+}
 body.force2 .cols > .panel{margin-top:14px}
 .layoutseg{display:inline-flex;align-items:center;gap:0;margin:2px 0 12px;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
 .layoutseg span{padding:6px 10px;color:var(--muted);font-weight:600}
 .layoutseg button{border:0;border-left:1px solid var(--line);border-radius:0;padding:6px 12px;font-size:13px;font-weight:600;background:var(--panel);color:var(--ink)}
 .layoutseg button.on{background:var(--accent);color:var(--accent-ink)}
+.viewrow2{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
+.viewrow2 .layoutseg{margin:0}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 16</p>
-  <div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div>
+  <p class="ver">Version 18</p>
+  <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="1">100%</button><button type="button" data-z="0.85">85%</button><button type="button" data-z="0.7">70%</button></div></div>
   <p class="sub">Line up to six tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
   <details class="guide">
@@ -196,7 +214,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <li><b>Duplicate</b> places a copy right after the selection, or right after the selected clip.</li>
       <li><b>Delete and close gap</b> removes it and slides everything after it left. <b>Silence</b> mutes it in place. <b>Trim to selection</b> keeps only the selected part of that track.</li>
     </ul>
-    <p><b>Split at playhead</b> cuts the clip under the playhead into two clips. In <b>Move</b> mode, tap a clip to select it, then drag it sideways to move it. To put it on another track, pick the track in the selected clip's <b>Track</b> menu under the edit buttons, where you can also type its exact start time. Swiping up or down over the tracks scrolls the page, so you won't grab a track by accident.</p>
+    <p><b>Split at playhead</b> cuts the clip under the playhead into two clips. In <b>Move</b> mode, tap a clip to select it, then drag it sideways to move it. To put it on another track, pick the track in the selected clip's <b>Track</b> menu under the edit buttons, where you can also type its exact start time. <b>Track lock</b> (next to Loop) decides what touches on the tracks do: <b>On</b> (the default) makes selecting and moving reliable, including dragging a clip up or down onto another track, and you scroll the page by swiping outside the tracks; <b>Off</b> lets up-and-down swipes over the tracks scroll the page instead.</p>
     <p><b>Undo</b> steps back through your last 60 edits. Edits never change your original files.</p>
     <h3>Recording</h3>
     <p>Open <b>Recording</b> and tap <b>Turn on microphone</b>. Use wired headphones so the music doesn't leak into your take; Bluetooth adds delay. Tap the track to record onto, move the playhead to where you want to start, and press the red <b>record</b> button. After the count-in, sing or play along; press the red button or <b>Stop</b> to finish. Each take becomes its own clip, so you can split, trim, move, and duplicate it.</p>
@@ -215,7 +233,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>In Export, check <b>Only edit the tags of a song I already have</b>, then <b>Open a song</b> (WAV, MP3, M4A, or MP4). Its details and cover art fill in under Song details. Change them and tap <b>Save tagged copy</b>; it makes a new file with "-tagged" added to the name, without re-encoding the audio. Uncheck the box to go back to exporting your mix.</p>
     <p>Music players show cover art in their own frame, usually a square, whatever shape the picture is. For a full-screen look, use the MP4 video export in the shape you want.</p>
     <h3>Layout</h3>
-    <p>The <b>Layout</b> buttons under the title switch between <b>Auto</b> (side by side on wide screens), <b>1 column</b>, and <b>2 columns</b>, whatever your screen size. Your choice is remembered.</p>
+    <p>The <b>Size</b> buttons (100%, 85%, 70%) shrink the whole page on a phone so more fits on screen; you can still pinch to zoom in. The <b>Layout</b> buttons under the title switch between <b>Auto</b> (side by side on wide screens), <b>1 column</b>, and <b>2 columns</b>, whatever your screen size. Your choice is remembered.</p>
     <h3>Good to know</h3>
     <ul>
       <li>Your audio never leaves your device. Files aren't saved when you close the app, so choose them again next time.</li>
@@ -224,6 +242,7 @@ body.force2 .cols > .panel{margin-top:14px}
     </ul>
   </details>
 
+  <div class="topgrid">
   <div class="panel" data-sec="project">
     <h2>Project</h2>
     <div class="field"><label for="projName">Project name</label><input type="text" id="projName" placeholder="Untitled project" autocomplete="off"></div>
@@ -289,6 +308,8 @@ body.force2 .cols > .panel{margin-top:14px}
   </div>
 
 
+  </div>
+
   <div class="transport">
     <div class="tbar">
       <button class="icon" id="toStart" aria-label="Go to start" title="Go to start"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="5" width="2.5" height="14" fill="currentColor"/><path d="M19 5v14L8.5 12z" fill="currentColor"/></svg></button>
@@ -309,6 +330,7 @@ body.force2 .cols > .panel{margin-top:14px}
         <button id="modeMove">Move</button>
       </div>
       <button class="icon" id="loop" aria-label="Loop the selection" aria-pressed="false" title="Loop the selection"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M17 4l3 3-3 3M4 11V9a2 2 0 0 1 2-2h14M7 20l-3-3 3-3M20 13v2a2 2 0 0 1-2 2H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="margin-left:6px">Loop</span></button>
+      <button class="icon" id="trackLock" aria-pressed="true" title="When on, touches on the tracks only select or move; scroll the page outside the tracks">Track lock: On</button>
     </div>
     <p class="hint selinfo" id="selInfo"></p>
     <canvas class="ruler" id="ruler" aria-label="Timeline ruler. Tap to move the playhead."></canvas>
@@ -2167,6 +2189,12 @@ $('projOpen').onchange=async e=>{
   setProg($('projProg'),null);
 };
 
+// ---------- track lock: tracks capture every touch (reliable selecting) or let swipes scroll the page ----------
+let trackLock=true; try{ const v=localStorage.getItem('mixdown-tracklock'); if(v!==null) trackLock=v==='1'; }catch(e){}
+function applyTrackLock(){ document.body.classList.toggle('tracklock',trackLock); const b=$('trackLock'); b.textContent='Track lock: '+(trackLock?'On':'Off'); b.classList.toggle('on',trackLock); b.setAttribute('aria-pressed',String(trackLock)); }
+$('trackLock').onclick=()=>{ trackLock=!trackLock; applyTrackLock(); try{ localStorage.setItem('mixdown-tracklock',trackLock?'1':'0'); }catch(e){} toast(trackLock?'Track lock on: drag freely on the tracks. Scroll the page outside them.':'Track lock off: swiping up or down over the tracks scrolls the page.'); };
+applyTrackLock();
+
 // ---------- layout ----------
 function applyLayout(v){ document.body.classList.toggle('force1',v==='one'); document.body.classList.toggle('force2',v==='two'); setTimeout(()=>{ setZoomFromSlider(); drawSpec(); },50); }
 let layoutPref='auto'; try{ const v=localStorage.getItem('mixdown-layout'); if(v) layoutPref=v; }catch(e){}
@@ -2186,6 +2214,18 @@ tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
 renderAll(); renderBands(); setEditing(false); syncLatency(); applyLayout(layoutPref); setZoomFromSlider(); drawSpec();
 window.addEventListener('resize',()=>{ setZoomFromSlider(); drawSpec(); });
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{ renderAll(); drawSpec(); });
+
+// ---------- view size (phones): lay the page out wider and let the phone scale it down ----------
+let sizePref=1; try{ const z=parseFloat(localStorage.getItem('mixdown-size')); if(z) sizePref=z; }catch(e){}
+function applySize(z){
+  const meta=document.querySelector('meta[name="viewport"]');
+  const sw=Math.min(screen.width, screen.height) <= 900 ? (matchMedia('(orientation: landscape)').matches ? Math.max(screen.width,screen.height) : Math.min(screen.width,screen.height)) : 0;
+  meta.setAttribute('content', z>=1 || !sw ? 'width=device-width, initial-scale=1, viewport-fit=cover' : `width=${Math.round(sw/z)}, viewport-fit=cover`);
+  document.querySelectorAll('.sizeseg button').forEach(b=>b.classList.toggle('on', +b.dataset.z===z));
+}
+document.querySelectorAll('.sizeseg button').forEach(b=>b.onclick=()=>{ sizePref=+b.dataset.z; applySize(sizePref); try{ localStorage.setItem('mixdown-size',sizePref); }catch(e){} });
+window.addEventListener('orientationchange',()=>setTimeout(()=>applySize(sizePref),300));
+applySize(sizePref);
 </script>
 </body>
 </html>
