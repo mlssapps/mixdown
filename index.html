@@ -187,20 +187,27 @@ body.force2 .cols > .panel{margin-top:14px}
 .layoutseg button.on{background:var(--accent);color:var(--accent-ink)}
 .viewrow2{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
 .viewrow2 .layoutseg{margin:0}
+.mastercheck{padding:10px 12px;border-radius:12px;border:1.5px solid var(--line)}
+.mastercheck.on{border-color:var(--accent)}
+.mastercheck.off{border-color:#C2457A;color:#C2457A}
+.stemsbox{margin-top:10px;padding:12px;border:1.5px solid var(--line);border-radius:12px}
+.stemsbox .stemlist{display:flex;flex-direction:column;gap:8px;margin:8px 0 12px;max-height:340px;overflow:auto}
+.stemsbox .check{font-weight:400}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 22</p>
-  <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="1">100%</button><button type="button" data-z="0.85">85%</button><button type="button" data-z="0.7">70%</button></div></div>
-  <p class="sub">Line up to six tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
+  <p class="ver">Version 23</p>
+  <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
+  <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
   <details class="guide">
     <summary>How to use Mixdown</summary>
     <h3>Quick start</h3>
     <ul>
-      <li>Under <b>Tracks</b>, choose an audio file for Track 1. Add more tracks (up to 6) with <b>Add track</b>, or add a <b>tone track</b>.</li>
+      <li>Type the <b>Song title</b> once under <b>Project</b>. It also fills in the Title tag and the export file name.</li>
+      <li>Under <b>Tracks</b>, choose an audio file for Track 1. Add more tracks (up to 12) with <b>Add track</b>, or add a <b>tone track</b>. Got a zip of stems? Tap <b>Open stems zip</b> and each file becomes its own track.</li>
       <li>Press <b>Play</b>. Tap the ruler to jump anywhere, or use the buttons to go to the start or end or skip 10 seconds. Turn on <b>Loop</b> to repeat a selection while you adjust it.</li>
       <li>Adjust each track's volume, pan, and fades, then shape the whole mix in <b>EQ and spectrum</b>.</li>
       <li>Under <b>Export</b>, press <b>Export WAV</b>, then tap <b>Save</b>. If nothing happens, press and hold Save and choose <b>Download link</b>.</li>
@@ -248,7 +255,8 @@ body.force2 .cols > .panel{margin-top:14px}
   <div class="topgrid">
   <div class="panel" data-sec="project">
     <h2>Project</h2>
-    <div class="field"><label for="projName">Project name</label><input type="text" id="projName" placeholder="Untitled project" autocomplete="off"></div>
+    <div class="field"><label for="projName">Song title</label><input type="text" id="projName" placeholder="Untitled song" autocomplete="off"></div>
+    <p class="hint" style="margin:-4px 0 10px">Type it once here. It names the project, fills in the Title in Song details, and names your exported file.</p>
     <div class="row">
       <button id="projSave">Save project</button>
       <span class="pick" style="display:block"><span class="pickface" style="display:block;text-align:center">Open project</span><input type="file" id="projOpen" accept=".zip,.mixdown,application/zip"></span>
@@ -267,6 +275,8 @@ body.force2 .cols > .panel{margin-top:14px}
       <button id="addTrack">Add track</button>
       <button id="addTone">Add tone track</button>
     </div>
+    <span class="pick" style="display:block;margin-top:10px"><span class="pickface" style="display:block;text-align:center">Open stems zip</span><input type="file" id="stemsZip" accept=".zip,application/zip,application/x-zip-compressed"></span>
+    <div id="stemsBox" class="stemsbox" hidden></div>
   </div>
 
   <div class="panel" data-sec="record">
@@ -518,7 +528,7 @@ body.force2 .cols > .panel{margin-top:14px}
       </div>
       <div class="field">
         <label for="fileName">File name</label>
-        <input type="text" id="fileName" placeholder="my-mix" autocomplete="off">
+        <div style="display:flex;gap:8px;align-items:center"><input type="text" id="fileName" placeholder="my-mix" autocomplete="off" style="flex:1;min-width:0"><button class="small" id="fileMatch" type="button" hidden>Match title</button></div>
       </div>
       </div>
       <label class="check" style="margin:4px 0 12px"><input type="checkbox" id="tagOnly"> Only edit the tags of a song I already have</label>
@@ -553,6 +563,7 @@ body.force2 .cols > .panel{margin-top:14px}
         </div>
         <p class="hint">Saved inside the file: WAV gets two tag formats so more players can read them; M4A and MP4 get standard music tags. The video uses this cover art. Artist, album, genre, and year are remembered on this device.</p>
       </details>
+      <label class="check mastercheck" id="mOn2Wrap" style="margin:14px 0 0"><input type="checkbox" id="mOn2"> <span id="mOn2Text">Master when exporting</span></label>
       <button class="primary" id="exportWav" style="width:100%;margin-top:12px">Export WAV</button>
       <button class="primary" id="teSave" style="width:100%;margin-top:12px" hidden>Save tagged copy</button>
       <p class="hint" id="fmtHint"></p>
@@ -594,7 +605,7 @@ SOFTWARE.
 <script>
 const $ = id => document.getElementById(id);
 const COLORS = ['--t1','--t2','--t3','--t4','--t5','--t6'];
-const MAXTRACKS = 6;
+const MAXTRACKS = 12;
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const fmt = s => { s=Math.max(0,s||0); const m=Math.floor(s/60); return m+':'+(s%60).toFixed(1).padStart(4,'0'); };
 const dbToGain = d => Math.pow(10,d/20);
@@ -912,8 +923,8 @@ function syncTrackPanel(t){
 }
 function renderAll(){ renderLanes(); renderTrackPanels(); renderShowRow(); renderTargets(); }
 
-async function loadFile(t,f){
-  const a=ctx(); status(`Loading ${f.name}…`, true);
+async function loadFile(t,f,quiet){
+  const a=ctx(); if(!quiet) status(`Loading ${f.name}…`, true);
   try{
     const ab=await f.arrayBuffer(); const keep=new Uint8Array(ab.slice(0));
     const buf=await new Promise((res,rej)=>{ const p=a.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
@@ -924,9 +935,10 @@ async function loadFile(t,f){
     const cl=newClip(buf, computePeaks(buf), [{s:0,e:buf.duration}], at, nm); t.clips.push(cl); activeClipId=cl.id;
     if(/^Track \d+$/.test(t.name)) t.name=nm;
     setActive(t.id); renderAll(); setZoomFromSlider();
-    if(!$('fileName').value) $('fileName').value=t.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-mix';
-    status(`Loaded ${f.name}.`, true);
-  }catch(e){ status(`${f.name} couldn't be opened. Try a WAV, MP3, or M4A file.`); }
+    if(!quiet && !$('projName').value.trim()) setTitle(nm.replace(/[_]+/g,' ').trim());
+    if(!quiet) status(`Loaded ${f.name}.`, true);
+    return true;
+  }catch(e){ if(!quiet) status(`${f.name} couldn't be opened. Try a WAV, MP3, or M4A file.`); return false; }
 }
 // ---------- track effects ----------
 const FX=[
@@ -1654,7 +1666,10 @@ function mSettings(){ return {
   type: $('mType').value, tp: $('mTP').checked, look: +$('mLook').value, rel: +$('mRel').value }; }
 function syncM(){ $('mLookV').textContent=(+$('mLook').value).toFixed(1)+' ms'; $('mRelV').textContent=$('mRel').value+' ms'; }
 ['mLook','mRel'].forEach(id=>$(id).oninput=()=>{ syncM(); saveM(); });
-['mTarget','mCeil','mType','mTP','mOn'].forEach(id=>$(id).onchange=()=>{ saveM(); });
+['mTarget','mCeil','mType','mTP','mOn'].forEach(id=>$(id).onchange=()=>{ saveM(); if(id==='mOn') syncFmt(); });
+function syncMOn2(){ const on=$('mOn').checked; $('mOn2').checked=on; const w=$('mOn2Wrap'); w.classList.toggle('on',on); w.classList.toggle('off',!on);
+  $('mOn2Text').textContent = on ? 'Master when exporting: On' : 'Master when exporting: Off. This file won’t be mastered.'; }
+$('mOn2').onchange=()=>{ $('mOn').checked=$('mOn2').checked; saveM(); syncFmt(); };
 function saveM(){ try{ localStorage.setItem('mixdown-master',JSON.stringify({...mSettings(), on:$('mOn').checked})); }catch(e){} }
 try{ const m=JSON.parse(localStorage.getItem('mixdown-master')||'null'); if(m){ $('mTarget').value=m.target; $('mCeil').value=m.ceil; $('mType').value=m.type; $('mTP').checked=!!m.tp; $('mLook').value=m.look; $('mRel').value=m.rel; $('mOn').checked=m.on!==false; } }catch(e){}
 syncM();
@@ -1756,6 +1771,7 @@ async function masterMix(sr, prog){
   if(!isFinite(before)) throw new Error('silent');
   prog(0.3, set.tp?'Finding true peaks…':'Finding peaks…'); await sleep();
   const p=peakEnvelope(chs,set.tp);
+  let inPk=0; for(let i=0;i<n;i++) if(p[i]>inPk) inPk=p[i];
   const G=new Float32Array(n), work=new Float32Array(n);
   let gdb=set.target-before, got=before;
   for(let it=0;it<6;it++){
@@ -1770,7 +1786,7 @@ async function masterMix(sr, prog){
   let minG=1;
   for(let c=0;c<2;c++){ const src=chs[c], dst=out.getChannelData(c); for(let i=0;i<n;i++){ const gi=G[i]; if(gi<minG) minG=gi; dst[i]=src[i]*g*gi; } }
   const pk=peakEnvelope([out.getChannelData(0),out.getChannelData(1)],set.tp); let mx=0; for(let i=0;i<n;i++) if(pk[i]>mx) mx=pk[i];
-  return {buf:out, before, after:got, gainDb:gdb, maxGR:-20*Math.log10(minG), peakDb:20*Math.log10(mx||1e-9), tp:set.tp, target:set.target};
+  return {buf:out, before, after:got, gainDb:gdb, maxGR:-20*Math.log10(minG), peakDb:20*Math.log10(mx||1e-9), inPeakDb:20*Math.log10(inPk||1e-9), tp:set.tp, target:set.target};
 }
 function showStats(r){
   const el=$('mStats'); el.hidden=false;
@@ -1779,7 +1795,7 @@ function showStats(r){
   <div><b>${r.peakDb.toFixed(1)}</b><span>${r.tp?'dBTP true peak':'dB peak'}</span></div>
   <div><b>${r.gainDb>=0?'+':''}${r.gainDb.toFixed(1)}</b><span>dB gain added</span></div>
   <div><b>${r.maxGR.toFixed(1)}</b><span>dB most limiting</span></div>
-  <div class="note">${reached?'Target reached.':`Couldn’t fully reach ${r.target} LUFS without more limiting than the ceiling allows; this is as loud as it gets with these settings.`}${r.maxGR>6?' Heavy limiting: if it sounds squashed, try a lower target or the soft limiter.':''}</div>`;
+  <div class="note">${reached?'Target reached.':`Couldn’t fully reach ${r.target} LUFS without more limiting than the ceiling allows; this is as loud as it gets with these settings.`}${r.maxGR>6?' Heavy limiting: if it sounds squashed, try a lower target or the soft limiter.':''}${r.gainDb<0 && r.maxGR>0.5 ? ` Why limiting while turning it down? The song’s peaks are ${(r.inPeakDb-r.before).toFixed(1)} dB above its average loudness, so even at this target they get near the ceiling, where the limiter gently catches them. It’s light and safe; for none at all, lower the Target a little.` : ''}${r.inPeakDb>0.5 ? ` Heads up: before mastering, the mix peaks at +${r.inPeakDb.toFixed(1)} dB, over full scale. Mastering fixes that, but an unmastered export would clip; lower the track volumes or the EQ Master slider if you export without mastering.` : ''}</div>`;
 }
 $('mRun').onclick=async()=>{
   if(!tracks.some(hasAudio)){ status('Choose an audio file for a track first.'); return; }
@@ -2076,7 +2092,8 @@ function syncFmt(){
   const f=$('fmt').value;
   $('bitsBox').style.visibility = f==='wav'?'visible':'hidden';
   $('shapeBox').hidden = f!=='mp4'; $('vTextRow').hidden = f!=='mp4'; $('vVisRow').hidden = f!=='mp4';
-  $('exportWav').textContent = f==='wav'?'Export WAV':f==='m4a'?'Export M4A':'Export video';
+  $('exportWav').textContent = (f==='wav'?'Export WAV':f==='m4a'?'Export M4A':'Export video') + ($('mOn').checked?' (mastered)':' (not mastered)');
+  syncMOn2();
   $('fmtHint').textContent = f==='wav' ? 'Lossless, full quality. Best for keeping and for distribution.' :
     f==='m4a' ? 'AAC at 256 kbps: much smaller and good for sharing or playing on phones.' :
     'Your cover art (or black if there is none) with the song, ready to post. Add cover art under Song details. Visuals stack in rows under the art. Moving visuals make a 30 fps video, so it takes a little longer to build.';
@@ -2209,19 +2226,27 @@ $('exportWav').onclick=async()=>{
     if(fmt==='wav'){ prog(0.95,'Writing the file…'); await sleep(); blob=encodeWav(out,bits,v); }
     else if(fmt==='m4a'){ prog(0.9,'Encoding M4A…'); blob=await makeM4a(out,v,prog); }
     else { prog(0.6,'Making the video…'); blob=await makeVideo(out,v,prog); }
-    const base=(($('fileName').value||'my-mix').trim().replace(/[^\w\- ]+/g,'').replace(/\s+/g,'-')||'my-mix');
-    const name=base+(lp.on?(lp.fill?`-${Math.round(lp.fill/60)}min`:lp.reps>1?`-x${lp.reps}`:'-loop'):'')+(fmt==='wav'?'.wav':fmt==='m4a'?'.m4a':'.mp4');
-    await saveBlob(name, blob);
+    const tail=(lp.on?(lp.fill?`-${Math.round(lp.fill/60)}min`:lp.reps>1?`-x${lp.reps}`:'-loop'):'')+(fmt==='wav'?'.wav':fmt==='m4a'?'.m4a':'.mp4');
+    lastExport={blob, tail};
+    await saveBlob(exportBase()+tail, blob);
     status('Ready.'+note+' Tap Save below.', true);
   }catch(e){ const m=e&&e.message; status(m==='silent'?'The mix is silent, so there’s nothing to export.': m==='noaac'?'This device can’t make AAC audio. Export WAV instead.': m==='toolong'?'That length is too much for this device’s memory. Try a shorter total length, 44.1 kHz, or M4A.': m==='noavc'?'This device can’t make H.264 video. Export WAV or M4A instead.':'Exporting failed on this device. Try 44.1 kHz or a shorter song.'); }
   setProg($('progress'),null); $('exportWav').disabled=false;
 };
 let downloadsP=null;
 function getDownloads(){ if(!downloadsP) downloadsP=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(null); return downloadsP; }
+let lastExport=null;
+function exportBase(){ return (($('fileName').value||'my-mix').trim().replace(/[^\w\- ]+/g,'').replace(/\s+/g,'-')||'my-mix'); }
 async function saveBlob(name, blob){ return saveTo($('saveBtn'), name, blob); }
+// The file name box renames the Save button right away; no need to export again.
+function refreshSaveName(){ const b=$('saveBtn'); if(!lastExport || b.hidden) return; setSaveLink(b, exportBase()+lastExport.tail, lastExport.blob); }
+function hideSave(){ lastExport=null; const b=$('saveBtn'); b.hidden=true; if(b._url){ URL.revokeObjectURL(b._url); b._url=null; } }
 async function saveTo(btn, name, blob){
   const dl=await getDownloads();
   if(dl){ try{ await dl.save({filename:name,data:blob}); toast('Saved '+name+'.'); }catch(e){ toast(e&&e.code==='declined'?'Save cancelled.':e&&e.code==='too_large'?'That file is too large to save here.':'Saving is unavailable in this view.'); } return; }
+  setSaveLink(btn, name, blob);
+}
+function setSaveLink(btn, name, blob){
   if(btn._url) URL.revokeObjectURL(btn._url);
   const url=URL.createObjectURL(blob); btn._url=url; btn.href=url; btn.download=name;
   const mb=blob.size/1048576; btn.textContent=`Save ${name} (${mb>=1?mb.toFixed(1)+' MB':Math.round(blob.size/1024)+' KB'})`; btn.hidden=false;
@@ -2251,6 +2276,23 @@ function setFields(o){ PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el && id in 
 const b64=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode(...u8.subarray(i,i+0x8000)); return btoa(s); };
 const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 function projStatus(m, quiet){ $('projStatus').textContent=m; if(!quiet) toast(m); }
+// ---------- one song title: names the project, the Title tag, and the export file ----------
+const autoFileName=t=>{ const b=(t||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); return b?b+'-mix':''; };
+let lastTitle='';
+function fileIsAuto(){ const f=$('fileName').value.trim(); return !f || f===autoFileName(lastTitle); }
+function syncFileMatch(){ $('fileMatch').hidden = fileIsAuto() || !$('projName').value.trim(); }
+function setTitle(t, from){
+  const auto=fileIsAuto();
+  if(from!=='proj') $('projName').value=t;
+  if(from!=='tag') $('tgTitle').value=t;
+  if(auto) $('fileName').value=autoFileName(t);
+  lastTitle=t; syncFileMatch(); refreshSaveName();
+}
+$('projName').addEventListener('input',()=>setTitle($('projName').value,'proj'));
+$('tgTitle').addEventListener('input',()=>setTitle($('tgTitle').value,'tag'));
+$('fileName').addEventListener('input',()=>{ syncFileMatch(); refreshSaveName(); });
+$('fileMatch').onclick=()=>{ $('fileName').value=autoFileName($('projName').value); syncFileMatch(); refreshSaveName(); };
+{ const t=$('tgTitle').value.trim()||$('projName').value.trim(); if(t){ $('projName').value=t; $('tgTitle').value=t; } lastTitle=t; syncFileMatch(); }
 const projSlug=()=>(($('projName').value||'untitled').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'untitled');
 $('projSave').onclick=async()=>{
   if(!window.JSZip){ projStatus('Saving projects needs one online visit first, so the app can download its zip tool.'); return; }
@@ -2284,7 +2326,8 @@ function clearProject(){
 $('projNew').onclick=()=>{
   if(tracks.some(hasAudio) && !confirm('Start a new project? Save this one first if you want to keep it.')) return;
   clearProject(); nextId=1; tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
-  $('projName').value=''; renderAll(); setZoomFromSlider(); projStatus('New project started.');
+  ['projName','tgTitle','fileName','tgTrack','tgComment','tgLyrics'].forEach(id=>$(id).value=''); showCover(null); lastTitle=''; syncFileMatch(); hideSave();
+  renderAll(); setZoomFromSlider(); projStatus('New project started. Artist, album, year, and genre stay filled in.');
 };
 $('projOpen').onchange=async e=>{
   const f=e.target.files[0]; e.target.value=''; if(!f) return;
@@ -2292,7 +2335,9 @@ $('projOpen').onchange=async e=>{
   if(tracks.some(hasAudio) && !confirm('Open this project? Anything unsaved in the current one will be replaced.')) return;
   setProg($('projProg'),0.05); projStatus('Opening '+f.name+'…', true);
   try{
-    const zip=await JSZip.loadAsync(f), data=JSON.parse(await zip.file('project.json').async('string'));
+    const zip=await JSZip.loadAsync(f);
+    if(!zip.file('project.json')){ setProg($('projProg'),null); projStatus('That zip has no project in it. If it’s stems, use Open stems zip under Tracks.'); return; }
+    const data=JSON.parse(await zip.file('project.json').async('string'));
     if(data.app!=='mixdown') throw new Error('notproj');
     clearProject(); const a=ctx(), bufs={};
     let k=0;
@@ -2321,10 +2366,58 @@ $('projOpen').onchange=async e=>{
     eqs={mix:(data.eqs&&data.eqs.mix)||eqs.mix}; if(data.eqs) Object.keys(data.eqs).forEach(key=>{ if(key!=='mix') eqs[key]=data.eqs[key]; });
     showCover(data.cover ? {mime:data.cover.mime, bytes:unb64(data.cover.data)} : null);
     saveEq(); syncM(); syncFmt(); syncLoop(); syncLatency(); renderAll(); renderBands(); syncBand(); setZoomFromSlider(); drawSpec();
-    if(!$('projName').value) $('projName').value=f.name.replace(/(\.mixdown)?\.zip$/i,'');
+    { const t=$('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,''); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
     projStatus(`Opened ${$('projName').value}.`);
   }catch(err){ projStatus(err&&err.message==='notproj'?'That zip isn’t a Mixdown project.':'That project couldn’t be opened.'); }
   setProg($('projProg'),null);
+};
+
+// ---------- open a zip of stems: each audio file becomes its own track ----------
+const AUDIO_RE=/\.(wav|mp3|m4a|aac|flac|ogg|opus|aif|aiff|webm)$/i;
+const escH=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function stemRoom(){ return MAXTRACKS - tracks.length + tracks.filter(t=>!hasAudio(t) && !t.tone).length; }
+$('stemsZip').onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  const box=$('stemsBox');
+  if(!window.JSZip){ toast('Opening zips needs one online visit first, so the app can download its zip tool.'); return; }
+  box.hidden=false; box.innerHTML=`<p class="hint" style="margin:0">Reading ${escH(f.name)}…</p>`;
+  let zip;
+  try{ zip=await JSZip.loadAsync(f); }catch(err){ box.innerHTML='<p class="hint" style="margin:0">That zip couldn’t be opened.</p>'; return; }
+  if(zip.file('project.json')){ box.innerHTML='<p class="hint" style="margin:0">That zip is a Mixdown project. Open it with <b>Open project</b> instead.</p>'; return; }
+  const items=[];
+  zip.forEach((path,entry)=>{ const base=path.split('/').pop(); if(!entry.dir && AUDIO_RE.test(base) && !/^__MACOSX\//.test(path) && !base.startsWith('.')) items.push({path, file:base, name:base.replace(/\.[^.]+$/,'')}); });
+  items.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
+  if(!items.length){ box.innerHTML='<p class="hint" style="margin:0">No audio files were found in that zip.</p>'; return; }
+  const room=stemRoom(), title=f.name.replace(/\.zip$/i,'').replace(/[\s_-]*stems?$/i,'').trim();
+  box.innerHTML=`<b>${items.length} stem${items.length>1?'s':''} in ${escH(f.name)}</b>
+    <p class="hint" style="margin:4px 0 0">Untick any you don’t need, like silent or unused stems. There’s room for ${room} more track${room===1?'':'s'}. Many long stems use a lot of phone memory; if the app reloads, try fewer at a time.</p>
+    <div class="stemlist">${items.map((it,i)=>`<label class="check"><input type="checkbox" data-i="${i}"${i<room?' checked':''}> ${escH(it.name)}</label>`).join('')}</div>
+    <div class="row"><button class="primary" id="stemsAdd">Add tracks</button><button id="stemsCancel">Cancel</button></div>`;
+  const boxes=[...box.querySelectorAll('.stemlist input')];
+  const count=()=>{ const n=boxes.filter(b=>b.checked).length; $('stemsAdd').textContent = n ? `Add ${n} track${n>1?'s':''}` : 'Add tracks'; $('stemsAdd').disabled = !n || n>stemRoom(); };
+  boxes.forEach(b=>b.onchange=count); count();
+  $('stemsCancel').onclick=()=>{ box.hidden=true; box.innerHTML=''; };
+  $('stemsAdd').onclick=async()=>{
+    const pick=boxes.filter(b=>b.checked).map(b=>items[+b.dataset.i]);
+    if(pick.length>stemRoom()){ toast(`There’s only room for ${stemRoom()} more tracks.`); return; }
+    pause(); let ok=0, failed=[];
+    for(let i=0;i<pick.length;i++){
+      const it=pick[i];
+      box.innerHTML=`<p class="hint" style="margin:0">Adding ${i+1} of ${pick.length}: ${escH(it.name)}…</p><div class="progress"><div style="width:${Math.round(i/pick.length*100)}%"></div></div>`;
+      await sleep();
+      let t=tracks.find(x=>!hasAudio(x) && !x.tone);
+      if(!t){ t=newTrack(); tracks.push(t); }
+      try{
+        const blob=await zip.file(it.path).async('blob');
+        if(await loadFile(t, new File([blob], it.file), true)) ok++; else failed.push(it.name);
+      }catch(err){ failed.push(it.name); }
+    }
+    box.hidden=true; box.innerHTML='';
+    if(title && !$('projName').value.trim()) setTitle(title);
+    renderAll(); setZoomFromSlider(); renderBands();
+    const msg=`Added ${ok} stem${ok===1?'':'s'} as tracks.`+(failed.length?` Couldn’t open: ${failed.join(', ')}.`:'');
+    status(msg, true); toast(msg);
+  };
 };
 
 // ---------- track lock: tracks capture every touch (reliable selecting) or let swipes scroll the page ----------
@@ -2336,8 +2429,8 @@ applyTrackLock();
 // ---------- layout ----------
 function applyLayout(v){ document.body.classList.toggle('force1',v==='one'); document.body.classList.toggle('force2',v==='two'); setTimeout(()=>{ setZoomFromSlider(); drawSpec(); },50); }
 let layoutPref='auto'; try{ const v=localStorage.getItem('mixdown-layout'); if(v) layoutPref=v; }catch(e){}
-function markLayout(){ document.querySelectorAll('.layoutseg button').forEach(b=>b.classList.toggle('on',b.dataset.v===layoutPref)); }
-document.querySelectorAll('.layoutseg button').forEach(b=>b.onclick=()=>{ layoutPref=b.dataset.v; markLayout(); applyLayout(layoutPref); try{ localStorage.setItem('mixdown-layout',layoutPref); }catch(err){} });
+function markLayout(){ document.querySelectorAll('.layoutseg:not(.sizeseg) button').forEach(b=>b.classList.toggle('on',b.dataset.v===layoutPref)); }
+document.querySelectorAll('.layoutseg:not(.sizeseg) button').forEach(b=>b.onclick=()=>{ layoutPref=b.dataset.v; markLayout(); applyLayout(layoutPref); if(typeof applySize==='function') applySize(sizePref); try{ localStorage.setItem('mixdown-layout',layoutPref); }catch(err){} });
 markLayout();
 
 // ---------- installable app ----------
@@ -2354,12 +2447,19 @@ window.addEventListener('resize',()=>{ setZoomFromSlider(); drawSpec(); });
 if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{ renderAll(); drawSpec(); });
 
 // ---------- view size (phones): lay the page out wider and let the phone scale it down ----------
-let sizePref=1; try{ const z=parseFloat(localStorage.getItem('mixdown-size')); if(z) sizePref=z; }catch(e){}
-function applySize(z){
+let sizePref=0; try{ const v=localStorage.getItem('mixdown-size'); if(v!==null){ const z=parseFloat(v); sizePref = z===0?0 : z>=0.95?1 : z>=0.62?0.75 : 0.5; } }catch(e){}
+// Auto picks the scale from the screen and the layout: one column fits the phone at 100%; two columns need about 900px of room.
+function autoSize(sw){
+  const land=matchMedia('(orientation: landscape)').matches;
+  const want = layoutPref==='two' || (layoutPref==='auto' && land) ? 900 : 0;
+  return want ? Math.max(0.4, Math.min(1, sw/want)) : 1;
+}
+function applySize(pref){
   const meta=document.querySelector('meta[name="viewport"]');
   const sw=Math.min(screen.width, screen.height) <= 900 ? (matchMedia('(orientation: landscape)').matches ? Math.max(screen.width,screen.height) : Math.min(screen.width,screen.height)) : 0;
+  const z = pref===0 ? (sw ? autoSize(sw) : 1) : pref;
   meta.setAttribute('content', z>=1 || !sw ? 'width=device-width, initial-scale=1, viewport-fit=cover' : `width=${Math.round(sw/z)}, viewport-fit=cover`);
-  document.querySelectorAll('.sizeseg button').forEach(b=>b.classList.toggle('on', +b.dataset.z===z));
+  document.querySelectorAll('.sizeseg button').forEach(b=>b.classList.toggle('on', +b.dataset.z===pref));
 }
 document.querySelectorAll('.sizeseg button').forEach(b=>b.onclick=()=>{ sizePref=+b.dataset.z; applySize(sizePref); try{ localStorage.setItem('mixdown-size',sizePref); }catch(e){} });
 window.addEventListener('orientationchange',()=>setTimeout(()=>applySize(sizePref),300));
