@@ -104,6 +104,12 @@ button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var
 body.tracklock .lane .grip{display:flex}
 .laneshow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 8px;font-size:14px;color:var(--muted)}
 .laneshow[hidden]{display:none}
+.laneshow{display:block}
+.laneshowhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.laneshowmenu{margin-top:8px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:8px;max-height:360px;overflow:auto}
+.laneshowmenu .check{font-weight:400;color:var(--ink)}
+.laneshowquick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2px}
+.laneswatch{width:12px;height:12px;border-radius:3px;flex:none}
 body.tracklock .lane canvas{touch-action:none}
 .lane .tag{position:absolute;left:8px;top:4px;font-size:12px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--panel);pointer-events:none;max-width:70%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .lane .tag.muted{opacity:.5;text-decoration:line-through}
@@ -220,7 +226,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 24</p>
+  <p class="ver">Version 25</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -824,15 +830,34 @@ function renderLanes(){
   $('emptyMsg').hidden = tracks.some(hasAudio);
   drawAll();
 }
+let laneMenuOpen=false;
 function renderLaneShow(){
   const box=$('laneShow'), hid=tracks.filter(t=>t.hidden).length;
   box.hidden=!hid && tracks.length<3;
   box.innerHTML='';
-  const txt=document.createElement('span'); txt.textContent = hid ? `Showing ${tracks.length-hid} of ${tracks.length} tracks.` : `Showing all ${tracks.length} tracks.`; box.appendChild(txt);
-  const mk=(label,fn,dis)=>{ const b=document.createElement('button'); b.className='small'; b.type='button'; b.textContent=label; b.disabled=!!dis; b.onclick=fn; box.appendChild(b); };
-  const a=activeTrack();
-  mk('Show only '+(a?a.name:'selected'), ()=>{ tracks.forEach(t=>t.hidden=t!==a); renderAll(); }, !a);
-  if(hid) mk('Show all', ()=>{ tracks.forEach(t=>t.hidden=false); renderAll(); });
+  const head=document.createElement('div'); head.className='laneshowhead';
+  const txt=document.createElement('span'); txt.textContent = hid ? `Showing ${tracks.length-hid} of ${tracks.length} tracks.` : `Showing all ${tracks.length} tracks.`; head.appendChild(txt);
+  const btn=document.createElement('button'); btn.className='small'+(laneMenuOpen?' on':''); btn.type='button'; btn.textContent=laneMenuOpen?'Done':'Choose tracks \u25BE'; btn.setAttribute('aria-expanded',String(laneMenuOpen));
+  btn.onclick=()=>{ laneMenuOpen=!laneMenuOpen; renderLaneShow(); }; head.appendChild(btn);
+  box.appendChild(head);
+  if(!laneMenuOpen) return;
+  const menu=document.createElement('div'); menu.className='laneshowmenu';
+  const quick=document.createElement('div'); quick.className='laneshowquick';
+  const mk=(label,fn,dis)=>{ const b=document.createElement('button'); b.className='small'; b.type='button'; b.textContent=label; b.disabled=!!dis; b.onclick=fn; quick.appendChild(b); };
+  const soloed=tracks.filter(t=>t.solo), a=activeTrack();
+  mk('All', ()=>{ tracks.forEach(t=>t.hidden=false); renderAll(); });
+  mk('Soloed only', ()=>{ tracks.forEach(t=>t.hidden=!t.solo); renderAll(); }, !soloed.length);
+  mk('Selected only', ()=>{ tracks.forEach(t=>t.hidden=t!==a); renderAll(); }, !a);
+  menu.appendChild(quick);
+  tracks.forEach(t=>{
+    const l=document.createElement('label'); l.className='check';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!t.hidden;
+    cb.onchange=()=>{ if(!cb.checked && tracks.filter(x=>!x.hidden).length<=1){ cb.checked=true; toast('Keep at least one track showing.'); return; } t.hidden=!cb.checked; renderAll(); };
+    const sw=document.createElement('span'); sw.className='laneswatch'; sw.style.background=css(t.colorVar);
+    const nm=document.createElement('span'); nm.textContent=t.name+(t.solo?' (solo)':'')+(t.mute?' (muted)':'');
+    l.append(cb,sw,nm); menu.appendChild(l);
+  });
+  box.appendChild(menu);
 }
 function setActive(id){ activeId=id; if(document.getElementById('laneShow')) setTimeout(renderLaneShow,0); if(window.updateRecTarget && $('micOn') && !$('micOn').hidden) updateRecTarget(); document.querySelectorAll('.lane').forEach(l=>l.classList.toggle('active',+l.dataset.id===id)); document.querySelectorAll('.track').forEach(p=>p.classList.toggle('active',+p.dataset.id===id)); updateSelInfo(); }
 function attachLane(el,t){
