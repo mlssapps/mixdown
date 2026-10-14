@@ -17,6 +17,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 :root{
   --bg:#EEF0F4; --panel:#FFFFFF; --ink:#151922; --muted:#5B6476; --line:#D6DBE4;
   --accent:#C9771A; --accent-ink:#FFFFFF; --lane:#F5F6F9; --sel:rgba(201,119,26,.32);
@@ -122,7 +123,7 @@ body.tracklock .lane canvas{touch-action:none}
 .empty{padding:22px 10px;text-align:center;color:var(--muted)}
 
 /* tracks */
-.tracks{display:grid;gap:12px}
+.tracks{display:grid;gap:12px;align-items:start}
 .track{border:1px solid var(--line);border-radius:12px;padding:10px 12px;border-left-width:5px}
 .thead{display:flex;gap:6px;align-items:center}
 .ttoggle{flex:1;min-width:0;display:flex;gap:8px;align-items:center;text-align:left;background:none;border:none;padding:6px 2px;font:inherit;color:var(--ink);cursor:pointer}
@@ -130,13 +131,18 @@ body.tracklock .lane canvas{touch-action:none}
 .track.open .ttoggle .caret{transform:rotate(90deg)}
 .ttoggle .tnm{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;min-width:0}
 .tsum{display:block;font-size:12px;color:var(--accent);margin:0 0 2px 22px;line-height:1.35}
-.tsum:empty{display:none}
+.tsum{min-height:1.35em}
+.tsum.none{color:var(--muted)}
 .track.hiddenlane .ttoggle .tnm{opacity:.55}
 .tbody{margin-top:8px}
 .tbody[hidden]{display:none}
 .tshow.off{opacity:.55;text-decoration:line-through}
 .val.changed{color:var(--accent);font-weight:600}
 input[type=range]{touch-action:pan-y}
+.track,.lane,.lanes,input[type=range],.thead,.ttoggle{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.track input[type=text]{-webkit-user-select:text;user-select:text}
+.vreset{background:none;border:none;padding:2px 4px;margin:-2px -4px;font:inherit;color:inherit;cursor:pointer;border-radius:6px}
+.vreset.changed{color:var(--accent);font-weight:600;text-decoration:underline dotted;text-underline-offset:3px}
 .undobar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
 .undobar button{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .track.active{box-shadow:0 0 0 2px var(--accent)}
@@ -226,7 +232,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 25</p>
+  <p class="ver">Version 26</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -298,7 +304,7 @@ body.force2 .cols > .panel{margin-top:14px}
 
   <div class="panel" data-sec="tracks">
     <h2>Tracks</h2>
-    <p class="hint" style="margin:0 0 8px">Tap a track's name to open or close its settings. Closed tracks can't be bumped by accident. Amber means a setting was changed from its default; double-tap a slider to reset it.</p>
+    <p class="hint" style="margin:0 0 8px">Tap a track's name to open or close its settings. Closed tracks can't be bumped by accident. Amber means a setting was changed from its default; tap the amber number to reset it. Volume and pan click into place at 0 and Center.</p>
     <div class="undobar"><button class="small undoBtn" type="button">Undo</button><button class="small redoBtn" type="button">Redo</button></div>
     <div class="tracks" id="tracks"></div>
     <div class="row" style="margin-top:12px">
@@ -831,6 +837,7 @@ function renderLanes(){
   drawAll();
 }
 let laneMenuOpen=false;
+['tracks','lanes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('contextmenu',e=>{ if(!(e.target instanceof HTMLInputElement && e.target.type==='text')) e.preventDefault(); }); });
 function renderLaneShow(){
   const box=$('laneShow'), hid=tracks.filter(t=>t.hidden).length;
   box.hidden=!hid && tracks.length<3;
@@ -937,12 +944,12 @@ function trackBodyHTML(t){
   ${toneHTML()}
   <span class="tfname" hidden></span><span class="tpickface" hidden></span>
   <div class="row">
-    <div class="field"><label>Volume <span class="val tgainV"></span></label><input type="range" class="tgain" min="-40" max="6" step="0.1"></div>
-    <div class="field"><label>Pan <span class="val tpanV"></span></label><input type="range" class="tpan" min="-1" max="1" step="0.01"></div>
+    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain" min="-40" max="6" step="0.1"></div>
+    <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan" min="-1" max="1" step="0.01"></div>
   </div>
   <div class="row">
-    <div class="field"><label>Fade in <span class="val tfiV"></span></label><input type="range" class="tfi" min="0" max="30" step="0.1"></div>
-    <div class="field"><label>Fade out <span class="val tfoV"></span></label><input type="range" class="tfo" min="0" max="30" step="0.1"></div>
+    <div class="field"><label>Fade in <button type="button" class="val vreset tfiV" title="Tap to reset"></button></label><input type="range" class="tfi" min="0" max="30" step="0.1"></div>
+    <div class="field"><label>Fade out <button type="button" class="val vreset tfoV" title="Tap to reset"></button></label><input type="range" class="tfo" min="0" max="30" step="0.1"></div>
   </div>
   <details class="fxbox"><summary>Effects <span class="fxcount"></span></summary><div class="fxlist"></div></details>`;
   return `
@@ -952,12 +959,12 @@ function trackBodyHTML(t){
     <span class="tfname hint" style="margin:0"></span>
   </div>
   <div class="row">
-    <div class="field"><label>Volume <span class="val tgainV"></span></label><input type="range" class="tgain" min="-30" max="12" step="0.1"></div>
-    <div class="field"><label>Pan <span class="val tpanV"></span></label><input type="range" class="tpan" min="-1" max="1" step="0.01"></div>
+    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain" min="-30" max="12" step="0.1"></div>
+    <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan" min="-1" max="1" step="0.01"></div>
   </div>
   <div class="row">
-    <div class="field"><label>Fade in <span class="val tfiV"></span></label><input type="range" class="tfi" min="0" max="15" step="0.1"></div>
-    <div class="field"><label>Fade out <span class="val tfoV"></span></label><input type="range" class="tfo" min="0" max="15" step="0.1"></div>
+    <div class="field"><label>Fade in <button type="button" class="val vreset tfiV" title="Tap to reset"></button></label><input type="range" class="tfi" min="0" max="15" step="0.1"></div>
+    <div class="field"><label>Fade out <button type="button" class="val vreset tfoV" title="Tap to reset"></button></label><input type="range" class="tfo" min="0" max="15" step="0.1"></div>
   </div>
   <details class="fxbox"><summary>Effects <span class="fxcount"></span></summary><div class="fxlist"></div></details>`;
 }
@@ -977,14 +984,16 @@ function renderTrackPanels(){
     setOpen(t.open);
     q('.ttoggle').onclick=()=>setOpen(!t.open);
     // sliders: one named undo step per drag, double-tap resets to default
-    const slider=(cls,key,word,fmtV,def,after)=>{
+    const slider=(cls,key,word,fmtV,def,after,snap)=>{
       const el=q(cls); let from=null;
-      el.addEventListener('input',()=>{ if(from===null){ from=t[key]; pushUndo(`${t.name} ${word}`); } t[key]=+el.value; after(); syncTrackPanel(t); });
+      el.addEventListener('input',()=>{ if(from===null){ from=t[key]; pushUndo(`${t.name} ${word}`); } let v=+el.value; if(snap && Math.abs(v-def)<snap){ v=def; el.value=def; } t[key]=v; after(); syncTrackPanel(t); });
       el.addEventListener('change',()=>{ if(from!==null){ const top=undoStack[undoStack.length-1]; if(top) top.label=`${t.name} ${word} ${fmtV(from)} → ${fmtV(t[key])}`; if(from===t[key]) undoStack.pop(); from=null; updateUndoUI(); } if(key==='fadeIn'||key==='fadeOut') restartIfPlaying(); });
-      el.addEventListener('dblclick',()=>{ if(t[key]===def) return; pushUndo(`${t.name} ${word} ${fmtV(t[key])} → ${fmtV(def)} (reset)`); t[key]=def; after(); syncTrackPanel(t); if(key==='fadeIn'||key==='fadeOut') restartIfPlaying(); toast(`${t.name} ${word} reset.`); });
+      const reset=()=>{ if(t[key]===def){ toast(`${t.name} ${word} is already at its default.`); return; } pushUndo(`${t.name} ${word} ${fmtV(t[key])} → ${fmtV(def)} (reset)`); t[key]=def; after(); syncTrackPanel(t); if(key==='fadeIn'||key==='fadeOut') restartIfPlaying(); toast(`${t.name} ${word} reset to ${fmtV(def)}.`); };
+      el.addEventListener('dblclick',reset);
+      q(cls+'V').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); reset(); });
     };
-    slider('.tgain','gainDb','volume',fmtGain,0,()=>{ liveUpdate(t); drawLane(t); });
-    slider('.tpan','pan','pan',fmtPan,0,()=>liveUpdate(t));
+    slider('.tgain','gainDb','volume',fmtGain,0,()=>{ liveUpdate(t); drawLane(t); },0.45);
+    slider('.tpan','pan','pan',fmtPan,0,()=>liveUpdate(t),0.05);
     slider('.tfi','fadeIn','fade in',fmtFade,0,()=>drawLane(t));
     slider('.tfo','fadeOut','fade out',fmtFade,0,()=>drawLane(t));
     q('.tmute').onclick=()=>{ pushUndo(`${t.name} mute ${t.mute?'off':'on'}`); t.mute=!t.mute; liveUpdateAll(); syncTrackPanel(t); renderLanes(); };
@@ -1005,7 +1014,7 @@ function syncTrackPanel(t){
   const sh=q('.tshow'); sh.textContent=t.hidden?'Hidden':'Shown'; sh.classList.toggle('off',!!t.hidden); sh.setAttribute('aria-pressed',String(!t.hidden));
   const nfx=t.fx?FX.filter(e=>t.fx[e.k]&&t.fx[e.k].on).length:0;
   const sum=[]; if(Math.abs(t.gainDb)>0.05) sum.push('Volume '+fmtGain(t.gainDb)); if(Math.abs(t.pan)>=0.01) sum.push('Pan '+fmtPan(t.pan)); if(t.fadeIn) sum.push('Fade in '+fmtFade(t.fadeIn)); if(t.fadeOut) sum.push('Fade out '+fmtFade(t.fadeOut)); if(nfx) sum.push(nfx+' effect'+(nfx>1?'s':'')+' on'); if(!hasAudio(t)) sum.push('No audio yet');
-  q('.tsum').textContent=sum.join(' · ');
+  q('.tsum').textContent=sum.length?sum.join(' · '):'No changes'; q('.tsum').classList.toggle('none',!sum.length);
   q('.tgainV').classList.toggle('changed',Math.abs(t.gainDb)>0.05); q('.tpanV').classList.toggle('changed',Math.abs(t.pan)>=0.01); q('.tfiV').classList.toggle('changed',!!t.fadeIn); q('.tfoV').classList.toggle('changed',!!t.fadeOut);
   q('.tgain').value=t.gainDb; q('.tgainV').textContent=fmtGain(t.gainDb);
   q('.tpan').value=t.pan; q('.tpanV').textContent = fmtPan(t.pan);
