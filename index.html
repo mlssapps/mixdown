@@ -98,6 +98,12 @@ button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var
 .lane{position:relative;border-radius:8px;background:var(--lane);border:2px solid transparent;overflow:hidden}
 .lane.active{border-color:var(--accent)}
 .lane canvas{display:block;width:100%;height:116px;touch-action:pan-y}
+.lanes.compact .lane canvas{height:72px}
+.lanes.tiny .lane canvas{height:56px}
+.lane .grip{display:none;position:absolute;right:0;top:0;bottom:0;width:38px;touch-action:pan-y;background:repeating-linear-gradient(0deg,transparent 0 6px,rgba(127,127,127,.18) 6px 8px);border-left:1px solid var(--line);align-items:center;justify-content:center;color:var(--muted);font-size:16px}
+body.tracklock .lane .grip{display:flex}
+.laneshow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 8px;font-size:14px;color:var(--muted)}
+.laneshow[hidden]{display:none}
 body.tracklock .lane canvas{touch-action:none}
 .lane .tag{position:absolute;left:8px;top:4px;font-size:12px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--panel);pointer-events:none;max-width:70%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .lane .tag.muted{opacity:.5;text-decoration:line-through}
@@ -111,9 +117,25 @@ body.tracklock .lane canvas{touch-action:none}
 
 /* tracks */
 .tracks{display:grid;gap:12px}
-.track{border:1px solid var(--line);border-radius:12px;padding:12px;border-left-width:5px}
+.track{border:1px solid var(--line);border-radius:12px;padding:10px 12px;border-left-width:5px}
+.thead{display:flex;gap:6px;align-items:center}
+.ttoggle{flex:1;min-width:0;display:flex;gap:8px;align-items:center;text-align:left;background:none;border:none;padding:6px 2px;font:inherit;color:var(--ink);cursor:pointer}
+.ttoggle .caret{display:inline-block;transition:transform .15s;color:var(--muted)}
+.track.open .ttoggle .caret{transform:rotate(90deg)}
+.ttoggle .tnm{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;min-width:0}
+.tsum{display:block;font-size:12px;color:var(--accent);margin:0 0 2px 22px;line-height:1.35}
+.tsum:empty{display:none}
+.track.hiddenlane .ttoggle .tnm{opacity:.55}
+.tbody{margin-top:8px}
+.tbody[hidden]{display:none}
+.tshow.off{opacity:.55;text-decoration:line-through}
+.val.changed{color:var(--accent);font-weight:600}
+input[type=range]{touch-action:pan-y}
+.undobar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.undobar button{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .track.active{box-shadow:0 0 0 2px var(--accent)}
 .track h3{margin:0 0 10px;font-size:16px;display:flex;gap:8px;align-items:center}
+.track .tbody h3{margin-top:0}
 .track h3 input{flex:1;font-weight:600}
 .mutesolo{display:flex;gap:6px}
 .fxbox{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
@@ -198,7 +220,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 23</p>
+  <p class="ver">Version 24</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -221,7 +243,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <li><b>Duplicate</b> places a copy right after the selection, or right after the selected clip.</li>
       <li><b>Delete and close gap</b> removes it and slides everything after it left. <b>Silence</b> mutes it in place. <b>Trim to selection</b> keeps only the selected part of that track.</li>
     </ul>
-    <p><b>Split at playhead</b> cuts the clip under the playhead into two clips. In <b>Move</b> mode, tap a clip to select it, then drag it sideways to move it. To put it on another track, pick the track in the selected clip's <b>Track</b> menu under the edit buttons, where you can also type its exact start time. <b>Track lock</b> (next to Loop) decides what touches on the tracks do: <b>On</b> (the default) makes selecting and moving reliable, including dragging a clip up or down onto another track, and you scroll the page by swiping outside the tracks; <b>Off</b> lets up-and-down swipes over the tracks scroll the page instead.</p>
+    <p><b>Split at playhead</b> cuts the clip under the playhead into two clips. In <b>Move</b> mode, tap a clip to select it, then drag it sideways to move it. To put it on another track, pick the track in the selected clip's <b>Track</b> menu under the edit buttons, where you can also type its exact start time. <b>Swipe on tracks</b> (next to Loop) decides what touches on the tracks do: <b>Edit</b> (the default) makes selecting and moving reliable, including dragging a clip up or down onto another track; to scroll the page, swipe on the striped strip at the right edge of the tracks. <b>Scroll</b> lets up-and-down swipes anywhere over the tracks scroll the page. Tap a track's name under Tracks to open or close its settings, use <b>Shown/Hidden</b> to choose which tracks appear in the player (hidden tracks still play), and <b>Undo</b>/<b>Redo</b> name exactly what they change.</p>
     <p><b>Clip fades and crossfades:</b> select a clip in Move mode and set its <b>Fade in</b> and <b>Fade out</b> (seconds) under the edit buttons. To crossfade, overlap two clips, on the same track or different tracks, and give the first a fade out and the second a matching fade in. <b>Crossfade into next clip</b> does it automatically on the same track. Fades use an equal-power curve, so the loudness stays steady through the blend.</p>
     <p><b>Undo</b> steps back through your last 60 edits. Edits never change your original files.</p>
     <h3>Recording</h3>
@@ -270,6 +292,8 @@ body.force2 .cols > .panel{margin-top:14px}
 
   <div class="panel" data-sec="tracks">
     <h2>Tracks</h2>
+    <p class="hint" style="margin:0 0 8px">Tap a track's name to open or close its settings. Closed tracks can't be bumped by accident. Amber means a setting was changed from its default; double-tap a slider to reset it.</p>
+    <div class="undobar"><button class="small undoBtn" type="button">Undo</button><button class="small redoBtn" type="button">Redo</button></div>
     <div class="tracks" id="tracks"></div>
     <div class="row" style="margin-top:12px">
       <button id="addTrack">Add track</button>
@@ -343,10 +367,11 @@ body.force2 .cols > .panel{margin-top:14px}
         <button id="modeMove">Move</button>
       </div>
       <button class="icon" id="loop" aria-label="Loop the selection" aria-pressed="false" title="Loop the selection"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M17 4l3 3-3 3M4 11V9a2 2 0 0 1 2-2h14M7 20l-3-3 3-3M20 13v2a2 2 0 0 1-2 2H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="margin-left:6px">Loop</span></button>
-      <button class="icon" id="trackLock" aria-pressed="true" title="When on, touches on the tracks only select or move; scroll the page outside the tracks">Track lock: On</button>
+      <button class="icon" id="trackLock" aria-pressed="true" title="Edit: swipes on the tracks select or move. Scroll: swipes on the tracks scroll the page.">Swipe on tracks: Edit</button>
     </div>
     <p class="hint selinfo" id="selInfo"></p>
     <canvas class="ruler" id="ruler" aria-label="Timeline ruler. Tap to move the playhead."></canvas>
+    <div class="laneshow" id="laneShow" hidden></div>
     <div class="lanes" id="lanes"></div>
     <div class="empty" id="emptyMsg">Choose a song for Track 1 in Tracks above to get started.</div>
     <div class="viewrow">
@@ -365,7 +390,8 @@ body.force2 .cols > .panel{margin-top:14px}
       <button class="small" id="silSel">Silence</button>
       <button class="small" id="trimSel">Trim to selection</button>
       <button class="small" id="clearSel">Clear selection</button>
-      <button class="small" id="undo">Undo</button>
+      <button class="small undoBtn" id="undo">Undo</button>
+      <button class="small redoBtn" id="redo">Redo</button>
     </div>
     <div class="cliprow" id="clipRow" hidden>
       <span class="cliplabel" id="clipLabel"></span>
@@ -666,9 +692,20 @@ function cutSegs(segs,u0,u1,mode){ // mode: 'delete' | 'keep' | 'silence'
   }
   return out.filter(g=>segLen(g)>1e-6);
 }
-function snapshot(){ return tracks.map(t=>({id:t.id, clips:t.clips.map(c=>({...c, segs:JSON.parse(JSON.stringify(c.segs))}))})); }
-function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>60) undoStack.shift(); }
-function restore(snap){ snap.forEach(st=>{ const t=tracks.find(x=>x.id===st.id); if(t) t.clips=st.clips; }); }
+// Undo covers clip edits AND each track's volume, pan, fades, mute, solo, and effects. Every step has a name.
+const TSET=['gainDb','pan','fadeIn','fadeOut','mute','solo'];
+function snapshot(){ return tracks.map(t=>{ const o={id:t.id, clips:t.clips.map(c=>({...c, segs:JSON.parse(JSON.stringify(c.segs))})), fx:t.fx?JSON.parse(JSON.stringify(t.fx)):null}; TSET.forEach(k=>o[k]=t[k]); return o; }); }
+let redoStack=[];
+function pushUndo(label){ undoStack.push({snap:snapshot(), label:label||'Clip edit'}); if(undoStack.length>60) undoStack.shift(); redoStack=[]; updateUndoUI(); }
+function restore(snap){ snap.forEach(st=>{ const t=tracks.find(x=>x.id===st.id); if(!t) return; t.clips=st.clips; if('gainDb' in st){ TSET.forEach(k=>t[k]=st[k]); t.fx=st.fx?JSON.parse(JSON.stringify(st.fx)):t.fx; } }); }
+function updateUndoUI(){
+  const u=undoStack[undoStack.length-1], r=redoStack[redoStack.length-1];
+  document.querySelectorAll('.undoBtn').forEach(b=>{ b.disabled=!u; b.textContent=u?'Undo: '+u.label:'Undo'; b.title=b.textContent; });
+  document.querySelectorAll('.redoBtn').forEach(b=>{ b.disabled=!r; b.textContent=r?'Redo: '+r.label:'Redo'; b.title=b.textContent; });
+}
+function doUndo(){ const u=undoStack.pop(); if(!u) return; redoStack.push({snap:snapshot(), label:u.label}); restore(u.snap); afterHistory(); toast('Undid: '+u.label); }
+function doRedo(){ const r=redoStack.pop(); if(!r) return; undoStack.push({snap:snapshot(), label:r.label}); restore(r.snap); afterHistory(); toast('Redid: '+r.label); }
+function afterHistory(){ if(activeClipId && !findClip(activeClipId)) activeClipId=null; liveUpdateAll(); restartIfPlaying(); renderAll(); updateUndoUI(); }
 
 // ---------- view ----------
 let pps=50, viewStart=0, playhead=0, sel=null, mode='select';
@@ -762,7 +799,7 @@ function updateSelInfo(){
   $('splitBtn').disabled = !(t && clipAt(t,playhead));
   $('dupBtn').disabled = !(has || (activeClipId && findClip(activeClipId)) || (t && clipAt(t,playhead)));
   $('pasteBtn').disabled = !(clipboard && t);
-  $('undo').disabled=!undoStack.length;
+  updateUndoUI();
   const ac=activeClipId && findClip(activeClipId);
   $('clipRow').hidden=!ac;
   if(ac){ $('clipLabel').textContent=`Selected clip: ${ac.c.name} on ${ac.t.name}, ${fmt(clipLen(ac.c))} long`; if(document.activeElement!==$('clipStart')) $('clipStart').value=ac.c.offset.toFixed(2);
@@ -775,16 +812,29 @@ function updateSelInfo(){
 // ---------- lanes + track panels ----------
 function renderLanes(){
   const L=$('lanes'); L.innerHTML='';
-  tracks.forEach(t=>{
+  const vis=tracks.filter(t=>!t.hidden);
+  L.classList.toggle('compact', vis.length>4 && vis.length<=8); L.classList.toggle('tiny', vis.length>8);
+  renderLaneShow();
+  vis.forEach(t=>{
     const d=document.createElement('div'); d.className='lane'+(t.id===activeId?' active':''); d.dataset.id=t.id;
-    d.innerHTML=`<canvas></canvas><span class="tag${t.mute?' muted':''}" style="color:${css(t.colorVar)}"></span>`;
+    d.innerHTML=`<canvas></canvas><span class="tag${t.mute?' muted':''}" style="color:${css(t.colorVar)}"></span><div class="grip" aria-hidden="true">&#8597;</div>`;
     d.querySelector('.tag').textContent=t.name+(hasAudio(t)?'':' (no audio)');
     L.appendChild(d); attachLane(d,t);
   });
   $('emptyMsg').hidden = tracks.some(hasAudio);
   drawAll();
 }
-function setActive(id){ activeId=id; if(window.updateRecTarget && $('micOn') && !$('micOn').hidden) updateRecTarget(); document.querySelectorAll('.lane').forEach(l=>l.classList.toggle('active',+l.dataset.id===id)); document.querySelectorAll('.track').forEach(p=>p.classList.toggle('active',+p.dataset.id===id)); updateSelInfo(); }
+function renderLaneShow(){
+  const box=$('laneShow'), hid=tracks.filter(t=>t.hidden).length;
+  box.hidden=!hid && tracks.length<3;
+  box.innerHTML='';
+  const txt=document.createElement('span'); txt.textContent = hid ? `Showing ${tracks.length-hid} of ${tracks.length} tracks.` : `Showing all ${tracks.length} tracks.`; box.appendChild(txt);
+  const mk=(label,fn,dis)=>{ const b=document.createElement('button'); b.className='small'; b.type='button'; b.textContent=label; b.disabled=!!dis; b.onclick=fn; box.appendChild(b); };
+  const a=activeTrack();
+  mk('Show only '+(a?a.name:'selected'), ()=>{ tracks.forEach(t=>t.hidden=t!==a); renderAll(); }, !a);
+  if(hid) mk('Show all', ()=>{ tracks.forEach(t=>t.hidden=false); renderAll(); });
+}
+function setActive(id){ activeId=id; if(document.getElementById('laneShow')) setTimeout(renderLaneShow,0); if(window.updateRecTarget && $('micOn') && !$('micOn').hidden) updateRecTarget(); document.querySelectorAll('.lane').forEach(l=>l.classList.toggle('active',+l.dataset.id===id)); document.querySelectorAll('.track').forEach(p=>p.classList.toggle('active',+p.dataset.id===id)); updateSelInfo(); }
 function attachLane(el,t){
   const c=el.querySelector('canvas'); let down=null;
   const timeAt=e=>{ const r=c.getBoundingClientRect(); return viewStart+(e.clientX-r.left)/pps; };
@@ -802,13 +852,13 @@ function attachLane(el,t){
       const over=document.elementFromPoint(e.clientX,e.clientY)?.closest('.lane');
       const target=over && tracks.find(x=>x.id===+over.dataset.id);
       if(target && target!==down.track){
-        if(!down.pushed){ pushUndo(); down.pushed=true; }
+        if(!down.pushed){ pushUndo('Move clip to another track'); down.pushed=true; }
         down.track.clips=down.track.clips.filter(x=>x!==down.clip); target.clips.push(down.clip); down.track=target; setActive(target.id); down.moved=true;
       }
     }
     if(!down.moved) return;
     if(mode==='select'){ sel={id:t.id,a:down.t0,b:timeAt(e)}; drawLane(t); updateSelInfo(); }
-    else if(down.clip){ if(!down.pushed){ pushUndo(); down.pushed=true; } down.clip.offset=Math.max(0,down.off+(e.clientX-down.x)/pps); drawAll(); }
+    else if(down.clip){ if(!down.pushed){ pushUndo('Move clip'); down.pushed=true; } down.clip.offset=Math.max(0,down.off+(e.clientX-down.x)/pps); drawAll(); }
   });
   const up=()=>{
     if(!down) return;
@@ -818,7 +868,7 @@ function attachLane(el,t){
   };
   c.addEventListener('pointerup',up);
   // the browser took over the touch to scroll the page: do nothing
-  c.addEventListener('pointercancel',()=>{ if(down && down.pushed){ const u=undoStack.pop(); if(u) restore(u); } down=null; drawAll(); });
+  c.addEventListener('pointercancel',()=>{ if(down && down.pushed){ const u=undoStack.pop(); if(u) restore(u.snap); updateUndoUI(); } down=null; drawAll(); });
 }
 $('ruler').addEventListener('pointerdown',e=>{ const r=$('ruler').getBoundingClientRect(); seek(viewStart+(e.clientX-r.left)/pps); });
 
@@ -854,7 +904,9 @@ function toneHTML(){
     <button class="primary toApply" style="width:100%;margin:6px 0 12px">Update tone</button>
   </div>`;
 }
-function trackPanelHTML(t){
+function trackHeadHTML(){ return `<div class="thead"><button type="button" class="ttoggle" aria-expanded="false"><span class="caret">&#9656;</span><span class="tnm"></span></button><button class="small tmute">Mute</button><button class="small tsolo">Solo</button><button class="small tshow" title="Show or hide this track in the player">Shown</button></div><span class="tsum"></span>`; }
+function trackPanelHTML(t){ return trackHeadHTML()+'<div class="tbody" hidden>'+trackBodyHTML(t)+'</div>'; }
+function trackBodyHTML(t){
   if(t.tone) return `
   <h3><input type="text" class="tname" value="" aria-label="Track name"><button class="small tremove">Remove</button></h3>
   ${toneHTML()}
@@ -867,7 +919,6 @@ function trackPanelHTML(t){
     <div class="field"><label>Fade in <span class="val tfiV"></span></label><input type="range" class="tfi" min="0" max="30" step="0.1"></div>
     <div class="field"><label>Fade out <span class="val tfoV"></span></label><input type="range" class="tfo" min="0" max="30" step="0.1"></div>
   </div>
-  <div class="mutesolo"><button class="small tmute">Mute</button><button class="small tsolo">Solo</button></div>
   <details class="fxbox"><summary>Effects <span class="fxcount"></span></summary><div class="fxlist"></div></details>`;
   return `
   <h3><input type="text" class="tname" value="" aria-label="Track name"><button class="small tremove">Remove</button></h3>
@@ -883,7 +934,6 @@ function trackPanelHTML(t){
     <div class="field"><label>Fade in <span class="val tfiV"></span></label><input type="range" class="tfi" min="0" max="15" step="0.1"></div>
     <div class="field"><label>Fade out <span class="val tfoV"></span></label><input type="range" class="tfo" min="0" max="15" step="0.1"></div>
   </div>
-  <div class="mutesolo"><button class="small tmute">Mute</button><button class="small tsolo">Solo</button></div>
   <details class="fxbox"><summary>Effects <span class="fxcount"></span></summary><div class="fxlist"></div></details>`;
 }
 function renderTrackPanels(){
@@ -893,27 +943,47 @@ function renderTrackPanels(){
     p.style.borderLeftColor=css(t.colorVar); p.innerHTML=trackPanelHTML(t); box.appendChild(p);
     const q=s=>p.querySelector(s);
     q('.tname').value=t.name;
-    q('.tname').oninput=e=>{ t.name=e.target.value||('Track '+(tracks.indexOf(t)+1)); const tag=document.querySelector(`.lane[data-id="${t.id}"] .tag`); if(tag) tag.textContent=t.name; updateSelInfo(); };
+    q('.tname').oninput=e=>{ t.name=e.target.value||('Track '+(tracks.indexOf(t)+1)); const tag=document.querySelector(`.lane[data-id="${t.id}"] .tag`); if(tag) tag.textContent=t.name; q('.tnm').textContent=t.name; updateSelInfo(); };
     q('.tremove').onclick=()=>{ if(hasAudio(t) && !confirm(`Remove ${t.name}?`)) return; tracks=tracks.filter(x=>x!==t); if(activeId===t.id) activeId=tracks[0]?.id||null; restartIfPlaying(); renderAll(); };
     wireFx(t,p);
     if(t.tone) wireTone(t,p); else q('.tfile').onchange=e=>{ const f=e.target.files[0]; e.target.value=''; if(f) loadFile(t,f); };
-    q('.tgain').oninput=e=>{ t.gainDb=+e.target.value; liveUpdate(t); syncTrackPanel(t); drawLane(t); };
-    q('.tpan').oninput=e=>{ t.pan=+e.target.value; liveUpdate(t); syncTrackPanel(t); };
-    q('.tfi').oninput=e=>{ t.fadeIn=+e.target.value; syncTrackPanel(t); drawLane(t); };
-    q('.tfo').oninput=e=>{ t.fadeOut=+e.target.value; syncTrackPanel(t); drawLane(t); };
-    q('.tfi').onchange=q('.tfo').onchange=()=>restartIfPlaying();
-    q('.tmute').onclick=()=>{ t.mute=!t.mute; liveUpdateAll(); syncTrackPanel(t); renderLanes(); };
-    q('.tsolo').onclick=()=>{ t.solo=!t.solo; liveUpdateAll(); syncTrackPanel(t); };
+    if(t.open===undefined) t.open=!hasAudio(t) && !t.tone;
+    const setOpen=o=>{ t.open=o; p.classList.toggle('open',o); q('.tbody').hidden=!o; q('.ttoggle').setAttribute('aria-expanded',String(o)); };
+    setOpen(t.open);
+    q('.ttoggle').onclick=()=>setOpen(!t.open);
+    // sliders: one named undo step per drag, double-tap resets to default
+    const slider=(cls,key,word,fmtV,def,after)=>{
+      const el=q(cls); let from=null;
+      el.addEventListener('input',()=>{ if(from===null){ from=t[key]; pushUndo(`${t.name} ${word}`); } t[key]=+el.value; after(); syncTrackPanel(t); });
+      el.addEventListener('change',()=>{ if(from!==null){ const top=undoStack[undoStack.length-1]; if(top) top.label=`${t.name} ${word} ${fmtV(from)} → ${fmtV(t[key])}`; if(from===t[key]) undoStack.pop(); from=null; updateUndoUI(); } if(key==='fadeIn'||key==='fadeOut') restartIfPlaying(); });
+      el.addEventListener('dblclick',()=>{ if(t[key]===def) return; pushUndo(`${t.name} ${word} ${fmtV(t[key])} → ${fmtV(def)} (reset)`); t[key]=def; after(); syncTrackPanel(t); if(key==='fadeIn'||key==='fadeOut') restartIfPlaying(); toast(`${t.name} ${word} reset.`); });
+    };
+    slider('.tgain','gainDb','volume',fmtGain,0,()=>{ liveUpdate(t); drawLane(t); });
+    slider('.tpan','pan','pan',fmtPan,0,()=>liveUpdate(t));
+    slider('.tfi','fadeIn','fade in',fmtFade,0,()=>drawLane(t));
+    slider('.tfo','fadeOut','fade out',fmtFade,0,()=>drawLane(t));
+    q('.tmute').onclick=()=>{ pushUndo(`${t.name} mute ${t.mute?'off':'on'}`); t.mute=!t.mute; liveUpdateAll(); syncTrackPanel(t); renderLanes(); };
+    q('.tsolo').onclick=()=>{ pushUndo(`${t.name} solo ${t.solo?'off':'on'}`); t.solo=!t.solo; liveUpdateAll(); syncTrackPanel(t); };
+    q('.tshow').onclick=()=>{ t.hidden=!t.hidden; syncTrackPanel(t); renderLanes(); };
     p.addEventListener('pointerdown',()=>setActive(t.id));
     syncTrackPanel(t);
   });
   $('addTrack').disabled = $('addTone').disabled = tracks.length>=MAXTRACKS;
   $('addTrack').textContent = tracks.length>=MAXTRACKS ? `Up to ${MAXTRACKS} tracks` : 'Add track';
 }
+const fmtGain=v=>(v>0?'+':'')+(+v).toFixed(1)+' dB';
+const fmtPan=v=>Math.abs(v)<0.01?'Center':(v<0?'L ':'R ')+Math.round(Math.abs(v)*100);
+const fmtFade=v=>v?(+v).toFixed(1)+' s':'Off';
 function syncTrackPanel(t){
   const p=document.querySelector(`.track[data-id="${t.id}"]`); if(!p) return; const q=s=>p.querySelector(s);
-  q('.tgain').value=t.gainDb; q('.tgainV').textContent=(t.gainDb>0?'+':'')+t.gainDb.toFixed(1)+' dB';
-  q('.tpan').value=t.pan; q('.tpanV').textContent = Math.abs(t.pan)<0.01?'Center': (t.pan<0?'L ':'R ')+Math.round(Math.abs(t.pan)*100);
+  q('.tnm').textContent=t.name; p.classList.toggle('hiddenlane',!!t.hidden);
+  const sh=q('.tshow'); sh.textContent=t.hidden?'Hidden':'Shown'; sh.classList.toggle('off',!!t.hidden); sh.setAttribute('aria-pressed',String(!t.hidden));
+  const nfx=t.fx?FX.filter(e=>t.fx[e.k]&&t.fx[e.k].on).length:0;
+  const sum=[]; if(Math.abs(t.gainDb)>0.05) sum.push('Volume '+fmtGain(t.gainDb)); if(Math.abs(t.pan)>=0.01) sum.push('Pan '+fmtPan(t.pan)); if(t.fadeIn) sum.push('Fade in '+fmtFade(t.fadeIn)); if(t.fadeOut) sum.push('Fade out '+fmtFade(t.fadeOut)); if(nfx) sum.push(nfx+' effect'+(nfx>1?'s':'')+' on'); if(!hasAudio(t)) sum.push('No audio yet');
+  q('.tsum').textContent=sum.join(' · ');
+  q('.tgainV').classList.toggle('changed',Math.abs(t.gainDb)>0.05); q('.tpanV').classList.toggle('changed',Math.abs(t.pan)>=0.01); q('.tfiV').classList.toggle('changed',!!t.fadeIn); q('.tfoV').classList.toggle('changed',!!t.fadeOut);
+  q('.tgain').value=t.gainDb; q('.tgainV').textContent=fmtGain(t.gainDb);
+  q('.tpan').value=t.pan; q('.tpanV').textContent = fmtPan(t.pan);
   if(t.tone && t.tone.type==='binaural'){ q('.tpan').disabled=true; q('.tpanV').textContent='Off for binaural'; } else q('.tpan').disabled=false;
   q('.tfi').value=t.fadeIn; q('.tfiV').textContent=t.fadeIn? t.fadeIn.toFixed(1)+' s':'Off';
   q('.tfo').value=t.fadeOut; q('.tfoV').textContent=t.fadeOut? t.fadeOut.toFixed(1)+' s':'Off';
@@ -930,7 +1000,7 @@ async function loadFile(t,f,quiet){
     const buf=await new Promise((res,rej)=>{ const p=a.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
     registerSource(buf, f.name, keep, 'file');
     const nm=f.name.replace(/\.[^.]+$/,'').slice(0,40);
-    pushUndo();
+    pushUndo(`Add ${nm}`);
     const at = hasAudio(t) ? playhead : 0;
     const cl=newClip(buf, computePeaks(buf), [{s:0,e:buf.duration}], at, nm); t.clips.push(cl); activeClipId=cl.id;
     if(/^Track \d+$/.test(t.name)) t.name=nm;
@@ -1096,7 +1166,7 @@ function toneName(set){ const nz={white:'White',pink:'Pink',brown:'Brown'}; if(s
 function applyTone(t, quiet){
   const set=t.tone; const dur=Math.max(1,Math.min(900,set.len||Math.max(projectLen()-set.start,60)));
   const buf=genTone(set,dur,ctx().sampleRate); set.genDur=dur;
-  if(t.clips.length && !quiet) pushUndo();
+  if(t.clips.length && !quiet) pushUndo(`Update tone on ${t.name}`);
   t.clips=[newClip(buf, computePeaks(buf), [{s:0,e:buf.duration}], Math.max(0,set.start), toneName(set))];
   if(/^Tone( track)?$|^(Binaural|Monaural|Isochronic) |^(White|Pink|Brown) noise$/.test(t.name)) t.name=toneName(set);
   restartIfPlaying(); renderAll();
@@ -1176,37 +1246,38 @@ function pasteAt(t,time,cb){ const made=cb.items.map(it=>newClip(it.buf,it.peaks
 function afterEdit(msg){ sel=null; restartIfPlaying(); renderAll(); if(msg) toast(msg); }
 function needSel(){ const t=activeTrack(); if(!t||!sel||sel.id!==t.id||Math.abs(sel.b-sel.a)<0.01){ toast('Select part of a track first.'); return null; } return t; }
 
-$('trimSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(); const [A,B]=selRange(); rangeOp(t,A,B,'trim'); afterEdit('Trimmed the track to the selection.'); };
-$('delSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(); const [A,B]=selRange(); rangeOp(t,A,B,'delete'); afterEdit('Deleted the selection and closed the gap.'); };
-$('silSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(); const [A,B]=selRange(); rangeOp(t,A,B,'silence'); afterEdit('Silenced the selection.'); };
-$('cutBtn').onclick=()=>{ const t=needSel(); if(!t) return; const [A,B]=selRange(); const cb=copyRange(t,A,B); if(!cb){ toast('There’s no audio in that selection.'); return; } pushUndo(); clipboard=cb; rangeOp(t,A,B,'cut'); afterEdit('Cut. Move the playhead, choose a track, and tap Paste.'); };
+$('trimSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(`Trim ${t.name}`); const [A,B]=selRange(); rangeOp(t,A,B,'trim'); afterEdit('Trimmed the track to the selection.'); };
+$('delSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(`Delete part of ${t.name}`); const [A,B]=selRange(); rangeOp(t,A,B,'delete'); afterEdit('Deleted the selection and closed the gap.'); };
+$('silSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(`Silence part of ${t.name}`); const [A,B]=selRange(); rangeOp(t,A,B,'silence'); afterEdit('Silenced the selection.'); };
+$('cutBtn').onclick=()=>{ const t=needSel(); if(!t) return; const [A,B]=selRange(); const cb=copyRange(t,A,B); if(!cb){ toast('There’s no audio in that selection.'); return; } pushUndo(`Cut from ${t.name}`); clipboard=cb; rangeOp(t,A,B,'cut'); afterEdit('Cut. Move the playhead, choose a track, and tap Paste.'); };
 $('copyBtn').onclick=()=>{ const t=needSel(); if(!t) return; const [A,B]=selRange(); const cb=copyRange(t,A,B); if(!cb){ toast('There’s no audio in that selection.'); return; } clipboard=cb; updateSelInfo(); toast('Copied. Move the playhead, choose a track, and tap Paste.'); };
-$('pasteBtn').onclick=()=>{ const t=activeTrack(); if(!t||!clipboard) return; pushUndo(); const made=pasteAt(t,playhead,clipboard); activeClipId=made[0]?.id||null; afterEdit(`Pasted on ${t.name} at ${fmt(playhead)}.`); };
+$('pasteBtn').onclick=()=>{ const t=activeTrack(); if(!t||!clipboard) return; pushUndo(`Paste on ${t.name}`); const made=pasteAt(t,playhead,clipboard); activeClipId=made[0]?.id||null; afterEdit(`Pasted on ${t.name} at ${fmt(playhead)}.`); };
 $('dupBtn').onclick=()=>{
   const t=activeTrack(); if(!t) return;
   if(sel && sel.id===t.id && Math.abs(sel.b-sel.a)>0.01){
     const [A,B]=selRange(); const cb=copyRange(t,A,B); if(!cb){ toast('There’s no audio in that selection.'); return; }
-    pushUndo(); const made=pasteAt(t,B,cb); activeClipId=made[0]?.id||null; afterEdit('Duplicated the selection right after itself.'); return;
+    pushUndo('Duplicate'); const made=pasteAt(t,B,cb); activeClipId=made[0]?.id||null; afterEdit('Duplicated the selection right after itself.'); return;
   }
   const ac=(activeClipId&&findClip(activeClipId)) || (clipAt(t,playhead)&&{t,c:clipAt(t,playhead)}); if(!ac) return;
-  pushUndo(); const c=ac.c, d=newClip(c.buf,c.peaks,JSON.parse(JSON.stringify(c.segs)),clipEnd(c),c.name); d.fi=c.fi||0; d.fo=c.fo||0; ac.t.clips.push(d); activeClipId=d.id;
+  pushUndo('Duplicate clip'); const c=ac.c, d=newClip(c.buf,c.peaks,JSON.parse(JSON.stringify(c.segs)),clipEnd(c),c.name); d.fi=c.fi||0; d.fo=c.fo||0; ac.t.clips.push(d); activeClipId=d.id;
   afterEdit('Duplicated the clip right after itself.');
 };
 $('splitBtn').onclick=()=>{
   const t=activeTrack(); const c=t&&clipAt(t,playhead); if(!c){ toast('Put the playhead over a clip on the active track.'); return; }
   const u=playhead-c.offset, L=clipLen(c); if(u<0.01||u>L-0.01){ toast('Move the playhead inside the clip to split it.'); return; }
-  pushUndo();
+  pushUndo(`Split ${t.name}`);
   const right=newClip(c.buf,c.peaks,cutSegs(c.segs,u,L,'keep'),c.offset+u,c.name);
   right.fo=c.fo||0; c.fo=0; right.fi=0;
   c.segs=cutSegs(c.segs,0,u,'keep'); t.clips.push(right); activeClipId=right.id;
   afterEdit('Split. Switch to Move to drag either part.');
 };
 $('clearSel').onclick=()=>{ sel=null; drawAll(); };
-$('undo').onclick=()=>{ const u=undoStack.pop(); if(!u) return; restore(u); if(activeClipId && !findClip(activeClipId)) activeClipId=null; restartIfPlaying(); renderAll(); toast('Undone.'); };
-$('clipStart').onchange=e=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.c.offset=Math.max(0,+e.target.value||0); restartIfPlaying(); drawAll(); };
-$('clipToPh').onclick=()=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.c.offset=playhead; restartIfPlaying(); drawAll(); };
-$('clipTrack').onchange=e=>{ const ac=findClip(activeClipId), to=tracks.find(t=>t.id===+e.target.value); if(!ac||!to||to===ac.t) return; pushUndo(); ac.t.clips=ac.t.clips.filter(x=>x!==ac.c); to.clips.push(ac.c); setActive(to.id); afterEdit(`Moved the clip to ${to.name}.`); };
-const clipFadeSet=(key,el)=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.c[key]=Math.max(0,Math.min(clipLen(ac.c),parseFloat(String(el.value).replace(',','.'))||0)); restartIfPlaying(); drawAll(); };
+document.querySelectorAll('.undoBtn').forEach(b=>b.onclick=doUndo);
+document.querySelectorAll('.redoBtn').forEach(b=>b.onclick=doRedo);
+$('clipStart').onchange=e=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo('Clip start'); ac.c.offset=Math.max(0,+e.target.value||0); restartIfPlaying(); drawAll(); };
+$('clipToPh').onclick=()=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo('Move clip to playhead'); ac.c.offset=playhead; restartIfPlaying(); drawAll(); };
+$('clipTrack').onchange=e=>{ const ac=findClip(activeClipId), to=tracks.find(t=>t.id===+e.target.value); if(!ac||!to||to===ac.t) return; pushUndo('Move clip to another track'); ac.t.clips=ac.t.clips.filter(x=>x!==ac.c); to.clips.push(ac.c); setActive(to.id); afterEdit(`Moved the clip to ${to.name}.`); };
+const clipFadeSet=(key,el)=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo('Clip fade'); ac.c[key]=Math.max(0,Math.min(clipLen(ac.c),parseFloat(String(el.value).replace(',','.'))||0)); restartIfPlaying(); drawAll(); };
 $('clipFi').onchange=e=>clipFadeSet('fi',e.target);
 $('clipFo').onchange=e=>clipFadeSet('fo',e.target);
 $('clipXf').onclick=()=>{
@@ -1214,10 +1285,10 @@ $('clipXf').onclick=()=>{
   const c=ac.c, next=ac.t.clips.filter(x=>x!==c && x.offset>c.offset).sort((a,b)=>a.offset-b.offset)[0];
   if(!next){ toast('There’s no later clip on this track to crossfade into.'); return; }
   const X=Math.min(c.fo>0?c.fo:2, clipLen(c)/2, clipLen(next)/2);
-  pushUndo(); next.offset=Math.max(0,clipEnd(c)-X); c.fo=X; next.fi=X;
+  pushUndo('Crossfade'); next.offset=Math.max(0,clipEnd(c)-X); c.fo=X; next.fi=X;
   restartIfPlaying(); drawAll(); toast(`Crossfaded over ${X.toFixed(1)} s.`);
 };
-$('clipDel').onclick=()=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo(); ac.t.clips=ac.t.clips.filter(x=>x!==ac.c); activeClipId=null; afterEdit('Removed the clip.'); };
+$('clipDel').onclick=()=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo('Remove clip'); ac.t.clips=ac.t.clips.filter(x=>x!==ac.c); activeClipId=null; afterEdit('Removed the clip.'); };
 $('modeSel').onclick=()=>{ mode='select'; activeClipId=null; drawAll(); $('modeSel').classList.add('on'); $('modeMove').classList.remove('on'); updateSelInfo(); };
 $('modeMove').onclick=()=>{ mode='move'; $('modeMove').classList.add('on'); $('modeSel').classList.remove('on'); updateSelInfo(); };
 
@@ -1597,7 +1668,7 @@ function stopRecording(){
   const len = buf.duration - skip;
   if(len<0.05){ $('recStatus').textContent='The take was too short to keep.'; playhead=r.p0; drawAll(); return; }
   const t=tracks.find(x=>x.id===r.trackId) || activeTrack();
-  pushUndo();
+  pushUndo(`Recording on ${t.name}`);
   registerSource(buf, 'take-'+takeNo+'.wav', null, 'take');
   const cl=newClip(buf, computePeaks(buf), [{s:skip, e:buf.duration}], Math.max(0,zero+skip), 'Take '+(takeNo++));
   t.clips.push(cl); activeClipId=cl.id;
@@ -2301,7 +2372,7 @@ $('projSave').onclick=async()=>{
   $('projSave').disabled=true; $('projSaveBtn').hidden=true; setProg($('projProg'),0.05); projStatus('Packing your project…', true); await sleep();
   try{
     const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs,
-      tracks:tracks.map(t=>({id:t.id,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
+      tracks:tracks.map(t=>({id:t.id,hidden:!!t.hidden,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
         clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0}; })})),
       sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
     let k=0;
@@ -2320,7 +2391,7 @@ $('projSave').onclick=async()=>{
   setProg($('projProg'),null); $('projSave').disabled=false;
 };
 function clearProject(){
-  pause(); tracks=[]; undoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
+  pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
   eqs={mix:eqs.mix}; sources.clear();
 }
 $('projNew').onclick=()=>{
@@ -2351,7 +2422,7 @@ $('projOpen').onchange=async e=>{
     if(data.fields && data.fields.vVis && !('vWave' in data.fields)){ const o=data.fields.vVis; $('vWave').checked=o==='wave'; $('vBars').checked=o==='bars'||o==='mirror'; if(o==='mirror') $('vBarStyle').value='mirror'; } masterDb=data.masterDb||0; if(data.latencyMs!=null) latencyMs=data.latencyMs;
     tracks=[]; let maxT=0, maxC=0;
     for(const td of data.tracks){
-      const t={...newTrack(), id:td.id, name:td.name, gainDb:td.gainDb, pan:td.pan, mute:td.mute, solo:td.solo, fadeIn:td.fadeIn, fadeOut:td.fadeOut, colorVar:td.colorVar, clips:[]};
+      const t={...newTrack(), id:td.id, hidden:!!td.hidden, name:td.name, gainDb:td.gainDb, pan:td.pan, mute:td.mute, solo:td.solo, fadeIn:td.fadeIn, fadeOut:td.fadeOut, colorVar:td.colorVar, clips:[]};
       if(td.fx) t.fx=td.fx;
       if(td.tone){
         t.tone=td.tone; const dur=td.tone.genDur||Math.max(1,td.tone.len||60);
@@ -2409,7 +2480,7 @@ $('stemsZip').onchange=async e=>{
       if(!t){ t=newTrack(); tracks.push(t); }
       try{
         const blob=await zip.file(it.path).async('blob');
-        if(await loadFile(t, new File([blob], it.file), true)) ok++; else failed.push(it.name);
+        if(await loadFile(t, new File([blob], it.file), true)){ ok++; t.open=false; } else failed.push(it.name);
       }catch(err){ failed.push(it.name); }
     }
     box.hidden=true; box.innerHTML='';
@@ -2422,8 +2493,8 @@ $('stemsZip').onchange=async e=>{
 
 // ---------- track lock: tracks capture every touch (reliable selecting) or let swipes scroll the page ----------
 let trackLock=true; try{ const v=localStorage.getItem('mixdown-tracklock'); if(v!==null) trackLock=v==='1'; }catch(e){}
-function applyTrackLock(){ document.body.classList.toggle('tracklock',trackLock); const b=$('trackLock'); b.textContent='Track lock: '+(trackLock?'On':'Off'); b.classList.toggle('on',trackLock); b.setAttribute('aria-pressed',String(trackLock)); }
-$('trackLock').onclick=()=>{ trackLock=!trackLock; applyTrackLock(); try{ localStorage.setItem('mixdown-tracklock',trackLock?'1':'0'); }catch(e){} toast(trackLock?'Track lock on: drag freely on the tracks. Scroll the page outside them.':'Track lock off: swiping up or down over the tracks scrolls the page.'); };
+function applyTrackLock(){ document.body.classList.toggle('tracklock',trackLock); const b=$('trackLock'); b.textContent='Swipe on tracks: '+(trackLock?'Edit':'Scroll'); b.classList.toggle('on',trackLock); b.setAttribute('aria-pressed',String(trackLock)); }
+$('trackLock').onclick=()=>{ trackLock=!trackLock; applyTrackLock(); try{ localStorage.setItem('mixdown-tracklock',trackLock?'1':'0'); }catch(e){} toast(trackLock?'Edit: drag on the tracks to select or move. To scroll, swipe on the striped strip at the right edge of the tracks.':'Scroll: swiping up or down over the tracks scrolls the page.'); };
 applyTrackLock();
 
 // ---------- layout ----------
