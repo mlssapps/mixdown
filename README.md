@@ -1,31 +1,50 @@
 # Mixdown
 
-Edit, record, mix, and master songs right on your phone.
+A free audio studio for your phone: multitrack editing, recording, EQ, effects, and LUFS mastering, with something most editors don't have built in: **binaural and monaural beats, isochronic tones, and white, pink, and brown noise** you can layer under your music.
 
 **Open the app:** https://mlssapps.github.io/mixdown/
 
-Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. Your audio never leaves your device.
+Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No account, no ads, and your audio never leaves your device.
 
-## What it does
+## Tones and noise
+
+- **Binaural beats:** a slightly different tone in each ear (headphones)
+- **Monaural beats:** two tones mixed together, so they work on speakers too
+- **Isochronic tones:** one tone pulsing on and off, with adjustable pulse edges
+- **Beat glide:** move smoothly from one beat rate to another across a track
+- **Noise:** white, pink, or brown, as a bed under a tone or on its own track
+- Set the carrier and beat frequencies exactly, or tap Delta, Theta, Alpha, Beta, or Gamma presets
+
+## Editing and recording
 
 - **Up to 6 tracks** with waveforms: split, cut, copy, paste, duplicate, trim, delete, silence, and undo
-- **Recording** with count-in, level meter, and an automatic timing (latency) fix
-- **Per-track and whole-mix 8-band EQ** with a live spectrum analyzer
-- **Effects per track:** noise gate, compressor, saturation, chorus/flanger, phaser, tremolo, echo/delay, reverb
-- **Tone tracks:** binaural, monaural, and isochronic tones, beat glides, and white, pink, or brown noise
-- **Mastering:** loudness target from 0 to -20 LUFS, hard or soft limiter with look-ahead, release, ceiling, and true peak
-- **Export:** WAV (24 or 16-bit), M4A, or an MP4 cover art video, with title, artist, album, lyrics, and cover art tags
-- **Tag editor** for existing WAV, MP3, M4A, and MP4 files
+- **Recording** with count-in, live level meter, and an automatic timing (latency) fix
+- **Per-track and whole-mix 8-band parametric EQ** with a live spectrum analyzer
+- **Effects per track:** noise gate, compressor, saturation, chorus/flanger, phaser, tremolo, echo/delay (tempo sync), and reverb (room, hall, plate)
+
+## Mastering
+
+- **Loudness target** from 0 to -20 LUFS
+- **Hard or soft limiter** with look-ahead, release, ceiling, and true peak
+
+## Export
+
+- **WAV:** lossless, 24 or 16-bit, 48 or 44.1 kHz
+- **M4A:** 256 kbps AAC, small and phone-friendly
+- **MP4 cover art video:** square or 9:16, with your cover art (or black) and optional title and artist, ready to post
+- **Tags in every format:** title, artist, album, year, track, genre, comment, lyrics, and cover art
+- **Cleanup for AI music:** de-esser, hiss quieter, shimmer tamer, harsh tamer, and mud tamer that act only when each problem flares up, plus section volume and treble fixes
+- **Tag editor:** change the details and cover art of existing WAV, MP3, M4A, and MP4 files without re-encoding
 
 ## Install it like an app
 
 - **Android, tablets, Chromebooks:** open the link in Chrome, then menu → Install app.
 - **iPhone and iPad:** open the link in Safari, tap Share, then Add to Home Screen.
 
-Recording needs the microphone, which browsers only allow on secure (https) pages like the link above.
+After one online visit it works offline. Recording needs the microphone, which browsers only allow on secure (https) pages like the link above.
 
 ## Credits
 
-Created by Melissa Landrum (MLSS).
+Designed by Melissa Landrum (MLSS). Built with Claude by Anthropic.
 
 MP4 and M4A export use [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) by Vanilagy, under the MIT License.

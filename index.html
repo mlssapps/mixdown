@@ -227,12 +227,20 @@ body.force2 .cols > .panel{margin-top:14px}
 .stemsbox{margin-top:10px;padding:12px;border:1.5px solid var(--line);border-radius:12px}
 .stemsbox .stemlist{display:flex;flex-direction:column;gap:8px;margin:8px 0 12px;max-height:340px;overflow:auto}
 .stemsbox .check{font-weight:400}
+.clmod{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px}
+.clmod .clhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.clmod .clhead .check{margin:0}
+.clmod select{width:auto}
+.clmod .hint{margin:4px 0 0}
+.secrow{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px}
+.secrow .row{gap:8px}
+.secrow input{min-width:0}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 26</p>
+  <p class="ver">Version 27</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -278,12 +286,17 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Music players show cover art in their own frame, usually a square, whatever shape the picture is. For a full-screen look, use the MP4 video export in the shape you want.</p>
     <h3>Layout</h3>
     <p>The <b>Size</b> buttons (100%, 85%, 70%) shrink the whole page on a phone so more fits on screen; you can still pinch to zoom in. The <b>Layout</b> buttons under the title switch between <b>Auto</b> (side by side on wide screens), <b>1 column</b>, and <b>2 columns</b>, whatever your screen size. Your choice is remembered.</p>
+    <h3>Cleanup</h3>
+    <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids. <b>Cleanup</b> quiets each one only at the moments it flares up, so the rest of the song stays as it was. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
+    <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
     <h3>Good to know</h3>
     <ul>
       <li>Your audio never leaves your device. Files aren't saved when you close the app, so choose them again next time.</li>
       <li>Open the app in Chrome or Safari, not inside Instagram or Facebook, or choosing files may not work.</li>
       <li>The <b>Peak</b> reading after export tells you if the mix clips (goes over 0 dB). Turn on mastering to keep the export from clipping.</li>
     </ul>
+    <h3>Credits</h3>
+    <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
   </details>
 
   <div class="topgrid">
@@ -469,6 +482,22 @@ body.force2 .cols > .panel{margin-top:14px}
       <p class="hint">All bands that are on work together. The numbers just choose which band you're looking at or editing. <b>Bypass</b> turns this whole EQ off so you can hear the difference. Gain doesn't apply to high-pass, low-pass, or notch bands.</p>
     </div>
 
+    <div class="panel" data-sec="clean">
+      <h2>Cleanup</h2>
+      <p class="hint" style="margin-top:0">Quiets harsh S sounds, hiss, metallic shimmer, piercing upper mids, and boomy low mids, only at the moments they flare up. It's applied when you master or export.</p>
+      <div class="field">
+        <label for="clTarget">Clean up</label>
+        <select id="clTarget"></select>
+      </div>
+      <div id="clMods"></div>
+      <button class="primary" id="clHear" style="width:100%;margin-top:6px">Hear cleanup</button>
+      <p class="hint">Renders the master with cleanup, then press Play. Uncheck <b>Listen to the master</b> under Mastering to compare with the original.</p>
+      <h3 style="margin:16px 0 4px">Section fix <span class="hint" style="font-weight:400">(whole mix)</span></h3>
+      <p class="hint" style="margin-top:0">Turn the volume or treble up or down in one part of the song, with smooth ramps in and out. Select the part on the timeline first, or type the times.</p>
+      <div id="secList"></div>
+      <button id="secAdd" style="width:100%">Add section</button>
+    </div>
+
     <div class="panel" data-sec="mastering">
       <h2>Mastering</h2>
       <label class="check" style="margin-bottom:12px"><input type="checkbox" id="mOn" checked> Master when exporting</label>
@@ -546,9 +575,10 @@ body.force2 .cols > .panel{margin-top:14px}
         <label class="check"><input type="checkbox" id="vSlow"> Slow waveform: half a second at a time, so beats and pulses show</label>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <label class="check" style="margin:0"><input type="checkbox" id="vBars"> Spectrum</label>
-          <select id="vBarStyle" style="width:auto"><option value="bars">Bars</option><option value="mirror">Mirrored bars</option></select>
+          <select id="vBarStyle" style="width:auto"><option value="bars">Bars</option><option value="mirror">Mirrored bars</option><option value="stems">Stacked in track colors</option></select>
         </div>
-        <label class="check" style="margin-top:8px"><input type="checkbox" id="vSong"> Whole-song waveform with a progress marker</label>
+        <p class="hint" style="margin:4px 0 0">"Stacked in track colors" shows how much each track adds to every part of the spectrum, in that track's color, building up to the full mix.</p>
+      <label class="check" style="margin-top:8px"><input type="checkbox" id="vSong"> Whole-song waveform with a progress marker</label>
         <div class="field" style="margin-top:8px;max-width:220px">
           <label for="vColor">Visual color</label>
           <input type="color" id="vColor" value="#F2A541">
@@ -1025,7 +1055,7 @@ function syncTrackPanel(t){
   q('.tfname').textContent = hasAudio(t) ? (t.clips.length===1 ? `${t.clips[0].name}` : `${t.clips.length} clips`) + `, ${fmt(trackEnd(t)-trackStart(t))}` : 'No audio yet';
   q('.tpickface').textContent = hasAudio(t) ? 'Add audio at playhead' : 'Choose audio';
 }
-function renderAll(){ renderLanes(); renderTrackPanels(); renderShowRow(); renderTargets(); }
+function renderAll(){ renderLanes(); renderTrackPanels(); renderShowRow(); renderTargets(); try{ renderClean(); }catch(e){} }
 
 async function loadFile(t,f,quiet){
   const a=ctx(); if(!quiet) status(`Loading ${f.name}…`, true);
@@ -1855,15 +1885,92 @@ function limiterGain(p, sr, gain, set, out, work){
   let sum=0; for(let i=0;i<n;i++){ sum+=out[i]; a[i]=out[i]; if(i>L) sum-=a[i-L-1]; out[i]=sum/Math.min(i+1,L+1); }
   return out;
 }
+// ---------- cleanup (offline, moment-by-moment) ----------
+const CLEAN=[
+  {k:'deess', name:'De-esser', hint:'Turns down harsh S, SH, and T sounds when they spike (about 5–9 kHz). Best on a vocal track.', f:6500, q:1.0, pct:75, att:1, rel:60, max:10},
+  {k:'hiss', name:'Hiss quieter', hint:'Lowers hiss above about 4.5 kHz only in quiet gaps between phrases. The music itself passes through.'},
+  {k:'shimmer', name:'Shimmer tamer', hint:'Smooths swirly, metallic high end (about 8–16 kHz) when it flares up.', f:11500, q:0.7, pct:70, att:5, rel:120, max:8},
+  {k:'harsh', name:'Harsh tamer', hint:'Eases piercing upper mids (about 2.5–5 kHz) in vocals and guitars when they get sharp.', f:3500, q:1.0, pct:80, att:5, rel:100, max:6},
+  {k:'mud', name:'Mud tamer', hint:'Eases boomy low mids (about 200–500 Hz) only when they build up.', f:320, q:1.0, pct:80, att:20, rel:200, max:6}
+];
+const CL_AMT={gentle:0.35, medium:0.6, strong:0.9};
+let cleans={}, secs=[], clTarget='mix', lastStems=null;
+function cleanFor(key){ if(!cleans[key]){ const o={}; CLEAN.forEach(m=>o[m.k]={on:false,amt:'medium'}); cleans[key]=o; } return cleans[key]; }
+const cleanActive=key=>!!cleans[key] && CLEAN.some(m=>cleans[key][m.k] && cleans[key][m.k].on);
+function bqc(type,f,q,sr){ f=Math.min(f,sr*0.45); const w=2*Math.PI*f/sr, cs=Math.cos(w), sn=Math.sin(w), al=sn/(2*q), a0=1+al;
+  const b = type==='bp' ? [al,0,-al] : type==='lp' ? [(1-cs)/2,1-cs,(1-cs)/2] : [(1+cs)/2,-(1+cs),(1+cs)/2];
+  return [b[0]/a0,b[1]/a0,b[2]/a0,-2*cs/a0,(1-al)/a0]; }
+function bqRun(x,c){ const y=new Float32Array(x.length), b0=c[0],b1=c[1],b2=c[2],a1=c[3],a2=c[4]; let x1=0,x2=0,y1=0,y2=0;
+  for(let i=0;i<x.length;i++){ const v=x[i], o=b0*v+b1*x1+b2*x2-a1*y1-a2*y2; x2=x1; x1=v; y2=y1; y1=o; y[i]=o; } return y; }
+function follow(sigs,sr,attMs,relMs){ const n=sigs[0].length, e=new Float32Array(n), ga=Math.exp(-1/(sr*attMs/1000)), gr=Math.exp(-1/(sr*relMs/1000)); let s=0;
+  for(let i=0;i<n;i++){ let v=0; for(const x of sigs){ const a=Math.abs(x[i]); if(a>v) v=a; } s = v>s ? ga*s+(1-ga)*v : gr*s+(1-gr)*v; e[i]=s; } return e; }
+function pctDb(e,p){ const v=[]; for(let i=0;i<e.length;i+=64){ const d=20*Math.log10(e[i]+1e-12); if(d>-80) v.push(d); } if(!v.length) return -80; v.sort((a,b)=>a-b); return v[Math.min(v.length-1,Math.floor(p/100*v.length))]; }
+// a peaking cut that only dips when its band rises above the song's own usual level
+function dynCut(chs,sr,m,amt){
+  const c=bqc('bp',m.f,m.q,sr), b=chs.map(x=>bqRun(x,c)), e=follow(b,sr,m.att,m.rel);
+  const thr=pctDb(e,m.pct)+4-amt*6, slope=1-1/(2+amt*6), maxCut=m.max*amt, n=chs[0].length, LA=Math.round(sr*0.002);
+  const gA=Math.exp(-1/(sr*0.001)), gR=Math.exp(-1/(sr*m.rel/1000)); let gs=0;
+  for(let i=0;i<n;i++){ const ed=20*Math.log10(e[Math.min(n-1,i+LA)]+1e-12); const tg=Math.min(maxCut,Math.max(0,(ed-thr)*slope));
+    gs = tg>gs ? gA*gs+(1-gA)*tg : gR*gs+(1-gR)*tg;
+    if(gs>0.01){ const k=Math.pow(10,-gs/20)-1; for(let ch=0;ch<chs.length;ch++) chs[ch][i]+=k*b[ch][i]; } }
+}
+// lowers the top end only while the song is near its quietest (blends toward a gentle low-pass)
+function hissQuiet(chs,sr,amt){
+  const c=bqc('lp',4500,0.707,sr), h=chs.map(x=>bqRun(x,c)), e=follow(chs,sr,5,60);
+  const thr=pctDb(e,50)-26+amt*6, maxCut=18*amt, n=chs[0].length, LA=Math.round(sr*0.005);
+  const gClose=Math.exp(-1/(sr*0.06)), gOpen=Math.exp(-1/(sr*0.003)); let gs=0;
+  for(let i=0;i<n;i++){ const ed=20*Math.log10(e[Math.min(n-1,i+LA)]+1e-12); const tg=Math.max(0,Math.min(1,(thr-ed)/6))*maxCut;
+    gs = tg>gs ? gClose*gs+(1-gClose)*tg : gOpen*gs+(1-gOpen)*tg;
+    if(gs>0.01){ const w=1-Math.pow(10,-gs/20); for(let ch=0;ch<chs.length;ch++) chs[ch][i]+=w*(h[ch][i]-chs[ch][i]); } }
+}
+async function applyClean(chs,sr,set){
+  for(const m of CLEAN){ const st=set[m.k]; if(!st||!st.on) continue; const amt=CL_AMT[st.amt]||0.6;
+    if(m.k==='hiss') hissQuiet(chs,sr,amt); else dynCut(chs,sr,m,amt); await sleep(); }
+}
+function sectionFix(chs,sr){
+  const list=secs.filter(x=>x.b>x.a && (x.vol||x.treb)); if(!list.length) return;
+  const n=chs[0].length, vol=new Float32Array(n), tr=new Float32Array(n);
+  list.forEach(x=>{ const r=Math.min(0.5,(x.b-x.a)/4), i0=Math.max(0,Math.floor(x.a*sr)), i1=Math.min(n,Math.ceil(x.b*sr));
+    for(let i=i0;i<i1;i++){ const t=i/sr, w=Math.min(1,(t-x.a)/r,(x.b-t)/r); if(w<=0) continue; vol[i]+=w*(x.vol||0); tr[i]+=w*(x.treb||0); } });
+  const c=bqc('hp',4000,0.707,sr);
+  for(const x of chs){ const h=bqRun(x,c); for(let i=0;i<n;i++){ if(!vol[i] && !tr[i]) continue; const kt=Math.pow(10,tr[i]/20)-1, kv=Math.pow(10,vol[i]/20); x[i]=(x[i]+kt*h[i])*kv; } }
+}
 let masterBuf=null, masterSig='', listenMaster=false;
-function mixSignature(sr){ return JSON.stringify({bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
-async function renderMix(sr){
-  const tail=Math.max(0,...tracks.filter(hasAudio).map(fxTail));
-  const L=projectLen()+tail, oc=new OfflineAudioContext(2, Math.max(1,Math.ceil(L*sr)), sr);
-  await prepareFx(oc);
-  const chain=makeChain(oc, oc.destination);
-  tracks.filter(hasAudio).forEach(t=>scheduleTrack(oc,t,chain.input,0,0));
-  return await oc.startRendering();
+function mixSignature(sr){ return JSON.stringify({cl:cleans, sc:secs, bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
+async function renderMix(sr, opts={}){
+  const live=tracks.filter(hasAudio), tail=Math.max(0,...live.map(fxTail));
+  const L=projectLen()+tail, len=Math.max(1,Math.ceil(L*sr));
+  const perTrack=opts.stems || live.some(t=>cleanActive(t.id));
+  let out;
+  if(!perTrack){
+    const oc=new OfflineAudioContext(2, len, sr);
+    await prepareFx(oc);
+    const chain=makeChain(oc, oc.destination);
+    live.forEach(t=>scheduleTrack(oc,t,chain.input,0,0));
+    out=await oc.startRendering();
+  } else {
+    // each track on its own, so it can be cleaned (and measured for the stem visual), then summed
+    const sum=[new Float32Array(len), new Float32Array(len)], stems=[];
+    for(const t of live){
+      if(!audible(t)) continue;
+      const oc=new OfflineAudioContext(2, len, sr); await prepareFx(oc);
+      scheduleTrack(oc,t,oc.destination,0,0);
+      const b=await oc.startRendering(), chs=[b.getChannelData(0), b.getChannelData(1)];
+      if(cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id]);
+      for(let c=0;c<2;c++){ const s0=sum[c], x=chs[c]; for(let i=0;i<len;i++) s0[i]+=x[i]; }
+      if(opts.stems){ const m=new Float32Array(len>>1); for(let i=0;i<m.length;i++) m[i]=(chs[0][2*i]+chs[1][2*i]+chs[0][2*i+1]+chs[1][2*i+1])*0.25; stems.push({mono:m, color:css(t.colorVar)}); }
+      await sleep();
+    }
+    const oc=new OfflineAudioContext(2, len, sr), ab=new AudioBuffer({length:len, numberOfChannels:2, sampleRate:sr});
+    ab.copyToChannel(sum[0],0); ab.copyToChannel(sum[1],1);
+    const src=oc.createBufferSource(); src.buffer=ab; const chain=makeChain(oc, oc.destination); src.connect(chain.input); src.start();
+    out=await oc.startRendering();
+    if(opts.stems) lastStems={sig:mixSignature(sr), sr:sr/2, list:stems};
+  }
+  const chs=[out.getChannelData(0), out.getChannelData(1)];
+  if(cleanActive('mix')) await applyClean(chs,sr,cleans.mix);
+  sectionFix(chs,sr);
+  return out;
 }
 function setProg(el,f,msg){ el.hidden=f==null; if(f!=null) el.firstElementChild.style.width=(f*100)+'%'; if(msg) status(msg,true); }
 async function masterMix(sr, prog){
@@ -1915,6 +2022,42 @@ $('mRun').onclick=async()=>{
   setProg($('mProgress'),null); $('mRun').disabled=false;
 };
 $('mListen').onchange=e=>{ listenMaster=e.target.checked; restartIfPlaying(); };
+function renderClean(){
+  const sel=$('clTarget'), keep=clTarget;
+  sel.innerHTML='<option value="mix">Whole mix</option>'+tracks.filter(hasAudio).map(t=>`<option value="${t.id}"></option>`).join('');
+  [...sel.options].forEach(o=>{ if(o.value!=='mix') o.textContent=targetName(o.value); });
+  if(![...sel.options].some(o=>o.value===String(keep))) clTarget='mix';
+  sel.value=String(clTarget);
+  const set=cleanFor(clTarget);
+  $('clMods').innerHTML=CLEAN.map(m=>`<div class="clmod"><div class="clhead"><label class="check"><input type="checkbox" data-k="${m.k}"${set[m.k].on?' checked':''}> <b>${m.name}</b></label>
+    <select data-a="${m.k}" aria-label="${m.name} amount"><option value="gentle">Gentle</option><option value="medium">Medium</option><option value="strong">Strong</option></select></div><p class="hint">${m.hint}</p></div>`).join('');
+  $('clMods').querySelectorAll('select[data-a]').forEach(s=>{ s.value=set[s.dataset.a].amt; s.onchange=()=>{ cleanFor(clTarget)[s.dataset.a].amt=s.value; cleanChanged(); }; });
+  $('clMods').querySelectorAll('input[data-k]').forEach(c=>c.onchange=()=>{ cleanFor(clTarget)[c.dataset.k].on=c.checked; cleanChanged(); });
+}
+function cleanChanged(){ try{ localStorage.setItem('mixdown-clean',JSON.stringify({mix:cleans.mix||null})); }catch(e){} if(listenMaster && masterBuf) toast('Cleanup changed. Tap Hear cleanup to update what you hear.'); }
+renderClean(); renderSecs();
+$('clTarget').onchange=e=>{ clTarget=e.target.value==='mix'?'mix':+e.target.value; renderClean(); };
+$('clHear').onclick=()=>{ if(!tracks.some(hasAudio)){ status('Choose an audio file for a track first.'); return; } $('mRun').click(); };
+try{ const sv=JSON.parse(localStorage.getItem('mixdown-clean')||'null'); if(sv && sv.mix) cleans.mix=sv.mix; }catch(e){}
+const mmss=x=>{ x=Math.max(0,+x||0); const m=Math.floor(x/60), s=x-m*60; return m+':'+(s<10?'0':'')+s.toFixed(1); };
+const parseT=v=>{ v=String(v).trim(); if(!v) return 0; if(v.includes(':')){ const [m,s]=v.split(':'); return (+m||0)*60+(+s||0); } return +v||0; };
+function renderSecs(){
+  const box=$('secList'); box.innerHTML='';
+  if(!secs.length){ box.innerHTML='<p class="hint" style="margin:0 0 8px">No sections yet.</p>'; return; }
+  secs.forEach((x,i)=>{ const d=document.createElement('div'); d.className='secrow';
+    d.innerHTML=`<div class="row"><div class="field"><label>Start</label><input type="text" inputmode="decimal" data-f="a" value="${mmss(x.a)}"></div><div class="field"><label>End</label><input type="text" inputmode="decimal" data-f="b" value="${mmss(x.b)}"></div></div>
+      <div class="row"><div class="field"><label>Volume (dB)</label><input type="number" step="0.5" min="-24" max="12" inputmode="decimal" data-f="vol" value="${x.vol||0}"></div><div class="field"><label>Treble (dB)</label><input type="number" step="0.5" min="-12" max="6" inputmode="decimal" data-f="treb" value="${x.treb||0}"></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small" data-act="go">Go to start</button><button class="small" data-act="del">Remove</button></div>`;
+    d.querySelectorAll('input[data-f]').forEach(inp=>inp.onchange=()=>{ const f=inp.dataset.f; let v = (f==='a'||f==='b') ? parseT(inp.value) : (+inp.value||0);
+      if(f==='vol') v=Math.max(-24,Math.min(12,v)); if(f==='treb') v=Math.max(-12,Math.min(6,v)); x[f]=v; if(x.b<x.a){ const t=x.a; x.a=x.b; x.b=t; } renderSecs(); cleanChanged(); });
+    d.querySelector('[data-act=go]').onclick=()=>seek(x.a);
+    d.querySelector('[data-act=del]').onclick=()=>{ secs.splice(i,1); renderSecs(); cleanChanged(); };
+    box.appendChild(d); });
+}
+$('secAdd').onclick=()=>{ let a, b;
+  if(sel && Math.abs(sel.b-sel.a)>=0.5){ a=Math.min(sel.a,sel.b); b=Math.max(sel.a,sel.b); }
+  else { a=playhead; b=Math.min(projectLen()||a+10, a+10); if(b<=a) b=a+10; }
+  secs.push({a,b,vol:-2,treb:0}); renderSecs(); cleanChanged(); toast(sel?'Added the selected part. Adjust its volume or treble.':'Added 10 seconds from the playhead. Adjust the times, volume, or treble.'); };
 
 // ---------- tags ----------
 const TAG_IDS=['tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
@@ -2107,10 +2250,10 @@ function fft(re,im){ const n=re.length;
     for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let k=0;k<len/2;k++){ const a=i+k, b=a+len/2, xr=re[b]*cr-im[b]*ci, xi=re[b]*ci+im[b]*cr;
       re[b]=re[a]-xr; im[b]=im[a]-xi; re[a]+=xr; im[a]+=xi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
 // Stacked visual rows for the cover art video. kinds: 'wave' | 'slow' | 'bars' | 'mirror' | 'song'
-function makeVisualizer(kinds, mono, sr, W, band, color){
+function makeVisualizer(kinds, mono, sr, W, band, color, stems){
   const rowH=band.h/kinds.length, pad=W*0.06, x0=pad, w=W-2*pad;
   const N=2048, hann=new Float32Array(N); for(let i=0;i<N;i++) hann[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
-  const re=new Float32Array(N), im=new Float32Array(N);
+  const re=new Float32Array(N), im=new Float32Array(N), sre=new Float32Array(N), sim=new Float32Array(N);
   // whole-song overview (computed once)
   let overview=null;
   if(kinds.includes('song')){
@@ -2151,6 +2294,24 @@ function makeVisualizer(kinds, mono, sr, W, band, color){
           const bh=Math.max(4,val*h*(k==='mirror'?0.5:1)), x=x0+b*bw+bw*0.18, bwid=bw*0.64;
           if(k==='mirror') g.fillRect(x, mid-bh, bwid, bh*2); else g.fillRect(x, y0+(rowH-h)/2+h-bh, bwid, bh);
         }
+      } else if(k==='stems'){
+        // full-mix bar height, split into each track's share of that band, in the track's color
+        const c0=Math.round(t*sr)-N/2;
+        for(let i=0;i<N;i++){ re[i]=(mono[c0+i]||0)*hann[i]; im[i]=0; }
+        fft(re,im);
+        const binHz=sr/N, bw=w/bandsN, ssr=stems?stems.sr:sr, sbin=ssr/N, sc0=Math.round(t*ssr)-N/2;
+        const pw=(stems?stems.list:[]).map(st=>{ for(let i=0;i<N;i++){ sre[i]=(st.mono[sc0+i]||0)*hann[i]; sim[i]=0; } fft(sre,sim);
+          const out=new Float32Array(bandsN); for(let b=0;b<bandsN;b++){ if(edges[b]>=ssr/2) continue; const i0=Math.max(1,Math.floor(edges[b]/sbin)), i1=Math.min(N/2,Math.max(i0+1,Math.ceil(edges[b+1]/sbin))); let m=0; for(let i=i0;i<i1;i++){ const q=sre[i]*sre[i]+sim[i]*sim[i]; if(q>m) m=q; } out[b]=m; } return out; });
+        for(let b=0;b<bandsN;b++){
+          let m=0; const i0=Math.max(1,Math.floor(edges[b]/binHz)), i1=Math.max(i0+1,Math.ceil(edges[b+1]/binHz));
+          for(let i=i0;i<i1;i++){ const mag=Math.hypot(re[i],im[i]); if(mag>m) m=mag; }
+          let val=Math.max(0,Math.min(1,(20*Math.log10(m/(N/4)+1e-9)+60)/60)); val=Math.max(val,prev[b]*0.88); prev[b]=val;
+          const bh=Math.max(4,val*h), x=x0+b*bw+bw*0.18, bwid=bw*0.64; let y=y0+(rowH-h)/2+h;
+          let tot=0; pw.forEach(p=>tot+=p[b]);
+          if(tot<=0){ g.fillStyle=color; g.shadowColor=color; g.fillRect(x, y-bh, bwid, bh); continue; }
+          pw.forEach((p,si)=>{ const sh=bh*p[b]/tot; if(sh<0.5) return; const col=stems.list[si].color; g.fillStyle=col; g.shadowColor=col; g.fillRect(x, y-sh, bwid, sh); y-=sh; });
+        }
+        g.fillStyle=color; g.shadowColor=color;
       } else if(k==='song' && overview){
         const cols=overview.mn.length, done=Math.round(cols*Math.min(1,t/dur)), cw=w/cols;
         g.shadowBlur=0;
@@ -2161,7 +2322,7 @@ function makeVisualizer(kinds, mono, sr, W, band, color){
     g.restore();
   };
 }
-async function makeVideo(buf, v, prog){
+async function makeVideo(buf, v, prog, stems){
   const kinds=[]; if($('vWave').checked) kinds.push('wave'); if($('vSlow').checked) kinds.push('slow'); if($('vBars').checked) kinds.push($('vBarStyle').value); if($('vSong').checked) kinds.push('song');
   const vis=kinds.length?kinds:null, moving=kinds.some(k=>k!=='song');
   const shp=$('vShape').value, W=shp==='h'?1920:1080, H=shp==='v'?1920:1080, fps=moving?30:15;
@@ -2173,7 +2334,7 @@ async function makeVideo(buf, v, prog){
   if(vis){
     const mono=new Float32Array(b.length), L=b.getChannelData(0), R=b.getChannelData(b.numberOfChannels>1?1:0);
     for(let i=0;i<mono.length;i++) mono[i]=(L[i]+R[i])/2;
-    draw=makeVisualizer(kinds, mono, b.sampleRate, W, frame.band, $('vColor').value);
+    draw=makeVisualizer(kinds, mono, b.sampleRate, W, frame.band, $('vColor').value, stems);
     live=document.createElement('canvas'); live.width=W; live.height=H; lg=live.getContext('2d');
   }
   const muxer=new Mp4Muxer.Muxer({target:new Mp4Muxer.ArrayBufferTarget(), video:{codec:'avc',width:W,height:H,frameRate:fps}, audio:{codec:'aac',numberOfChannels:2,sampleRate:acfg.sampleRate}, fastStart:false});
@@ -2330,7 +2491,14 @@ $('exportWav').onclick=async()=>{
     const v=tagValues(), fmt=$('fmt').value; let blob;
     if(fmt==='wav'){ prog(0.95,'Writing the file…'); await sleep(); blob=encodeWav(out,bits,v); }
     else if(fmt==='m4a'){ prog(0.9,'Encoding M4A…'); blob=await makeM4a(out,v,prog); }
-    else { prog(0.6,'Making the video…'); blob=await makeVideo(out,v,prog); }
+    else {
+      let stems=null;
+      if($('vBars').checked && $('vBarStyle').value==='stems'){
+        if(!lastStems || lastStems.sig!==mixSignature(sr)){ prog(0.5,'Measuring each track for the colors…'); await sleep(); await renderMix(sr,{stems:true}); }
+        stems=lastStems;
+      }
+      prog(0.6,'Making the video…'); blob=await makeVideo(out,v,prog,stems);
+    }
     const tail=(lp.on?(lp.fill?`-${Math.round(lp.fill/60)}min`:lp.reps>1?`-x${lp.reps}`:'-loop'):'')+(fmt==='wav'?'.wav':fmt==='m4a'?'.m4a':'.mp4');
     lastExport={blob, tail};
     await saveBlob(exportBase()+tail, blob);
@@ -2405,7 +2573,7 @@ $('projSave').onclick=async()=>{
   pause(); const zip=new JSZip(), used=new Set();
   $('projSave').disabled=true; $('projSaveBtn').hidden=true; setProg($('projProg'),0.05); projStatus('Packing your project…', true); await sleep();
   try{
-    const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs,
+    const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs, cleans, secs,
       tracks:tracks.map(t=>({id:t.id,hidden:!!t.hidden,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
         clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0}; })})),
       sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
@@ -2426,7 +2594,7 @@ $('projSave').onclick=async()=>{
 };
 function clearProject(){
   pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
-  eqs={mix:eqs.mix}; sources.clear();
+  eqs={mix:eqs.mix}; sources.clear(); cleans={mix:cleans.mix}; secs=[]; clTarget='mix'; lastStems=null; renderClean(); renderSecs();
 }
 $('projNew').onclick=()=>{
   if(tracks.some(hasAudio) && !confirm('Start a new project? Save this one first if you want to keep it.')) return;
@@ -2469,6 +2637,7 @@ $('projOpen').onchange=async e=>{
     }
     nextId=maxT+1; nextClip=maxC+1; activeId=tracks[0]?.id||null;
     eqs={mix:(data.eqs&&data.eqs.mix)||eqs.mix}; if(data.eqs) Object.keys(data.eqs).forEach(key=>{ if(key!=='mix') eqs[key]=data.eqs[key]; });
+    cleans=data.cleans||{}; secs=Array.isArray(data.secs)?data.secs:[]; clTarget='mix'; renderSecs();
     showCover(data.cover ? {mime:data.cover.mime, bytes:unb64(data.cover.data)} : null);
     saveEq(); syncM(); syncFmt(); syncLoop(); syncLatency(); renderAll(); renderBands(); syncBand(); setZoomFromSlider(); drawSpec();
     { const t=$('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,''); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
