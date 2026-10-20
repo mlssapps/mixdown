@@ -139,6 +139,13 @@ body.tracklock .lane canvas{touch-action:none}
 .tshow.off{opacity:.55;text-decoration:line-through}
 .val.changed{color:var(--accent);font-weight:600}
 input[type=range]{touch-action:pan-y}
+/* volume-style sliders: drag the circle itself, so scrolling past can't bump them */
+input[type=range].thumbonly{-webkit-appearance:none;appearance:none;height:30px;background:transparent;pointer-events:none;margin:0}
+input[type=range].thumbonly::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:var(--line)}
+input[type=range].thumbonly::-moz-range-track{height:6px;border-radius:99px;background:var(--line)}
+input[type=range].thumbonly::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:28px;height:28px;margin-top:-11px;border-radius:50%;background:var(--accent);border:3px solid var(--panel);box-shadow:0 1px 4px rgba(0,0,0,.3);cursor:grab}
+input[type=range].thumbonly::-moz-range-thumb{pointer-events:auto;width:24px;height:24px;border-radius:50%;background:var(--accent);border:3px solid var(--panel);cursor:grab}
+input[type=range].thumbonly:disabled::-webkit-slider-thumb{background:var(--muted);cursor:default}
 .track,.lane,.lanes,input[type=range],.thead,.ttoggle{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .track input[type=text]{-webkit-user-select:text;user-select:text}
 .vreset{background:none;border:none;padding:2px 4px;margin:-2px -4px;font:inherit;color:inherit;cursor:pointer;border-radius:6px}
@@ -240,7 +247,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 27</p>
+  <p class="ver">Version 28</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -277,8 +284,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <p><b>Add tone track</b> creates a generated tone you can layer under your music. Choose <b>Binaural</b> (a slightly different tone in each ear; needs stereo headphones), <b>Monaural</b> (both tones mixed, works on speakers), or <b>Isochronic</b> (one tone pulsing on and off; adjust how soft the pulse edges are). Set the <b>Carrier</b> (the tone you hear) and the <b>Beat</b> (how fast it pulses), or tap a band button. <b>Glide the beat</b> moves smoothly from one beat rate to another over the track. Add a <b>Noise bed</b> (white, pink, or brown) under the tone and set its level, or choose <b>Noise only</b> for a track of just noise. Press <b>Update tone</b> after changes. Tone tracks work like any other track: volume, fades, EQ, split, and trim. Pan is off for binaural so each ear keeps its own tone.</p>
     <p>Binaural beats only work in stereo. If a phone speaker or app plays your song in mono, they disappear; monaural and isochronic tones survive.</p>
     <h3>Mastering</h3>
-    <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it.</p>
-    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with optional visual rows in your color: a live waveform, a slow waveform that shows beats and pulses, spectrum bars, and a whole-song waveform with a progress marker; check any combination). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
+    <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it. If you change anything in the mix afterward, Listen to the master turns itself off so Play always matches what you see; master again to hear the new version.</p>
+    <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with optional visual rows in your color: a live waveform, a slow waveform that shows beats and pulses, spectrum bars (plain, mirrored, stacked in track colors, or <b>EQ screen</b>: the whole mix shaded with a glowing line for each track, like the live EQ display), and a whole-song waveform with a progress marker; check any combination). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
     <h3>Repeat and seamless loops</h3>
     <p>In Export, <b>Repeat</b> plays the song 2, 3, or 5 times in one file, or <b>fills</b> 3 to 30 minutes, ending with a gentle fade. <b>Seamless loop</b> blends the ending into the beginning over the <b>Blend length</b>, so repeats flow without a click or gap. With Repeat off, Seamless loop makes a single file that loops perfectly when a player repeats it. Great for tone and noise tracks. Long files are large, so M4A is a good choice for them.</p>
     <h3>Editing tags only</h3>
@@ -287,10 +294,11 @@ body.force2 .cols > .panel{margin-top:14px}
     <h3>Layout</h3>
     <p>The <b>Size</b> buttons (100%, 85%, 70%) shrink the whole page on a phone so more fits on screen; you can still pinch to zoom in. The <b>Layout</b> buttons under the title switch between <b>Auto</b> (side by side on wide screens), <b>1 column</b>, and <b>2 columns</b>, whatever your screen size. Your choice is remembered.</p>
     <h3>Cleanup</h3>
-    <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids. <b>Cleanup</b> quiets each one only at the moments it flares up, so the rest of the song stays as it was. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
+    <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
     <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
     <h3>Good to know</h3>
     <ul>
+      <li>Volume, pan, and gain sliders move only when you drag the circle itself, so scrolling past can't bump them. Tap a changed number (it turns underlined) or double-tap the slider to reset it; volumes also snap to 0 dB as you pass it.</li>
       <li>Your audio never leaves your device. Files aren't saved when you close the app, so choose them again next time.</li>
       <li>Open the app in Chrome or Safari, not inside Instagram or Facebook, or choosing files may not work.</li>
       <li>The <b>Peak</b> reading after export tells you if the mix clips (goes over 0 dB). Turn on mastering to keep the export from clipping.</li>
@@ -465,8 +473,8 @@ body.force2 .cols > .panel{margin-top:14px}
         </div>
         <div class="row">
           <div class="field">
-            <label for="bGain">Gain <span class="val" id="bGainV"></span></label>
-            <input type="range" id="bGain" min="-18" max="18" step="0.1">
+            <label for="bGain">Gain <button type="button" class="val vreset" id="bGainV" title="Tap to reset to 0 dB"></button></label>
+            <input type="range" id="bGain" class="thumbonly" min="-18" max="18" step="0.1">
           </div>
           <div class="field">
             <label for="bQ">Width (Q) <span class="val" id="bQV"></span></label>
@@ -538,8 +546,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <div class="panel" data-sec="export">
       <h2>Export</h2>
       <div class="field">
-        <label for="master">Master volume <span class="val" id="masterV"></span></label>
-        <input type="range" id="master" min="-24" max="12" step="0.1" value="0">
+        <label for="master">Master volume <button type="button" class="val vreset" id="masterV" title="Tap to reset to 0 dB"></button></label>
+        <input type="range" id="master" class="thumbonly" min="-24" max="12" step="0.1" value="0">
       </div>
       <div id="exportOnly">
       <div class="row">
@@ -575,9 +583,9 @@ body.force2 .cols > .panel{margin-top:14px}
         <label class="check"><input type="checkbox" id="vSlow"> Slow waveform: half a second at a time, so beats and pulses show</label>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <label class="check" style="margin:0"><input type="checkbox" id="vBars"> Spectrum</label>
-          <select id="vBarStyle" style="width:auto"><option value="bars">Bars</option><option value="mirror">Mirrored bars</option><option value="stems">Stacked in track colors</option></select>
+          <select id="vBarStyle" style="width:auto"><option value="bars">Bars</option><option value="mirror">Mirrored bars</option><option value="stems">Stacked in track colors</option><option value="eqview">EQ screen: shaded mix, a line for each track</option></select>
         </div>
-        <p class="hint" style="margin:4px 0 0">"Stacked in track colors" shows how much each track adds to every part of the spectrum, in that track's color, building up to the full mix.</p>
+        <p class="hint" style="margin:4px 0 0">"Stacked in track colors" shows how much each track adds to every part of the spectrum, in that track's color, building up to the full mix. "EQ screen" looks like the live EQ display: the whole mix as a shaded area, with a glowing line for each track in its color.</p>
       <label class="check" style="margin-top:8px"><input type="checkbox" id="vSong"> Whole-song waveform with a progress marker</label>
         <div class="field" style="margin-top:8px;max-width:220px">
           <label for="vColor">Visual color</label>
@@ -974,8 +982,8 @@ function trackBodyHTML(t){
   ${toneHTML()}
   <span class="tfname" hidden></span><span class="tpickface" hidden></span>
   <div class="row">
-    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain" min="-40" max="6" step="0.1"></div>
-    <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan" min="-1" max="1" step="0.01"></div>
+    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain thumbonly" min="-40" max="6" step="0.1"></div>
+    <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan thumbonly" min="-1" max="1" step="0.01"></div>
   </div>
   <div class="row">
     <div class="field"><label>Fade in <button type="button" class="val vreset tfiV" title="Tap to reset"></button></label><input type="range" class="tfi" min="0" max="30" step="0.1"></div>
@@ -989,8 +997,8 @@ function trackBodyHTML(t){
     <span class="tfname hint" style="margin:0"></span>
   </div>
   <div class="row">
-    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain" min="-30" max="12" step="0.1"></div>
-    <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan" min="-1" max="1" step="0.01"></div>
+    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain thumbonly" min="-30" max="12" step="0.1"></div>
+    <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan thumbonly" min="-1" max="1" step="0.01"></div>
   </div>
   <div class="row">
     <div class="field"><label>Fade in <button type="button" class="val vreset tfiV" title="Tap to reset"></button></label><input type="range" class="tfi" min="0" max="15" step="0.1"></div>
@@ -1424,11 +1432,11 @@ function syncBand(){
   const set=curEq(), b=set.bands[curBand];
   $('bOn').checked=b.on; $('bType').value=b.type;
   $('bFreq').value=fToSlider(b.f); $('bFreqV').textContent=fmtF(b.f);
-  $('bGain').value=b.g; $('bGainV').textContent=noGain(b.type)?'n/a':(b.g>0?'+':'')+b.g.toFixed(1)+' dB';
+  $('bGain').value=b.g; $('bGainV').textContent=noGain(b.type)?'n/a':(b.g>0?'+':'')+b.g.toFixed(1)+' dB'; $('bGainV').classList.toggle('changed',!noGain(b.type)&&Math.abs(b.g)>0.05);
   $('bGain').disabled = !eqEditing || noGain(b.type);
   $('bQ').value=qToSlider(b.q); $('bQV').textContent=b.q.toFixed(2);
   $('eqBypass').checked=set.bypass;
-  $('master').value=masterDb; $('masterV').textContent=(masterDb>0?'+':'')+masterDb.toFixed(1)+' dB';
+  $('master').value=masterDb; $('masterV').textContent=(masterDb>0?'+':'')+masterDb.toFixed(1)+' dB'; $('masterV').classList.toggle('changed',Math.abs(masterDb)>0.05);
 }
 function applyAll(){ const set=curEq(); liveNodes(eqTarget).forEach((n,i)=>applyBand(n,set.bands[i],set.bypass)); }
 function bandChanged(){ const set=curEq(), n=liveNodes(eqTarget)[curBand]; if(n) applyBand(n,set.bands[curBand],set.bypass); if(eqTarget==='mix') saveEq(); syncBand(); renderBands(); drawSpec(); }
@@ -1436,12 +1444,14 @@ const cb=()=>curEq().bands[curBand];
 $('bOn').onchange=e=>{ cb().on=e.target.checked; bandChanged(); };
 $('bType').onchange=e=>{ cb().type=e.target.value; bandChanged(); };
 $('bFreq').oninput=e=>{ cb().f=sliderToF(+e.target.value); bandChanged(); };
-$('bGain').oninput=e=>{ cb().g=+e.target.value; cb().on=true; bandChanged(); };
+$('bGain').oninput=e=>{ let v=+e.target.value; if(Math.abs(v)<0.3){ v=0; e.target.value=0; } cb().g=v; cb().on=true; bandChanged(); };
 $('bQ').oninput=e=>{ cb().q=sliderToQ(+e.target.value); bandChanged(); };
 $('eqBypass').onchange=e=>{ curEq().bypass=e.target.checked; applyAll(); if(eqTarget==='mix') saveEq(); drawSpec(); };
 $('bandReset').onclick=()=>{ curEq().bands[curBand]=clone(DEFAULT_EQ[curBand]); bandChanged(); toast(`Band ${curBand+1} reset.`); };
 $('eqReset').onclick=()=>{ if(!confirm(`Reset all 8 bands for ${targetName(eqTarget)}?`)) return; curEq().bands=clone(DEFAULT_EQ); applyAll(); if(eqTarget==='mix') saveEq(); renderBands(); syncBand(); drawSpec(); };
-$('master').oninput=e=>{ masterDb=+e.target.value; if(masterGain) masterGain.gain.value=dbToGain(masterDb); saveEq(); syncBand(); };
+$('master').oninput=e=>{ let v=+e.target.value; if(Math.abs(v)<0.4){ v=0; e.target.value=0; } masterDb=v; if(masterGain) masterGain.gain.value=dbToGain(masterDb); saveEq(); syncBand(); };
+$('masterV').onclick=e=>{ e.preventDefault(); if(masterDb===0){ toast('Master volume is already at 0 dB.'); return; } masterDb=0; if(masterGain) masterGain.gain.value=1; saveEq(); syncBand(); toast('Master volume reset to 0 dB.'); };
+$('bGainV').onclick=e=>{ e.preventDefault(); if($('bGain').disabled) return; if(cb().g===0){ toast('This band is already at 0 dB.'); return; } cb().g=0; bandChanged(); toast('Band gain reset to 0 dB.'); };
 
 // spectrum + EQ curve
 let specData=null;
@@ -1584,8 +1594,8 @@ async function play(opts={}){
   }
   await prepareFx(c);
   startAt=playhead; startCtxTime=c.currentTime+(opts.delay||0.05);
+  if(!opts.recording && listenMaster && masterBuf && masterStale()) masterOff();
   if(!opts.recording && listenMaster && masterBuf){
-    if(masterSig!==mixSignature(+$('rate').value)) toast('The mix changed since you mastered. Tap Master now to update it.');
     const src=c.createBufferSource(); src.buffer=masterBuf; src.connect(analyser);
     if(startAt<masterBuf.duration) src.start(startCtxTime,startAt);
     session=[{srcs:[src], t:null, vol:null, pan:null, an:null, eqNodes:[]}];
@@ -1608,9 +1618,11 @@ $('toEnd').onclick=()=>{ if(playing) pause(); jump(projectLen()); };
 $('back10').onclick=()=>jump(curTime()-10);
 $('fwd10').onclick=()=>jump(curTime()+10);
 $('loop').onclick=()=>{ loopOn=!loopOn; $('loop').classList.toggle('on',loopOn); $('loop').setAttribute('aria-pressed',String(loopOn)); if(loopOn && !(sel&&Math.abs(sel.b-sel.a)>0.05)) toast('Select a section to loop it.'); };
+let staleCheckAt=0;
 function tick(){
   if(!playing) return;
   playhead=curTime();
+  if(!recording && listenMaster && masterBuf && performance.now()>staleCheckAt){ staleCheckAt=performance.now()+500; if(masterStale()){ masterOff(); playhead=curTime(); stopSources(); playing=false; play(); return; } }
   if(!recording && loopOn && sel && Math.abs(sel.b-sel.a)>0.05){ const a=Math.min(sel.a,sel.b), b=Math.max(sel.a,sel.b); if(playhead>=b || playhead<a-0.25){ seek(a); return; } }
   if(!recording && playhead>=projectLen()){ pause(); playhead=projectLen(); drawAll(); return; }
   if(recording){ updateClock(); }
@@ -1891,11 +1903,13 @@ const CLEAN=[
   {k:'hiss', name:'Hiss quieter', hint:'Lowers hiss above about 4.5 kHz only in quiet gaps between phrases. The music itself passes through.'},
   {k:'shimmer', name:'Shimmer tamer', hint:'Smooths swirly, metallic high end (about 8–16 kHz) when it flares up.', f:11500, q:0.7, pct:70, att:5, rel:120, max:8},
   {k:'harsh', name:'Harsh tamer', hint:'Eases piercing upper mids (about 2.5–5 kHz) in vocals and guitars when they get sharp.', f:3500, q:1.0, pct:80, att:5, rel:100, max:6},
-  {k:'mud', name:'Mud tamer', hint:'Eases boomy low mids (about 200–500 Hz) only when they build up.', f:320, q:1.0, pct:80, att:20, rel:200, max:6}
+  {k:'mud', name:'Mud tamer', hint:'Eases boomy low mids (about 200–500 Hz) only when they build up.', f:320, q:1.0, pct:80, att:20, rel:200, max:6},
+  {k:'declick', name:'Mouth-click remover', hint:'Finds tiny clicks and lip smacks in close, quiet vocals and smooths each one over. Best on a vocal track. Start with Gentle; Strong can soften crisp T and K sounds.'},
+  {k:'pops', name:'Pop softener', hint:'Softens the low thump of P and B sounds right on the mic. Use it on a vocal track only, since it would thin out bass and kick drums.'}
 ];
 const CL_AMT={gentle:0.35, medium:0.6, strong:0.9};
 let cleans={}, secs=[], clTarget='mix', lastStems=null;
-function cleanFor(key){ if(!cleans[key]){ const o={}; CLEAN.forEach(m=>o[m.k]={on:false,amt:'medium'}); cleans[key]=o; } return cleans[key]; }
+function cleanFor(key){ if(!cleans[key]) cleans[key]={}; const o=cleans[key]; CLEAN.forEach(m=>{ if(!o[m.k]) o[m.k]={on:false,amt:m.k==='declick'?'gentle':'medium'}; }); return o; }
 const cleanActive=key=>!!cleans[key] && CLEAN.some(m=>cleans[key][m.k] && cleans[key][m.k].on);
 function bqc(type,f,q,sr){ f=Math.min(f,sr*0.45); const w=2*Math.PI*f/sr, cs=Math.cos(w), sn=Math.sin(w), al=sn/(2*q), a0=1+al;
   const b = type==='bp' ? [al,0,-al] : type==='lp' ? [(1-cs)/2,1-cs,(1-cs)/2] : [(1+cs)/2,-(1+cs),(1+cs)/2];
@@ -1908,25 +1922,62 @@ function pctDb(e,p){ const v=[]; for(let i=0;i<e.length;i+=64){ const d=20*Math.
 // a peaking cut that only dips when its band rises above the song's own usual level
 function dynCut(chs,sr,m,amt){
   const c=bqc('bp',m.f,m.q,sr), b=chs.map(x=>bqRun(x,c)), e=follow(b,sr,m.att,m.rel);
-  const thr=pctDb(e,m.pct)+4-amt*6, slope=1-1/(2+amt*6), maxCut=m.max*amt, n=chs[0].length, LA=Math.round(sr*0.002);
-  const gA=Math.exp(-1/(sr*0.001)), gR=Math.exp(-1/(sr*m.rel/1000)); let gs=0;
+  const thr=pctDb(e,m.pct)+4-amt*6, slope=1-1/(2+amt*6), maxCut=m.max*amt, n=chs[0].length;
+  // gain moves no faster than the module's own attack (low bands move slower, so a cut never clicks); look ahead by the same time so it still lands on the spike
+  const attS=Math.max(0.001,m.att/1000), LA=Math.round(sr*attS*1.5);
+  const gA=Math.exp(-1/(sr*attS)), gR=Math.exp(-1/(sr*m.rel/1000)); let gs=0;
   for(let i=0;i<n;i++){ const ed=20*Math.log10(e[Math.min(n-1,i+LA)]+1e-12); const tg=Math.min(maxCut,Math.max(0,(ed-thr)*slope));
     gs = tg>gs ? gA*gs+(1-gA)*tg : gR*gs+(1-gR)*tg;
     if(gs>0.01){ const k=Math.pow(10,-gs/20)-1; for(let ch=0;ch<chs.length;ch++) chs[ch][i]+=k*b[ch][i]; } }
 }
 // lowers the top end only while the song is near its quietest (blends toward a gentle low-pass)
 function hissQuiet(chs,sr,amt){
-  const c=bqc('lp',4500,0.707,sr), h=chs.map(x=>bqRun(x,c)), e=follow(chs,sr,5,60);
-  const thr=pctDb(e,50)-26+amt*6, maxCut=18*amt, n=chs[0].length, LA=Math.round(sr*0.005);
-  const gClose=Math.exp(-1/(sr*0.06)), gOpen=Math.exp(-1/(sr*0.003)); let gs=0;
-  for(let i=0;i<n;i++){ const ed=20*Math.log10(e[Math.min(n-1,i+LA)]+1e-12); const tg=Math.max(0,Math.min(1,(thr-ed)/6))*maxCut;
-    gs = tg>gs ? gClose*gs+(1-gClose)*tg : gOpen*gs+(1-gOpen)*tg;
+  const c=bqc('lp',4500,0.707,sr), h=chs.map(x=>bqRun(x,c)), e=follow(chs,sr,10,150);
+  const thr=pctDb(e,50)-26+amt*6, maxCut=18*amt, n=chs[0].length, LA=Math.round(sr*0.02);
+  // smooth, steady moves: the target itself glides (no chatter on a fading tail or noise floor), closes over ~150 ms, opens over ~15 ms just ahead of the sound
+  const gT=Math.exp(-1/(sr*0.04)), gClose=Math.exp(-1/(sr*0.15)), gOpen=Math.exp(-1/(sr*0.015)); let gs=0, ts=0;
+  for(let i=0;i<n;i++){ const ed=20*Math.log10(e[Math.min(n-1,i+LA)]+1e-12); const tg=Math.max(0,Math.min(1,(thr-ed)/8))*maxCut;
+    ts = gT*ts+(1-gT)*tg;
+    gs = ts>gs ? gClose*gs+(1-gClose)*ts : gOpen*gs+(1-gOpen)*ts;
     if(gs>0.01){ const w=1-Math.pow(10,-gs/20); for(let ch=0;ch<chs.length;ch++) chs[ch][i]+=w*(h[ch][i]-chs[ch][i]); } }
+}
+// mouth clicks: a sudden, very short burst of highs well above the level just before it. Each one is crossfaded
+// for a few milliseconds toward a smooth low-passed copy, so the click's sharp edge disappears and the voice stays.
+function deClick(chs,sr,amt){
+  const hpC=bqc('hp',3000,0.707,sr), h=chs.map(x=>bqRun(bqRun(x,hpC),hpC));
+  const lpC=bqc('lp',2500,0.707,sr), lo=chs.map(x=>bqRun(bqRun(x,lpC),lpC));
+  const n=chs[0].length, ef=follow(h,sr,0.05,0.8), es=follow(h,sr,8,60);
+  const jump=16-amt*8, back=Math.round(sr*0.004), maxRun=Math.round(sr*0.005), pad=Math.round(sr*0.0015), floor=Math.pow(10,-72/20);
+  const hit=new Uint8Array(n);
+  for(let i=back;i<n;i++){ const prior=es[i-back]+1e-9; if(ef[i]>floor && 20*Math.log10(ef[i]/prior)>jump) hit[i]=1; }
+  const w=new Float32Array(n), depth=Math.min(1,0.55+amt*0.5), ramp=Math.round(sr*0.0008);
+  for(let i=0;i<n;){ if(!hit[i]){ i++; continue; } let j=i; while(j<n&&hit[j]) j++;
+    if(j-i<=maxRun){ const a=Math.max(0,i-pad), b=Math.min(n,j+pad);
+      for(let k=a-ramp;k<b+ramp;k++){ if(k<0||k>=n) continue; const r=k<a?(k-(a-ramp))/ramp : k>=b?((b+ramp)-k)/ramp : 1; const v=depth*Math.max(0,Math.min(1,r)); if(v>w[k]) w[k]=v; } }
+    i=j; }
+  for(let i=0;i<n;i++){ const v=w[i]; if(v>0) for(let c=0;c<chs.length;c++) chs[c][i]+=v*(lo[c][i]-chs[c][i]); }
+}
+// plosive pops: a sudden low thump that jumps well above the low end just before it and outweighs the voice's mids.
+// While it lasts, blend toward a copy with the lows rolled off; the rest of the voice is left alone.
+function popSoft(chs,sr,amt){
+  const lpC=bqc('lp',150,0.707,sr), lowB=chs.map(x=>bqRun(bqRun(x,lpC),lpC));
+  const midC=bqc('bp',1000,0.5,sr), midB=chs.map(x=>bqRun(x,midC));
+  const hpC=bqc('hp',140,0.707,sr), thin=chs.map(x=>bqRun(bqRun(x,hpC),hpC));
+  const e=follow(lowB,sr,2,40), eSlow=follow(lowB,sr,30,150), em=follow(midB,sr,2,40), n=chs[0].length;
+  const LA=Math.round(sr*0.004), back=Math.round(sr*0.03), jump=12-amt*6, floor=pctDb(e,96)-4-amt*4;
+  const gA=Math.exp(-1/(sr*0.003)), gR=Math.exp(-1/(sr*0.06)); let gs=0; const top=Math.min(1,0.6+amt*0.45);
+  for(let i=0;i<n;i++){ const j=Math.min(n-1,i+LA), ed=20*Math.log10(e[j]+1e-12), prior=20*Math.log10(eSlow[Math.max(0,j-back)]+1e-12), md=20*Math.log10(em[j]+1e-12);
+    const surge=ed-prior-jump, tg = (ed>floor && ed-md>3-amt*4) ? Math.max(0,Math.min(1,surge/6))*top : 0;
+    gs = tg>gs ? gA*gs+(1-gA)*tg : gR*gs+(1-gR)*tg;
+    if(gs>0.003) for(let c=0;c<chs.length;c++) chs[c][i]+=gs*(thin[c][i]-chs[c][i]); }
 }
 async function applyClean(chs,sr,set){
   for(const m of CLEAN){ const st=set[m.k]; if(!st||!st.on) continue; const amt=CL_AMT[st.amt]||0.6;
-    if(m.k==='hiss') hissQuiet(chs,sr,amt); else dynCut(chs,sr,m,amt); await sleep(); }
+    if(m.k==='hiss') hissQuiet(chs,sr,amt); else if(m.k==='declick') deClick(chs,sr,amt); else if(m.k==='pops') popSoft(chs,sr,amt); else dynCut(chs,sr,m,amt); await sleep(); }
 }
+// a few milliseconds of fade at the very start and end, so a file never begins or stops on a click
+function edgeFade(chs,sr){ const n=chs[0].length, fi=Math.min(n>>1,Math.round(sr*0.003)), fo=Math.min(n>>1,Math.round(sr*0.012));
+  for(const x of chs){ for(let i=0;i<fi;i++) x[i]*=i/fi; for(let i=0;i<fo;i++) x[n-1-i]*=i/fo; } }
 function sectionFix(chs,sr){
   const list=secs.filter(x=>x.b>x.a && (x.vol||x.treb)); if(!list.length) return;
   const n=chs[0].length, vol=new Float32Array(n), tr=new Float32Array(n);
@@ -1936,6 +1987,9 @@ function sectionFix(chs,sr){
   for(const x of chs){ const h=bqRun(x,c); for(let i=0;i<n;i++){ if(!vol[i] && !tr[i]) continue; const kt=Math.pow(10,tr[i]/20)-1, kv=Math.pow(10,vol[i]/20); x[i]=(x[i]+kt*h[i])*kv; } }
 }
 let masterBuf=null, masterSig='', listenMaster=false;
+// once the mix changes, the old master no longer matches what's on screen: switch Play back to the live mix and say so
+const masterStale=()=>masterSig!==mixSignature(+$('rate').value);
+function masterOff(){ listenMaster=false; const c=$('mListen'); if(c) c.checked=false; toast('You changed the mix, so Play now uses your live mix. Tap Master now (or Hear cleanup) to hear the processed version again.'); }
 function mixSignature(sr){ return JSON.stringify({cl:cleans, sc:secs, bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
 async function renderMix(sr, opts={}){
   const live=tracks.filter(hasAudio), tail=Math.max(0,...live.map(fxTail));
@@ -1970,6 +2024,7 @@ async function renderMix(sr, opts={}){
   const chs=[out.getChannelData(0), out.getChannelData(1)];
   if(cleanActive('mix')) await applyClean(chs,sr,cleans.mix);
   sectionFix(chs,sr);
+  edgeFade(chs,sr);
   return out;
 }
 function setProg(el,f,msg){ el.hidden=f==null; if(f!=null) el.firstElementChild.style.width=(f*100)+'%'; if(msg) status(msg,true); }
@@ -2224,7 +2279,7 @@ async function drawCoverFrame(W,H,v,vis){
   g.fillStyle='#000'; g.fillRect(0,0,W,H);
   const showText=$('vText').checked && (v.tgTitle||v.tgArtist);
   const textH0 = showText ? (H>W ? 260 : 170) : 0;
-  const nRows = Array.isArray(vis) ? vis.length : (vis?1:0);
+  const nRows = Array.isArray(vis) ? vis.reduce((a,k)=>a+visWeight(k),0) : (vis?1:0);
   const rowH = Math.round(H*(H>W?0.1:(nRows>2?0.11:0.14)));
   const bandH = nRows*rowH;
   const textH = textH0 + bandH; c.band={y:H-textH0-bandH, h:bandH};
@@ -2250,8 +2305,10 @@ function fft(re,im){ const n=re.length;
     for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let k=0;k<len/2;k++){ const a=i+k, b=a+len/2, xr=re[b]*cr-im[b]*ci, xi=re[b]*ci+im[b]*cr;
       re[b]=re[a]-xr; im[b]=im[a]-xi; re[a]+=xr; im[a]+=xi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
 // Stacked visual rows for the cover art video. kinds: 'wave' | 'slow' | 'bars' | 'mirror' | 'song'
+const visWeight=k=>k==='eqview'?2.2:1;
 function makeVisualizer(kinds, mono, sr, W, band, color, stems){
-  const rowH=band.h/kinds.length, pad=W*0.06, x0=pad, w=W-2*pad;
+  const unit=band.h/kinds.reduce((a,k)=>a+visWeight(k),0), pad=W*0.06, x0=pad, w=W-2*pad;
+  const rowY=[]; let acc=band.y; kinds.forEach(k=>{ rowY.push(acc); acc+=unit*visWeight(k); });
   const N=2048, hann=new Float32Array(N); for(let i=0;i<N;i++) hann[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
   const re=new Float32Array(N), im=new Float32Array(N), sre=new Float32Array(N), sim=new Float32Array(N);
   // whole-song overview (computed once)
@@ -2264,10 +2321,11 @@ function makeVisualizer(kinds, mono, sr, W, band, color, stems){
   }
   const bandsN=W>1200?72:48, edges=[]; for(let i=0;i<=bandsN;i++) edges.push(40*Math.pow(16000/40,i/bandsN));
   const prev=new Float32Array(bandsN), dur=mono.length/sr;
+  const eqP=W>1200?240:180, eqPrev={mix:new Float32Array(eqP+1), st:[]};
   return (g,t)=>{
     g.save(); g.fillStyle=color; g.strokeStyle=color; g.shadowColor=color;
     kinds.forEach((k,ri)=>{
-      const y0=band.y+ri*rowH, h=rowH*0.86, mid=y0+rowH/2;
+      const rowH=unit*visWeight(k), y0=rowY[ri], h=rowH*0.86, mid=y0+rowH/2;
       g.shadowBlur=16;
       if(k==='wave'){
         const c0=Math.round(t*sr)-N/2;
@@ -2312,6 +2370,27 @@ function makeVisualizer(kinds, mono, sr, W, band, color, stems){
           pw.forEach((p,si)=>{ const sh=bh*p[b]/tot; if(sh<0.5) return; const col=stems.list[si].color; g.fillStyle=col; g.shadowColor=col; g.fillRect(x, y-sh, bwid, sh); y-=sh; });
         }
         g.fillStyle=color; g.shadowColor=color;
+      } else if(k==='eqview'){
+        // like the EQ screen: the whole mix as a shaded area, each track as a glowing line in its color, on a frequency grid
+        const top=y0+(rowH-h)/2, bot=top+h, P=eqP, fLo=40, fHi=Math.min(16000, stems?stems.sr/2*0.98:16000, sr/2*0.98);
+        const xs=f=>x0+w*Math.log(f/fLo)/Math.log(fHi/fLo);
+        g.shadowBlur=0; g.globalAlpha=0.28; g.strokeStyle='#ffffff'; g.fillStyle='#ffffff'; g.lineWidth=Math.max(1,W/1080);
+        g.font=`500 ${Math.round(W/60)}px Figtree, sans-serif`;
+        [50,100,200,500,1000,2000,5000,10000].forEach(f=>{ if(f>fHi) return; const x=Math.round(xs(f))+.5; g.beginPath(); g.moveTo(x,top); g.lineTo(x,bot); g.stroke(); g.fillText(f>=1000?(f/1000)+'k':String(f), x+4, bot-6); });
+        g.globalAlpha=1;
+        const curve=(arr,rate,c0,store)=>{ for(let i=0;i<N;i++){ re[i]=(arr[c0+i]||0)*hann[i]; im[i]=0; } fft(re,im); const bin=rate/N, out=new Float32Array(P+1);
+          for(let p=0;p<=P;p++){ const f1=fLo*Math.pow(fHi/fLo,p/P), f2=fLo*Math.pow(fHi/fLo,(p+1)/P); const i0=Math.max(1,Math.floor(f1/bin)), i1=Math.min(N/2,Math.max(i0+1,Math.ceil(f2/bin))); let m=0; for(let i=i0;i<i1;i++){ const q=re[i]*re[i]+im[i]*im[i]; if(q>m) m=q; }
+            let val=Math.max(0,Math.min(1,(10*Math.log10(m/(N*N/16)+1e-12)+66)/66)); val=Math.max(val, store[p]-0.035); store[p]=val; out[p]=val; } return out; };
+        const mix=curve(mono,sr,Math.round(t*sr)-N/2,eqPrev.mix);
+        g.beginPath(); g.moveTo(x0,bot); for(let p=0;p<=P;p++) g.lineTo(x0+w*p/P, bot-mix[p]*h); g.lineTo(x0+w,bot); g.closePath();
+        g.fillStyle=color; g.globalAlpha=0.3; g.fill(); g.globalAlpha=1;
+        const list=stems?stems.list:[];
+        if(!list.length){ g.strokeStyle=color; g.shadowColor=color; g.shadowBlur=14; g.lineWidth=Math.max(3,W/360); g.beginPath(); for(let p=0;p<=P;p++){ const x=x0+w*p/P, y=bot-mix[p]*h; p?g.lineTo(x,y):g.moveTo(x,y); } g.stroke(); }
+        list.forEach((st,si)=>{ if(!eqPrev.st[si]) eqPrev.st[si]=new Float32Array(P+1);
+          const ssr=stems.sr, cv=curve(st.mono,ssr,Math.round(t*ssr)-N/2,eqPrev.st[si]);
+          g.strokeStyle=st.color; g.shadowColor=st.color; g.shadowBlur=14; g.lineWidth=Math.max(3,W/360); g.beginPath();
+          for(let p=0;p<=P;p++){ const x=x0+w*p/P, y=bot-cv[p]*h; p?g.lineTo(x,y):g.moveTo(x,y); } g.stroke(); });
+        g.strokeStyle=color; g.fillStyle=color; g.shadowColor=color;
       } else if(k==='song' && overview){
         const cols=overview.mn.length, done=Math.round(cols*Math.min(1,t/dur)), cw=w/cols;
         g.shadowBlur=0;
@@ -2493,7 +2572,7 @@ $('exportWav').onclick=async()=>{
     else if(fmt==='m4a'){ prog(0.9,'Encoding M4A…'); blob=await makeM4a(out,v,prog); }
     else {
       let stems=null;
-      if($('vBars').checked && $('vBarStyle').value==='stems'){
+      if($('vBars').checked && ['stems','eqview'].includes($('vBarStyle').value)){
         if(!lastStems || lastStems.sig!==mixSignature(sr)){ prog(0.5,'Measuring each track for the colors…'); await sleep(); await renderMix(sr,{stems:true}); }
         stems=lastStems;
       }
