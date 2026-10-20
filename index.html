@@ -247,7 +247,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 28</p>
+  <p class="ver">Version 29</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -294,7 +294,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <h3>Layout</h3>
     <p>The <b>Size</b> buttons (100%, 85%, 70%) shrink the whole page on a phone so more fits on screen; you can still pinch to zoom in. The <b>Layout</b> buttons under the title switch between <b>Auto</b> (side by side on wide screens), <b>1 column</b>, and <b>2 columns</b>, whatever your screen size. Your choice is remembered.</p>
     <h3>Cleanup</h3>
-    <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
+    <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
     <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
     <h3>Good to know</h3>
     <ul>
@@ -493,6 +493,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <div class="panel" data-sec="clean">
       <h2>Cleanup</h2>
       <p class="hint" style="margin-top:0">Quiets harsh S sounds, hiss, metallic shimmer, piercing upper mids, and boomy low mids, only at the moments they flare up. It's applied when you master or export.</p>
+      <label class="check"><input type="checkbox" id="endGlitch"> Remove end glitches when adding audio</label>
+      <p class="hint" style="margin:2px 0 12px">Some files, like Suno stems, fade to silence and then end with a split-second burst that sounds like a click or swipe. Mixdown trims just that burst. Each track that had one shows a note with <b>Put it back</b>, and your file itself is never changed.</p>
       <div class="field">
         <label for="clTarget">Clean up</label>
         <select id="clTarget"></select>
@@ -996,6 +998,7 @@ function trackBodyHTML(t){
     <span class="pick"><span class="pickface tpickface">Choose audio</span><input type="file" class="tfile" accept="audio/*,.wav,.mp3,.m4a,.aac,.flac,.ogg"></span>
     <span class="tfname hint" style="margin:0"></span>
   </div>
+  <div class="tglitch hint" style="margin:-4px 0 10px" hidden><span class="tglitchTxt"></span> <button type="button" class="small tglitchBtn"></button></div>
   <div class="row">
     <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain thumbonly" min="-30" max="12" step="0.1"></div>
     <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan thumbonly" min="-1" max="1" step="0.01"></div>
@@ -1060,6 +1063,7 @@ function syncTrackPanel(t){
   q('.tfi').value=t.fadeIn; q('.tfiV').textContent=t.fadeIn? t.fadeIn.toFixed(1)+' s':'Off';
   q('.tfo').value=t.fadeOut; q('.tfoV').textContent=t.fadeOut? t.fadeOut.toFixed(1)+' s':'Off';
   q('.tmute').classList.toggle('on',t.mute); q('.tsolo').classList.toggle('on',t.solo);
+  const gl=q('.tglitch'); if(gl){ const st=glitchState(t); gl.hidden=!st; if(st){ q('.tglitchTxt').textContent = st.trimmed ? `Removed a ${st.len.toFixed(2)} s glitch at the end of ${st.c.name}.` : `${st.c.name} ends with a ${st.len.toFixed(2)} s glitch (kept).`; q('.tglitchBtn').textContent = st.trimmed ? 'Put it back' : 'Remove it'; q('.tglitchBtn').onclick=()=>toggleGlitch(t); } }
   q('.tfname').textContent = hasAudio(t) ? (t.clips.length===1 ? `${t.clips[0].name}` : `${t.clips.length} clips`) + `, ${fmt(trackEnd(t)-trackStart(t))}` : 'No audio yet';
   q('.tpickface').textContent = hasAudio(t) ? 'Add audio at playhead' : 'Choose audio';
 }
@@ -1074,14 +1078,36 @@ async function loadFile(t,f,quiet){
     const nm=f.name.replace(/\.[^.]+$/,'').slice(0,40);
     pushUndo(`Add ${nm}`);
     const at = hasAudio(t) ? playhead : 0;
-    const cl=newClip(buf, computePeaks(buf), [{s:0,e:buf.duration}], at, nm); t.clips.push(cl); activeClipId=cl.id;
+    const g=detectEndGlitch(buf), cut=g>0&&endGlitchOn();
+    const cl=newClip(buf, computePeaks(buf), [{s:0,e:buf.duration-(cut?g:0)}], at, nm); if(g>0) cl.glitch=g; t.clips.push(cl); activeClipId=cl.id;
     if(/^Track \d+$/.test(t.name)) t.name=nm;
     setActive(t.id); renderAll(); setZoomFromSlider();
     if(!quiet && !$('projName').value.trim()) setTitle(nm.replace(/[_]+/g,' ').trim());
-    if(!quiet) status(`Loaded ${f.name}.`, true);
+    if(!quiet) status(`Loaded ${f.name}.`+(cut?` Removed a ${g.toFixed(2)} s glitch at its end.`:''), true);
     return true;
   }catch(e){ if(!quiet) status(`${f.name} couldn't be opened. Try a WAV, MP3, or M4A file.`); return false; }
 }
+// ---------- end glitch (e.g. Suno stems: fades to silence, then a split-second burst right at the end) ----------
+let glitchFixedOnOpen=0;
+function endGlitchOn(){ try{ return localStorage.getItem('mixdown-endglitch')!=='0'; }catch(e){ return true; } }
+function detectEndGlitch(buf){
+  const sr=buf.sampleRate, n=buf.length, W=Math.round(sr*0.005), span=Math.min(n, Math.round(sr*0.4)); if(span<W*12) return 0;
+  const chs=[]; for(let c=0;c<buf.numberOfChannels;c++) chs.push(buf.getChannelData(c));
+  const lv=[]; for(let i=n-span;i+W<=n;i+=W){ let s2=0; for(let j=i;j<i+W;j++){ let v=0; for(const x of chs) v+=x[j]; v/=chs.length; s2+=v*v; } lv.push(10*Math.log10(s2/W+1e-14)); }
+  // the faded-out level: the quiet end of the last 0.4 s (15th percentile, so one odd frame can't fool it)
+  const srt=lv.slice().sort((a,b)=>a-b), floor=srt[Math.floor(srt.length*0.15)];
+  let k=lv.length-1; while(k>0 && lv[k]>floor+3) k--;
+  const tailMax=Math.max(...lv.slice(k));
+  // only when the song has really faded out, then rises sharply in the last ~0.3 s
+  if(floor>-60 || tailMax-floor<12) return 0;
+  const cutAt=n-span+(k+1)*W, len=(n-cutAt)/sr; return len>0 && len<=0.3 ? len : 0;
+}
+function glitchState(t){ for(const c of t.clips){ if(!c.glitch) continue; const g=c.segs[c.segs.length-1]; if(!g||g.sil!=null) continue; const D=c.buf.duration;
+  if(Math.abs(g.e-(D-c.glitch))<1e-4) return {c,len:c.glitch,trimmed:true}; if(Math.abs(g.e-D)<1e-4) return {c,len:c.glitch,trimmed:false}; } return null; }
+function toggleGlitch(t){ const st=glitchState(t); if(!st) return; const g=st.c.segs[st.c.segs.length-1];
+  pushUndo(st.trimmed?`${st.c.name}: put back its ending`:`${st.c.name}: remove end glitch`);
+  g.e = st.trimmed ? st.c.buf.duration : st.c.buf.duration-st.c.glitch; renderAll(); restartIfPlaying();
+  toast(st.trimmed?'Original ending restored.':'End glitch removed.'); }
 // ---------- track effects ----------
 const FX=[
   {k:'gate',name:'Noise gate',hint:'Mutes the track when it drops below the threshold, cutting hiss between phrases.',p:[
@@ -2091,6 +2117,7 @@ function renderClean(){
 }
 function cleanChanged(){ try{ localStorage.setItem('mixdown-clean',JSON.stringify({mix:cleans.mix||null})); }catch(e){} if(listenMaster && masterBuf) toast('Cleanup changed. Tap Hear cleanup to update what you hear.'); }
 renderClean(); renderSecs();
+$('endGlitch').checked=endGlitchOn(); $('endGlitch').onchange=e=>{ try{ localStorage.setItem('mixdown-endglitch',e.target.checked?'1':'0'); }catch(err){} toast(e.target.checked?'New audio will have end glitches trimmed.':'New audio will keep its original ending.'); };
 $('clTarget').onchange=e=>{ clTarget=e.target.value==='mix'?'mix':+e.target.value; renderClean(); };
 $('clHear').onclick=()=>{ if(!tracks.some(hasAudio)){ status('Choose an audio file for a track first.'); return; } $('mRun').click(); };
 try{ const sv=JSON.parse(localStorage.getItem('mixdown-clean')||'null'); if(sv && sv.mix) cleans.mix=sv.mix; }catch(e){}
@@ -2654,7 +2681,7 @@ $('projSave').onclick=async()=>{
   try{
     const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs, cleans, secs,
       tracks:tracks.map(t=>({id:t.id,hidden:!!t.hidden,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
-        clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0}; })})),
+        clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0,gl:c.glitch||0}; })})),
       sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
     let k=0;
     for(const sid of used){
@@ -2701,7 +2728,7 @@ $('projOpen').onchange=async e=>{
     }
     setFields(data.fields||{});
     if(data.fields && data.fields.vVis && !('vWave' in data.fields)){ const o=data.fields.vVis; $('vWave').checked=o==='wave'; $('vBars').checked=o==='bars'||o==='mirror'; if(o==='mirror') $('vBarStyle').value='mirror'; } masterDb=data.masterDb||0; if(data.latencyMs!=null) latencyMs=data.latencyMs;
-    tracks=[]; let maxT=0, maxC=0;
+    tracks=[]; let maxT=0, maxC=0; glitchFixedOnOpen=0;
     for(const td of data.tracks){
       const t={...newTrack(), id:td.id, hidden:!!td.hidden, name:td.name, gainDb:td.gainDb, pan:td.pan, mute:td.mute, solo:td.solo, fadeIn:td.fadeIn, fadeOut:td.fadeOut, colorVar:td.colorVar, clips:[]};
       if(td.fx) t.fx=td.fx;
@@ -2710,7 +2737,10 @@ $('projOpen').onchange=async e=>{
         const buf=genTone(t.tone,dur,a.sampleRate), pk=computePeaks(buf);
         t.clips=td.clips.map(c=>({id:c.id,buf,peaks:pk,segs:c.segs,offset:c.offset,name:c.name,fi:c.fi||0,fo:c.fo||0}));
       } else {
-        t.clips=td.clips.filter(c=>bufs[c.src]).map(c=>({id:c.id,buf:bufs[c.src].buf,peaks:bufs[c.src].peaks,segs:c.segs,offset:c.offset,name:c.name,fi:c.fi||0,fo:c.fo||0}));
+        t.clips=td.clips.filter(c=>bufs[c.src]).map(c=>({id:c.id,buf:bufs[c.src].buf,peaks:bufs[c.src].peaks,segs:c.segs,offset:c.offset,name:c.name,fi:c.fi||0,fo:c.fo||0,glitch:c.gl||0,_old:!('gl' in c)}));
+        // projects saved before end-glitch trimming: check those files now and trim if the setting is on
+        t.clips.forEach(c=>{ if(!c._old) return; delete c._old; const g=detectEndGlitch(c.buf); if(!g) return; c.glitch=g; const L=c.segs[c.segs.length-1];
+          if(endGlitchOn() && L && L.sil==null && Math.abs(L.e-c.buf.duration)<1e-4){ L.e=c.buf.duration-g; glitchFixedOnOpen++; } });
       }
       tracks.push(t); maxT=Math.max(maxT,td.id); td.clips.forEach(c=>maxC=Math.max(maxC,c.id));
     }
@@ -2720,7 +2750,7 @@ $('projOpen').onchange=async e=>{
     showCover(data.cover ? {mime:data.cover.mime, bytes:unb64(data.cover.data)} : null);
     saveEq(); syncM(); syncFmt(); syncLoop(); syncLatency(); renderAll(); renderBands(); syncBand(); setZoomFromSlider(); drawSpec();
     { const t=$('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,''); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
-    projStatus(`Opened ${$('projName').value}.`);
+    projStatus(`Opened ${$('projName').value}.`+(glitchFixedOnOpen?` Removed end glitches from ${glitchFixedOnOpen} file${glitchFixedOnOpen>1?'s':''}; each track shows a Put it back button.`:''));
   }catch(err){ projStatus(err&&err.message==='notproj'?'That zip isn’t a Mixdown project.':'That project couldn’t be opened.'); }
   setProg($('projProg'),null);
 };
