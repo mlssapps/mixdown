@@ -247,7 +247,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 29</p>
+  <p class="ver">Version 30</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -305,6 +305,39 @@ body.force2 .cols > .panel{margin-top:14px}
     </ul>
     <h3>Credits</h3>
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
+    <h3>What's new</h3>
+    <ul>
+      <li><b>Version 30:</b> A version history (this list), and bigger, easier-to-read frequency numbers on the EQ-screen video.</li>
+      <li><b>Version 29:</b> Automatically trims the split-second click or swipe at the very end of Suno stems. Each track that had one shows <b>Put it back</b>, and a setting turns it off.</li>
+      <li><b>Version 28:</b> EQ-screen video style. <b>Mouth-click remover</b> and <b>Pop softener</b>. Smoother Cleanup, and a tiny fade at the start and end of every export. Sliders move only when you drag the circle, with tap-to-reset to 0 dB. <b>Listen to the master</b> turns off by itself when the mix changes.</li>
+      <li><b>Version 27:</b> <b>Cleanup</b> for AI music (de-esser, hiss quieter, shimmer, harsh, and mud tamers) and <b>Section fix</b>. A video spectrum stacked in track colors. Credits.</li>
+      <li><b>Version 26:</b> Volume and pan click into place at 0 dB and Center; tap an amber value to reset it. Steadier layout on phones.</li>
+      <li><b>Version 25:</b> Choose which tracks to show: any mix, all, soloed, or selected.</li>
+      <li><b>Version 24:</b> Track panels fold down to a header with a summary of changes. Hide tracks. Edit or Scroll swipe setting. Named Undo and Redo.</li>
+      <li><b>Version 23:</b> The song title names your file. Open a stems zip as tracks. Up to 12 tracks. Mastering explains its limiting. Size buttons 50%, 75%, 100%, and Auto.</li>
+      <li><b>Version 22:</b> Clip fades and crossfades.</li>
+      <li><b>Version 21:</b> Repeat and seamless loops.</li>
+      <li><b>Version 20:</b> Stackable video visuals: live waveform, slow waveform, spectrum, and whole-song waveform.</li>
+      <li><b>Version 19:</b> The Edit EQ button stands out while the EQ is locked.</li>
+      <li><b>Version 18:</b> Track lock, so touches can't move clips by accident.</li>
+      <li><b>Version 17:</b> Size buttons and a fuller two-column layout.</li>
+      <li><b>Version 16:</b> Save and open projects with their audio. Moving visuals in the cover art video.</li>
+      <li><b>Version 15:</b> Layout buttons.</li>
+      <li><b>Version 14:</b> True 9:16 and new 16:9 video. Tag editing moved into Export.</li>
+      <li><b>Version 13:</b> Microphone indicator, automatic mic release, and a duplicate track name fix.</li>
+      <li><b>Version 12:</b> Effects on each track. Install it as an app.</li>
+      <li><b>Version 11:</b> White, pink, and brown noise.</li>
+      <li><b>Version 10:</b> Tone tracks: binaural, monaural, and isochronic. Up to 6 tracks.</li>
+      <li><b>Version 9:</b> M4A export, cover art video, tags in MP4 files, and the tag editor.</li>
+      <li><b>Version 8:</b> Mastering to a loudness target, with limiters and true peak. Tagged WAV files.</li>
+      <li><b>Version 7:</b> Swipe up and down past tracks. Clip Track menu.</li>
+      <li><b>Version 6:</b> Recording with count-in, level meter, and an automatic timing fix.</li>
+      <li><b>Version 5:</b> EQ on each track, EQ lock, and reset band.</li>
+      <li><b>Version 4:</b> Only the player row stays pinned at the top.</li>
+      <li><b>Version 3:</b> Clip editing: split, cut, copy, paste, duplicate, and move between tracks.</li>
+      <li><b>Version 2:</b> Player buttons, loop, taller waveforms, and a spectrum line for each track.</li>
+      <li><b>Version 1:</b> First release: tracks, trim, delete, silence, 8-band EQ, spectrum, and WAV export.</li>
+    </ul>
   </details>
 
   <div class="topgrid">
@@ -2399,12 +2432,13 @@ function makeVisualizer(kinds, mono, sr, W, band, color, stems){
         g.fillStyle=color; g.shadowColor=color;
       } else if(k==='eqview'){
         // like the EQ screen: the whole mix as a shaded area, each track as a glowing line in its color, on a frequency grid
-        const top=y0+(rowH-h)/2, bot=top+h, P=eqP, fLo=40, fHi=Math.min(16000, stems?stems.sr/2*0.98:16000, sr/2*0.98);
+        const labH=Math.round(W/30), top=y0+(rowH-h)/2, bot=top+h-labH-6, P=eqP, fLo=40, fHi=Math.min(16000, stems?stems.sr/2*0.98:16000, sr/2*0.98);
         const xs=f=>x0+w*Math.log(f/fLo)/Math.log(fHi/fLo);
         g.shadowBlur=0; g.globalAlpha=0.28; g.strokeStyle='#ffffff'; g.fillStyle='#ffffff'; g.lineWidth=Math.max(1,W/1080);
-        g.font=`500 ${Math.round(W/60)}px Figtree, sans-serif`;
-        [50,100,200,500,1000,2000,5000,10000].forEach(f=>{ if(f>fHi) return; const x=Math.round(xs(f))+.5; g.beginPath(); g.moveTo(x,top); g.lineTo(x,bot); g.stroke(); g.fillText(f>=1000?(f/1000)+'k':String(f), x+4, bot-6); });
-        g.globalAlpha=1;
+        [50,100,200,500,1000,2000,5000,10000].forEach(f=>{ if(f>fHi) return; const x=Math.round(xs(f))+.5; g.beginPath(); g.moveTo(x,top); g.lineTo(x,bot); g.stroke(); });
+        g.globalAlpha=0.8; g.font=`600 ${labH}px Figtree, sans-serif`; g.textAlign='center'; g.textBaseline='top';
+        [50,100,200,500,1000,2000,5000,10000].forEach((f,i)=>{ if(f>fHi) return; const x=xs(f), first=i===0; g.textAlign=first?'left':'center'; g.fillText((f>=1000?(f/1000)+'k':String(f))+(first?' Hz':''), first?Math.max(x0, x-labH*0.6):x, bot+6); });
+        g.textAlign='start'; g.textBaseline='alphabetic'; g.globalAlpha=1;
         const curve=(arr,rate,c0,store)=>{ for(let i=0;i<N;i++){ re[i]=(arr[c0+i]||0)*hann[i]; im[i]=0; } fft(re,im); const bin=rate/N, out=new Float32Array(P+1);
           for(let p=0;p<=P;p++){ const f1=fLo*Math.pow(fHi/fLo,p/P), f2=fLo*Math.pow(fHi/fLo,(p+1)/P); const i0=Math.max(1,Math.floor(f1/bin)), i1=Math.min(N/2,Math.max(i0+1,Math.ceil(f2/bin))); let m=0; for(let i=i0;i<i1;i++){ const q=re[i]*re[i]+im[i]*im[i]; if(q>m) m=q; }
             let val=Math.max(0,Math.min(1,(10*Math.log10(m/(N*N/16)+1e-12)+66)/66)); val=Math.max(val, store[p]-0.035); store[p]=val; out[p]=val; } return out; };

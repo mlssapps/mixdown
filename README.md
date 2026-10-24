@@ -36,6 +36,10 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 - **Cleanup for AI music:** de-esser, hiss quieter, shimmer tamer, harsh tamer, mud tamer, mouth-click remover, and pop softener that act only when each problem happens, plus section volume and treble fixes, and automatic trimming of the split-second glitch at the end of Suno stems (with a Put it back button)
 - **Tag editor:** change the details and cover art of existing WAV, MP3, M4A, and MP4 files without re-encoding
 
+## What's new
+
+The app's **How to use Mixdown** guide lists every version and what changed, newest first.
+
 ## Install it like an app
 
 - **Android, tablets, Chromebooks:** open the link in Chrome, then menu → Install app.
