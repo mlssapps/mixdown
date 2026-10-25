@@ -254,7 +254,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 31</p>
+  <p class="ver">Version 32</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -316,6 +316,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 32:</b> The player stays at the bottom of the screen even when the page is zoomed in.</li>
       <li><b>Version 31:</b> Player at the bottom of the screen. Taller waveforms that fit each track, plus a Wave size slider. Room past the end of the song. Volumes down to −60 dB, and tap the number to type one. Clip start and end in minutes and seconds, with an <b>Ends at</b> box. <b>Insert silence</b>. Much less work for your phone while playing.</li>
       <li><b>Version 30:</b> A version history (this list), and bigger, easier-to-read frequency numbers on the EQ-screen video.</li>
       <li><b>Version 29:</b> Automatically trims the split-second click or swipe at the very end of Suno stems. Each track that had one shows <b>Put it back</b>, and a setting turns it off.</li>
@@ -476,7 +477,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <span class="hint" style="margin:0;width:100%">Clip fades shape just this clip. Overlap two clips (on the same track or different tracks) and give the first a fade out and the second a matching fade in to crossfade them. <b>Crossfade into next clip</b> does it for you on this track: it slides the next clip back to overlap by the fade-out length (2 s if none) and sets both fades.</span>
     </div>
   </div>
-  <div class="transport">
+  <div class="transport" id="transportBar">
     <div class="tbar">
       <button class="icon" id="toStart" aria-label="Go to start" title="Go to start"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="5" width="2.5" height="14" fill="currentColor"/><path d="M19 5v14L8.5 12z" fill="currentColor"/></svg></button>
       <button class="icon" id="back10" aria-label="Back 10 seconds" title="Back 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M11.5 5v14L3 12zM21 5v14l-8.5-7z" fill="currentColor"/></svg></button>
@@ -1757,6 +1758,15 @@ function tick(){
   requestAnimationFrame(tick);
 }
 let selInfoAt=0;
+// Keep the player on screen when the page is pinch-zoomed: fixed bars normally stick to the unzoomed page,
+// so they slide away as you scroll a zoomed-in view. Follow the visible area instead.
+(function(){ const vv=window.visualViewport, bar=$('transportBar'); if(!vv||!bar) return;
+  bar.style.transformOrigin='left bottom';
+  let raf=0; const place=()=>{ raf=0; const lh=document.documentElement.clientHeight;
+    if(vv.scale<=1.01 && Math.abs(vv.offsetTop)<1 && Math.abs(vv.offsetLeft)<1 && Math.abs(vv.height-lh)<2){ bar.style.transform=''; return; }
+    const dy=vv.offsetTop+vv.height-lh; bar.style.transform=`translate(${vv.offsetLeft}px, ${dy}px) scale(${1/vv.scale})`; };
+  const q=()=>{ if(!raf) raf=requestAnimationFrame(place); };
+  vv.addEventListener('resize',q); vv.addEventListener('scroll',q); window.addEventListener('scroll',q,{passive:true}); q(); })();
 // the spectrum is only worth computing when someone can see it
 function specVisible(){ const c=$('spec'), p=c.closest('.panel'); if(p && p.classList.contains('collapsed')) return false; const r=c.getBoundingClientRect(); return r.width>0 && r.bottom>0 && r.top<innerHeight; }
 document.addEventListener('keydown',e=>{ if(e.code==='Space' && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); playing?pause():play(); } });
