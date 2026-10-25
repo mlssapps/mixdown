@@ -17,7 +17,8 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 
 ## Editing and recording
 
-- **Up to 12 tracks** with waveforms: split, cut, copy, paste, duplicate, trim, delete, silence, and undo
+- **Up to 12 tracks** with waveforms scaled to fit each track: split, cut, copy, paste, duplicate, trim, delete, silence, insert silence, and undo
+- **Player at the bottom of the screen,** with exact clip start and end times you can type
 - **Recording** with count-in, live level meter, and an automatic timing (latency) fix
 - **Per-track and whole-mix 8-band parametric EQ** with a live spectrum analyzer
 - **Effects per track:** noise gate, compressor, saturation, chorus/flanger, phaser, tremolo, echo/delay (tempo sync), and reverb (room, hall, plate)

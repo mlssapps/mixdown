@@ -73,8 +73,9 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .check input{width:18px;height:18px;accent-color:var(--accent)}
 
 /* transport */
-.transport{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);padding:8px 0;margin-top:6px;border-bottom:1px solid var(--line)}
-.transport .tbar{flex-wrap:nowrap;gap:6px}
+.transport{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.18)}
+.transport .tbar{flex-wrap:nowrap;gap:6px;justify-content:center;max-width:640px;margin:0 auto}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .transport button.icon{min-width:40px;padding:8px}
 .transport #play{min-width:72px !important;padding:10px 12px}
 .transport .clock{min-width:0;font-size:16px;white-space:nowrap;margin-left:4px}
@@ -93,7 +94,7 @@ button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var
 .showrow button.off{opacity:.45}
 
 /* timeline */
-.timeline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;margin-top:4px}
+.timeline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 26px 8px 8px;margin-top:4px}
 .ruler{display:block;width:100%;height:26px;touch-action:none;cursor:pointer}
 .lanes{display:grid;gap:6px;margin-top:4px}
 .lane{position:relative;border-radius:8px;background:var(--lane);border:2px solid transparent;overflow:hidden}
@@ -115,10 +116,16 @@ body.tracklock .lane canvas{touch-action:none}
 .lane .tag{position:absolute;left:8px;top:4px;font-size:12px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--panel);pointer-events:none;max-width:70%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .lane .tag.muted{opacity:.5;text-decoration:line-through}
 .viewrow{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
+.viewrow #vzoom{grid-column:2 / 4}
+.viewrow .vzv{text-align:right;min-width:2.5em}
 .edits{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.insrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:14px}
+.insrow input{width:72px}
+.valedit{display:flex;gap:6px;align-items:center;margin-top:6px;font-size:14px}
+.valedit input{width:84px}
 .cliprow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:14px}
 .cliprow .inl{display:flex;gap:6px;align-items:center;font-weight:500;margin:0}
-.cliprow input{width:96px}
+.cliprow input{width:104px}
 .cliplabel{font-weight:600;width:100%}
 .empty{padding:22px 10px;text-align:center;color:var(--muted)}
 
@@ -203,7 +210,7 @@ details.guide summary{cursor:pointer;font-weight:600}
 .guide h3{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:17px;margin:14px 0 4px}
 .guide p,.guide li{font-size:15px;max-width:68ch}
 .guide ul{padding-left:20px}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;max-width:min(560px,92vw);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:30;max-width:min(560px,92vw);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px}
 @media (min-width:900px){ body:not(.force1) .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start} .cols > .panel{margin-top:14px} }
 body.force2 .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
 /* top half in two columns: Project | Recording, then Tracks across with its cards side by side */
@@ -247,7 +254,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 30</p>
+  <p class="ver">Version 31</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -298,7 +305,9 @@ body.force2 .cols > .panel{margin-top:14px}
     <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
     <h3>Good to know</h3>
     <ul>
-      <li>Volume, pan, and gain sliders move only when you drag the circle itself, so scrolling past can't bump them. Tap a changed number (it turns underlined) or double-tap the slider to reset it; volumes also snap to 0 dB as you pass it.</li>
+      <li>Volume, pan, and gain sliders move only when you drag the circle itself, so scrolling past can't bump them. Double-tap a slider to reset it. Tap a track's volume number to type an exact value (down to −60 dB) or reset it; tap other changed numbers to reset them. Volumes also snap to 0 dB as you pass it.</li>
+      <li>The player stays at the bottom of the screen. Waveforms are scaled to fit each track so quiet recordings are easy to see; <b>Wave size</b> enlarges them further. Neither changes the sound.</li>
+      <li><b>Insert silence</b> (with the edit buttons) pushes everything after the playhead later on every track. A selected clip's <b>Starts at</b> and <b>Ends at</b> take minutes and seconds (1:15.2) or plain seconds; an earlier end trims the clip.</li>
       <li>Your audio never leaves your device. Files aren't saved when you close the app, so choose them again next time.</li>
       <li>Open the app in Chrome or Safari, not inside Instagram or Facebook, or choosing files may not work.</li>
       <li>The <b>Peak</b> reading after export tells you if the mix clips (goes over 0 dB). Turn on mastering to keep the export from clipping.</li>
@@ -307,6 +316,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 31:</b> Player at the bottom of the screen. Taller waveforms that fit each track, plus a Wave size slider. Room past the end of the song. Volumes down to −60 dB, and tap the number to type one. Clip start and end in minutes and seconds, with an <b>Ends at</b> box. <b>Insert silence</b>. Much less work for your phone while playing.</li>
       <li><b>Version 30:</b> A version history (this list), and bigger, easier-to-read frequency numbers on the EQ-screen video.</li>
       <li><b>Version 29:</b> Automatically trims the split-second click or swipe at the very end of Suno stems. Each track that had one shows <b>Put it back</b>, and a setting turns it off.</li>
       <li><b>Version 28:</b> EQ-screen video style. <b>Mouth-click remover</b> and <b>Pop softener</b>. Smoother Cleanup, and a tiny fade at the start and end of every export. Sliders move only when you drag the circle, with tap-to-reset to 0 dB. <b>Listen to the master</b> turns off by itself when the mix changes.</li>
@@ -358,7 +368,7 @@ body.force2 .cols > .panel{margin-top:14px}
 
   <div class="panel" data-sec="tracks">
     <h2>Tracks</h2>
-    <p class="hint" style="margin:0 0 8px">Tap a track's name to open or close its settings. Closed tracks can't be bumped by accident. Amber means a setting was changed from its default; tap the amber number to reset it. Volume and pan click into place at 0 and Center.</p>
+    <p class="hint" style="margin:0 0 8px">Tap a track's name to open or close its settings. Closed tracks can't be bumped by accident. Amber means a setting was changed from its default; tap the amber number to reset it (for volume, to type a value or reset it). Volume and pan click into place at 0 and Center.</p>
     <div class="undobar"><button class="small undoBtn" type="button">Undo</button><button class="small redoBtn" type="button">Redo</button></div>
     <div class="tracks" id="tracks"></div>
     <div class="row" style="margin-top:12px">
@@ -413,19 +423,6 @@ body.force2 .cols > .panel{margin-top:14px}
 
   </div>
 
-  <div class="transport">
-    <div class="tbar">
-      <button class="icon" id="toStart" aria-label="Go to start" title="Go to start"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="5" width="2.5" height="14" fill="currentColor"/><path d="M19 5v14L8.5 12z" fill="currentColor"/></svg></button>
-      <button class="icon" id="back10" aria-label="Back 10 seconds" title="Back 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M11.5 5v14L3 12zM21 5v14l-8.5-7z" fill="currentColor"/></svg></button>
-      <button class="primary" id="play" style="min-width:84px">Play</button>
-      <button class="icon rec" id="recBtn" aria-label="Record" title="Record onto the active track"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="currentColor"/></svg></button>
-      <button class="icon" id="fwd10" aria-label="Forward 10 seconds" title="Forward 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 5v14l8.5-7zM12.5 5v14L21 12z" fill="currentColor"/></svg></button>
-      <button class="icon" id="toEnd" aria-label="Go to end" title="Go to end"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5v14l10.5-7z" fill="currentColor"/><rect x="16.5" y="5" width="2.5" height="14" fill="currentColor"/></svg></button>
-      <span class="clock" id="clock">0:00.0 <small>/ 0:00.0</small></span>
-      <button class="micchip" id="micChip" hidden title="Microphone is on. Tap to turn it off.">Mic on ✕</button>
-    </div>
-  </div>
-
   <div class="timeline">
     <div class="tbar">
       <div class="seg" role="group" aria-label="Edit mode">
@@ -443,6 +440,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <div class="viewrow">
       <span>Zoom</span><input type="range" id="zoom" min="0" max="1" step="0.001" value="0" aria-label="Zoom">
       <span>View</span><input type="range" id="view" min="0" max="1" step="0.001" value="0" aria-label="Scroll the view">
+      <span>Wave size</span><input type="range" id="vzoom" min="0" max="1" step="0.01" value="0" aria-label="Waveform size (only changes the picture, not the sound)">
+      <span class="vzv" id="vzoomV">1×</span>
     </div>
     <div class="edits">
       <button class="small" id="splitBtn">Split at playhead</button>
@@ -456,12 +455,18 @@ body.force2 .cols > .panel{margin-top:14px}
       <button class="small" id="silSel">Silence</button>
       <button class="small" id="trimSel">Trim to selection</button>
       <button class="small" id="clearSel">Clear selection</button>
+      <button class="small" id="insSil">Insert silence</button>
       <button class="small undoBtn" id="undo">Undo</button>
       <button class="small redoBtn" id="redo">Redo</button>
     </div>
+    <div class="insrow" id="insRow" hidden>
+      <label class="inl">Insert <input type="number" id="insLen" min="0.1" max="600" step="0.5" value="2" inputmode="decimal"> seconds of silence at the playhead, on every track</label>
+      <button class="small primary" id="insGo">Insert</button> <button class="small" id="insCancel">Cancel</button>
+    </div>
     <div class="cliprow" id="clipRow" hidden>
       <span class="cliplabel" id="clipLabel"></span>
-      <label class="inl">Starts at <input type="number" id="clipStart" min="0" step="0.01" inputmode="decimal"></label>
+      <label class="inl">Starts at <input type="text" id="clipStart" inputmode="decimal" title="Type m:ss.ss or seconds"></label>
+      <label class="inl">Ends at <input type="text" id="clipEnd" inputmode="decimal" title="Type m:ss.ss or seconds. Earlier trims the clip; later brings back trimmed audio if there is any."></label>
       <button class="small" id="clipToPh">Move to playhead</button>
       <label class="inl">Track <select id="clipTrack" style="width:auto"></select></label>
       <button class="small" id="clipDel">Remove clip</button>
@@ -471,6 +476,19 @@ body.force2 .cols > .panel{margin-top:14px}
       <span class="hint" style="margin:0;width:100%">Clip fades shape just this clip. Overlap two clips (on the same track or different tracks) and give the first a fade out and the second a matching fade in to crossfade them. <b>Crossfade into next clip</b> does it for you on this track: it slides the next clip back to overlap by the fade-out length (2 s if none) and sets both fades.</span>
     </div>
   </div>
+  <div class="transport">
+    <div class="tbar">
+      <button class="icon" id="toStart" aria-label="Go to start" title="Go to start"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="5" width="2.5" height="14" fill="currentColor"/><path d="M19 5v14L8.5 12z" fill="currentColor"/></svg></button>
+      <button class="icon" id="back10" aria-label="Back 10 seconds" title="Back 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M11.5 5v14L3 12zM21 5v14l-8.5-7z" fill="currentColor"/></svg></button>
+      <button class="primary" id="play" style="min-width:84px">Play</button>
+      <button class="icon rec" id="recBtn" aria-label="Record" title="Record onto the active track"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="currentColor"/></svg></button>
+      <button class="icon" id="fwd10" aria-label="Forward 10 seconds" title="Forward 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 5v14l8.5-7zM12.5 5v14L21 12z" fill="currentColor"/></svg></button>
+      <button class="icon" id="toEnd" aria-label="Go to end" title="Go to end"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5v14l10.5-7z" fill="currentColor"/><rect x="16.5" y="5" width="2.5" height="14" fill="currentColor"/></svg></button>
+      <span class="clock" id="clock">0:00.0 <small>/ 0:00.0</small></span>
+      <button class="micchip" id="micChip" hidden title="Microphone is on. Tap to turn it off.">Mic on ✕</button>
+    </div>
+  </div>
+
 
   <div class="cols">
     <div class="panel" data-sec="eq">
@@ -719,6 +737,8 @@ const COLORS = ['--t1','--t2','--t3','--t4','--t5','--t6'];
 const MAXTRACKS = 12;
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const fmt = s => { s=Math.max(0,s||0); const m=Math.floor(s/60); return m+':'+(s%60).toFixed(1).padStart(4,'0'); };
+const mmss2 = s => { s=Math.max(0,+s||0); let m=Math.floor(s/60), r=Math.round((s-m*60)*100)/100; if(r>=60){ m++; r-=60; } return m+':'+r.toFixed(2).padStart(5,'0'); };
+const parseTime = v => { v=String(v).trim(); if(!v) return NaN; if(v.includes(':')){ const [m,x]=v.split(':'); return (+m||0)*60+(+x||0); } return +v; };
 const dbToGain = d => Math.pow(10,d/20);
 let toastT=null;
 function toast(m){ const el=$('toast'); el.textContent=m; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,4500); }
@@ -794,16 +814,24 @@ function afterHistory(){ if(activeClipId && !findClip(activeClipId)) activeClipI
 
 // ---------- view ----------
 let pps=50, viewStart=0, playhead=0, sel=null, mode='select';
-function minPps(){ const w=$('ruler').clientWidth||300; const L=Math.max(projectLen(),10); return w/L; }
+// the view runs a few seconds past the last clip, so the end of a song is easy to reach (export still ends with the music)
+const viewLen = () => { const L=projectLen(); return L+Math.max(3, L*0.06); };
+function minPps(){ const w=$('ruler').clientWidth||300; const L=Math.max(viewLen(),10); return w/L; }
 function setZoomFromSlider(){ const z=+$('zoom').value, lo=minPps(), hi=400; pps = lo*Math.pow(hi/lo,z); clampView(); drawAll(); }
 function visDur(){ return ($('ruler').clientWidth||300)/pps; }
 function clampView(){
-  const maxStart=Math.max(0,projectLen()-visDur());
+  const maxStart=Math.max(0,viewLen()-visDur());
   viewStart=Math.min(Math.max(0,viewStart),maxStart);
   $('view').value = maxStart>0 ? viewStart/maxStart : 0;
 }
+let vzoom=1; try{ vzoom=Math.max(1,Math.min(8,+localStorage.getItem('mixdown-vzoom')||1)); }catch(e){}
+$('vzoom').value=Math.log(vzoom)/Math.log(8); $('vzoomV').textContent=vzoom.toFixed(1).replace(/\.0$/,'')+'×';
+$('vzoom').oninput=e=>{ vzoom=Math.pow(8,+e.target.value); if(vzoom<1.05){ vzoom=1; } $('vzoomV').textContent=vzoom.toFixed(1).replace(/\.0$/,'')+'×'; try{ localStorage.setItem('mixdown-vzoom',String(vzoom)); }catch(err){} drawAll(); };
+// each track's waveform is scaled to its own loudest point, so quiet recordings fill the lane (picture only)
+function peakOf(P){ if(P._pk==null){ let m=0; for(let i=0;i<P.mx.length;i++){ const a=Math.max(P.mx[i],-P.mn[i]); if(a>m) m=a; } P._pk=m; } return P._pk; }
+function trackFit(t){ let m=0; for(const c of t.clips) m=Math.max(m,peakOf(c.peaks)); return 0.92/Math.max(m,0.003); }
 $('zoom').oninput=()=>{ const c=viewStart+visDur()/2; setZoomFromSlider(); viewStart=c-visDur()/2; clampView(); drawAll(); };
-$('view').oninput=()=>{ const maxStart=Math.max(0,projectLen()-visDur()); viewStart=+$('view').value*maxStart; drawAll(); };
+$('view').oninput=()=>{ const maxStart=Math.max(0,viewLen()-visDur()); viewStart=+$('view').value*maxStart; drawAll(); };
 
 function fitCanvas(c){
   const dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight;
@@ -825,10 +853,24 @@ function drawRuler(){
   const px=(playhead-viewStart)*pps;
   g.fillStyle=css('--accent'); g.beginPath(); g.moveTo(px-6,h-10); g.lineTo(px+6,h-10); g.lineTo(px,h); g.fill();
 }
+// Each lane's waveform is drawn once into a hidden copy and reused until something about it changes;
+// while playing, only the playhead line moves. This keeps phones cool.
 function drawLane(t){
   const c=document.querySelector(`.lane[data-id="${t.id}"] canvas`); if(!c) return;
-  const {g,w,h}=fitCanvas(c); g.clearRect(0,0,w,h);
-  const col=css(t.colorVar), mid=h/2;
+  const {g,w,h}=fitCanvas(c), live=!!(recording && recording.trackId===t.id);
+  const key=[c.width,c.height,viewStart,pps,vzoom,activeClipId,(sel&&sel.id===t.id)?[sel.a,sel.b].join(':'):'',t.gainDb,t.fadeIn,t.fadeOut,css(t.colorVar),css('--ink'),
+    t.clips.map(cl=>[cl.id,cl.offset,cl.fi||0,cl.fo||0,JSON.stringify(cl.segs)].join(';')).join('|')].join(',');
+  if(live || !t._lc || t._lc.key!==key){
+    if(!t._lc) t._lc={cv:document.createElement('canvas')};
+    const cv=t._lc.cv; if(cv.width!==c.width||cv.height!==c.height){ cv.width=c.width; cv.height=c.height; }
+    const cg=cv.getContext('2d'); cg.setTransform(c.width/w,0,0,c.height/h,0,0); cg.clearRect(0,0,w,h);
+    drawLaneBody(cg,w,h,t); t._lc.key=live?'':key;
+  }
+  g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,c.width,c.height); g.drawImage(t._lc.cv,0,0); g.setTransform(c.width/w,0,0,c.height/h,0,0);
+  const px=(playhead-viewStart)*pps; g.fillStyle=css('--accent'); g.fillRect(px-1,0,2,h);
+}
+function drawLaneBody(g,w,h,t){
+  const col=css(t.colorVar), mid=h/2, fit=trackFit(t)*vzoom;
   if(recording && recording.trackId===t.id && playhead>recording.p0){
     const x0=(recording.p0-viewStart)*pps, x1=(playhead-viewStart)*pps;
     g.fillStyle='rgba(229,72,77,.22)'; g.fillRect(x0,0,x1-x0,h); g.fillStyle='#E5484D'; g.fillRect(x0,0,2,h);
@@ -862,7 +904,7 @@ function drawLane(t){
           const u=(ta+tb)/2 - T0;
           let f=1; if(t.fadeIn>0 && u<t.fadeIn) f=Math.max(0,u/t.fadeIn); if(t.fadeOut>0 && u>T-t.fadeOut) f=Math.min(f,Math.max(0,(T-u)/t.fadeOut));
           if(cl.fi>0||cl.fo>0) f*=clipFadeAt(cl,(ta+tb)/2);
-          const k=(h/2-4)*dbToGain(t.gainDb)*f;
+          const k=(h/2-4)*fit*f;
           // light = peaks, solid = average loudness (RMS), so the shape of the song stays readable
           g.globalAlpha=.45; g.fillRect(x, mid-Math.min(hi*k,mid), 1, Math.max(1,Math.min((hi-lo)*k,h)));
           g.globalAlpha=1; const rr=Math.min(r*k,mid); g.fillRect(x, mid-rr, 1, Math.max(1,rr*2));
@@ -873,8 +915,6 @@ function drawLane(t){
       else { g.fillStyle=css('--muted'); g.fillRect(cx0,0,1,h); g.fillRect(cx1-1,0,1,h); }
     }
   }
-  // playhead
-  const px=(playhead-viewStart)*pps; g.fillStyle=css('--accent'); g.fillRect(px-1,0,2,h);
 }
 function drawAll(){ drawRuler(); tracks.forEach(drawLane); updateClock(); updateSelInfo(); if(micStream && !recording) updateRecTarget(); }
 function updateClock(){ $('clock').innerHTML = fmt(playhead)+' <small>/ '+fmt(recording?Math.max(projectLen(),playhead):projectLen())+'</small>'; $('clock').classList.toggle('recording',!!recording); }
@@ -887,7 +927,7 @@ function updateSelInfo(){
   updateUndoUI();
   const ac=activeClipId && findClip(activeClipId);
   $('clipRow').hidden=!ac;
-  if(ac){ $('clipLabel').textContent=`Selected clip: ${ac.c.name} on ${ac.t.name}, ${fmt(clipLen(ac.c))} long`; if(document.activeElement!==$('clipStart')) $('clipStart').value=ac.c.offset.toFixed(2);
+  if(ac){ $('clipLabel').textContent=`Selected clip: ${ac.c.name} on ${ac.t.name}, ${fmt(clipLen(ac.c))} long`; if(document.activeElement!==$('clipStart')) $('clipStart').value=mmss2(ac.c.offset); if(document.activeElement!==$('clipEnd')) $('clipEnd').value=mmss2(clipEnd(ac.c));
     if(document.activeElement!==$('clipFi')) $('clipFi').value=(ac.c.fi||0).toFixed(1); if(document.activeElement!==$('clipFo')) $('clipFo').value=(ac.c.fo||0).toFixed(1);
     const cs=$('clipTrack'); if(document.activeElement!==cs){ cs.innerHTML=tracks.map(t=>`<option value="${t.id}"></option>`).join(''); [...cs.options].forEach((o,i)=>o.textContent=tracks[i].name); cs.value=String(ac.t.id); } }
   $('selInfo').textContent = has ? `Selected ${fmt(Math.min(sel.a,sel.b))} to ${fmt(Math.max(sel.a,sel.b))} (${(Math.abs(sel.b-sel.a)).toFixed(2)} s) on ${t.name}.` :
@@ -993,7 +1033,7 @@ function toneHTML(){
     </div>
     <div class="row" style="margin-top:10px">
       <div class="field"><label class="toNoiseLbl">Noise bed</label><select class="toNoise"><option value="off">Off</option><option value="white">White</option><option value="pink">Pink</option><option value="brown">Brown</option></select></div>
-      <div class="field toNoiseLvlBox"><label>Noise level <span class="val toNoiseLvlV"></span></label><input type="range" class="toNoiseLvl" min="-30" max="6" step="0.5"></div>
+      <div class="field toNoiseLvlBox"><label>Noise level <span class="val toNoiseLvlV"></span></label><input type="range" class="toNoiseLvl" min="-60" max="6" step="0.5"></div>
     </div>
     <div class="toToneOnly">
     <label class="check" style="margin:10px 0"><input type="checkbox" class="toSweepOn"> Glide the beat to a new rate</label>
@@ -1017,7 +1057,7 @@ function trackBodyHTML(t){
   ${toneHTML()}
   <span class="tfname" hidden></span><span class="tpickface" hidden></span>
   <div class="row">
-    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain thumbonly" min="-40" max="6" step="0.1"></div>
+    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain thumbonly" min="-60" max="6" step="0.1"></div>
     <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan thumbonly" min="-1" max="1" step="0.01"></div>
   </div>
   <div class="row">
@@ -1033,7 +1073,7 @@ function trackBodyHTML(t){
   </div>
   <div class="tglitch hint" style="margin:-4px 0 10px" hidden><span class="tglitchTxt"></span> <button type="button" class="small tglitchBtn"></button></div>
   <div class="row">
-    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain thumbonly" min="-30" max="12" step="0.1"></div>
+    <div class="field"><label>Volume <button type="button" class="val vreset tgainV" title="Tap to reset"></button></label><input type="range" class="tgain thumbonly" min="-60" max="12" step="0.1"></div>
     <div class="field"><label>Pan <button type="button" class="val vreset tpanV" title="Tap to reset"></button></label><input type="range" class="tpan thumbonly" min="-1" max="1" step="0.01"></div>
   </div>
   <div class="row">
@@ -1064,7 +1104,15 @@ function renderTrackPanels(){
       el.addEventListener('change',()=>{ if(from!==null){ const top=undoStack[undoStack.length-1]; if(top) top.label=`${t.name} ${word} ${fmtV(from)} → ${fmtV(t[key])}`; if(from===t[key]) undoStack.pop(); from=null; updateUndoUI(); } if(key==='fadeIn'||key==='fadeOut') restartIfPlaying(); });
       const reset=()=>{ if(t[key]===def){ toast(`${t.name} ${word} is already at its default.`); return; } pushUndo(`${t.name} ${word} ${fmtV(t[key])} → ${fmtV(def)} (reset)`); t[key]=def; after(); syncTrackPanel(t); if(key==='fadeIn'||key==='fadeOut') restartIfPlaying(); toast(`${t.name} ${word} reset to ${fmtV(def)}.`); };
       el.addEventListener('dblclick',reset);
-      q(cls+'V').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); reset(); });
+      q(cls+'V').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); if(key==='gainDb') typeValue(); else reset(); });
+      // volume: tap the number to type an exact value (or reset it)
+      const typeValue=()=>{ const f=el.closest('.field'); let box=f.querySelector('.valedit'); if(box){ box.remove(); return; }
+        box=document.createElement('div'); box.className='valedit';
+        box.innerHTML=`<input type="number" inputmode="decimal" step="0.5" min="${el.min}" max="${el.max}" aria-label="${word} in dB"> <span>dB</span> <button type="button" class="small" data-a="set">Set</button> <button type="button" class="small" data-a="reset">Reset to 0</button>`;
+        const inp=box.querySelector('input'); inp.value=(+t[key]).toFixed(1); f.appendChild(box); inp.focus(); inp.select();
+        const apply=()=>{ let v=+inp.value; if(!isFinite(v)){ box.remove(); return; } v=Math.max(+el.min,Math.min(+el.max,v)); if(v!==t[key]){ pushUndo(`${t.name} ${word} ${fmtV(t[key])} → ${fmtV(v)}`); t[key]=v; after(); syncTrackPanel(t); } box.remove(); };
+        box.querySelector('[data-a=set]').onclick=apply; inp.onkeydown=ev=>{ if(ev.key==='Enter') apply(); if(ev.key==='Escape') box.remove(); };
+        box.querySelector('[data-a=reset]').onclick=()=>{ box.remove(); reset(); }; };
     };
     slider('.tgain','gainDb','volume',fmtGain,0,()=>{ liveUpdate(t); drawLane(t); },0.45);
     slider('.tpan','pan','pan',fmtPan,0,()=>liveUpdate(t),0.05);
@@ -1405,7 +1453,24 @@ $('splitBtn').onclick=()=>{
 $('clearSel').onclick=()=>{ sel=null; drawAll(); };
 document.querySelectorAll('.undoBtn').forEach(b=>b.onclick=doUndo);
 document.querySelectorAll('.redoBtn').forEach(b=>b.onclick=doRedo);
-$('clipStart').onchange=e=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo('Clip start'); ac.c.offset=Math.max(0,+e.target.value||0); restartIfPlaying(); drawAll(); };
+$('clipStart').onchange=e=>{ const ac=findClip(activeClipId); if(!ac) return; const v=parseTime(e.target.value); if(!isFinite(v)){ drawAll(); return; } pushUndo('Clip start'); ac.c.offset=Math.max(0,v); restartIfPlaying(); drawAll(); };
+// pushes everything after the playhead later on every track, so they all stay lined up
+function insertSilence(d){ const at=playhead;
+  pushUndo(`Insert ${d} s of silence at ${fmt(at)}`);
+  tracks.forEach(t=>{ t.clips.forEach(c=>{ if(c.offset>=at-1e-6) c.offset+=d; else if(clipEnd(c)>at+1e-6){ const u=at-c.offset, L=clipLen(c); c.segs=[...cutSegs(c.segs,0,u,'keep'),{sil:d},...cutSegs(c.segs,u,L,'keep')]; } }); });
+  secs.forEach(x=>{ if(x.a>=at) x.a+=d; if(x.b>=at) x.b+=d; }); try{ renderSecs(); }catch(e){}
+  renderAll(); restartIfPlaying(); toast(`Inserted ${d} s of silence at ${fmt(at)}.`); }
+$('insSil').onclick=()=>{ if(!tracks.some(hasAudio)) return; const r=$('insRow'); r.hidden=!r.hidden; if(!r.hidden) $('insLen').focus(); };
+$('insCancel').onclick=()=>{ $('insRow').hidden=true; };
+$('insGo').onclick=()=>{ const d=Math.round((+$('insLen').value||0)*100)/100; if(!(d>0)){ toast('Type how many seconds to insert.'); return; } $('insRow').hidden=true; insertSilence(Math.min(600,d)); };
+$('clipEnd').onchange=e=>{ const ac=findClip(activeClipId); if(!ac) return; const c=ac.c, v=parseTime(e.target.value); if(!isFinite(v)){ drawAll(); return; }
+  const L=clipLen(c), want=v-c.offset;
+  if(want<0.05){ toast('The end has to come after the start.'); drawAll(); return; }
+  if(Math.abs(want-L)<0.005){ drawAll(); return; }
+  if(want<L){ pushUndo('Clip end'); c.segs=cutSegs(c.segs,0,want,'keep'); }
+  else { const g=c.segs[c.segs.length-1]; if(!g || g.sil!=null || g.e>=c.buf.duration-1e-4){ toast('There is no more recorded audio after this clip\'s end.'); drawAll(); return; }
+    pushUndo('Clip end'); const add=Math.min(want-L, c.buf.duration-g.e); g.e+=add; if(add<want-L-0.005) toast('Extended to the end of the recording.'); }
+  restartIfPlaying(); renderAll(); };
 $('clipToPh').onclick=()=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo('Move clip to playhead'); ac.c.offset=playhead; restartIfPlaying(); drawAll(); };
 $('clipTrack').onchange=e=>{ const ac=findClip(activeClipId), to=tracks.find(t=>t.id===+e.target.value); if(!ac||!to||to===ac.t) return; pushUndo('Move clip to another track'); ac.t.clips=ac.t.clips.filter(x=>x!==ac.c); to.clips.push(ac.c); setActive(to.id); afterEdit(`Moved the clip to ${to.name}.`); };
 const clipFadeSet=(key,el)=>{ const ac=findClip(activeClipId); if(!ac) return; pushUndo('Clip fade'); ac.c[key]=Math.max(0,Math.min(clipLen(ac.c),parseFloat(String(el.value).replace(',','.'))||0)); restartIfPlaying(); drawAll(); };
@@ -1550,7 +1615,7 @@ function drawSpec(){
     }
     (session||[]).forEach(se=>{
       if(!se.an || !se.t || show[se.t.id]===false || !audible(se.t)) return;
-      const pts=specPath(se.an,1); g.beginPath(); pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
+      const pts=specPath(se.an,2); g.beginPath(); pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
       g.strokeStyle=css(se.t.colorVar); g.lineWidth=1.2; g.globalAlpha=.95; g.stroke(); g.globalAlpha=1; g.lineWidth=1;
     });
   }
@@ -1629,7 +1694,7 @@ function scheduleTrack(c, t, dest, at, when0){
   const fxOut=makeFx(c, fxFor(t), teq.last, when0);
   if(pan){ pan.pan.value=t.pan; fxOut.connect(pan); pan.connect(dest); } else fxOut.connect(dest);
   let an=null;
-  if(c===actx){ an=c.createAnalyser(); an.fftSize=8192; an.smoothingTimeConstant=0.75; (pan||fxOut).connect(an); const z=c.createGain(); z.gain.value=0; an.connect(z); z.connect(c.destination); }
+  if(c===actx){ an=c.createAnalyser(); an.fftSize=4096; an.smoothingTimeConstant=0.75; (pan||fxOut).connect(an); const z=c.createGain(); z.gain.value=0; an.connect(z); z.connect(c.destination); }
   const pts=fadePoints(t); fade.gain.setValueAtTime(valueAt(pts,at), when0);
   pts.forEach(([pt,v])=>{ if(pt>at) fade.gain.linearRampToValueAtTime(v, when0+(pt-at)); });
   const srcs=[];
@@ -1686,8 +1751,14 @@ function tick(){
   if(!recording && playhead>=projectLen()){ pause(); playhead=projectLen(); drawAll(); return; }
   if(recording){ updateClock(); }
   const vd=visDur(); if(playhead>viewStart+vd*0.9 || playhead<viewStart){ viewStart=playhead-vd*0.1; clampView(); }
-  drawAll(); drawSpec(); requestAnimationFrame(tick);
+  drawRuler(); tracks.forEach(drawLane); updateClock();
+  if(performance.now()>selInfoAt){ selInfoAt=performance.now()+300; updateSelInfo(); }
+  if(specVisible()) drawSpec();
+  requestAnimationFrame(tick);
 }
+let selInfoAt=0;
+// the spectrum is only worth computing when someone can see it
+function specVisible(){ const c=$('spec'), p=c.closest('.panel'); if(p && p.classList.contains('collapsed')) return false; const r=c.getBoundingClientRect(); return r.width>0 && r.bottom>0 && r.top<innerHeight; }
 document.addEventListener('keydown',e=>{ if(e.code==='Space' && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); playing?pause():play(); } });
 
 // ---------- recording ----------
