@@ -74,10 +74,17 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 
 /* transport */
 .transport{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.18)}
-.transport .tbar{flex-wrap:nowrap;gap:6px;justify-content:center;max-width:640px;margin:0 auto}
-body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
-.transport button.icon{min-width:40px;padding:8px}
-.transport #play{min-width:72px !important;padding:10px 12px}
+.transport .tbar{flex-wrap:nowrap;gap:5px;justify-content:center;max-width:640px;margin:0 auto}
+.transport .trow2{justify-content:space-between;align-items:center;margin-top:6px;gap:10px}
+.transport .trow1 button{min-width:44px;height:46px;padding:0 6px;font-size:15px;font-weight:700}
+.transport .trow1 .step{font-variant-numeric:tabular-nums}
+.transport .recbtn{min-width:118px;height:42px;padding:0 16px;font-weight:700;font-size:15px;margin-left:auto;border-radius:12px}
+.transport .recbtn.on{animation:recpulse 1.4s ease-in-out infinite}
+@keyframes recpulse{50%{box-shadow:0 0 0 6px rgba(229,72,77,.35)}}
+@media (prefers-reduced-motion: reduce){.transport .recbtn.on{animation:none}}
+body{padding-bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+.transport .trow1 button.icon{min-width:44px}
+.transport #play{min-width:76px !important;padding:0 12px}
 .transport .clock{min-width:0;font-size:16px;white-space:nowrap;margin-left:4px}
 .transport .clock small{display:block;font-size:12px;line-height:1.1}
 .tbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -183,7 +190,7 @@ input[type=range].thumbonly:disabled::-webkit-slider-thumb{background:var(--mute
 .bands button{min-width:44px;padding:8px 10px}
 .bands button.off{opacity:.55}
 button.rec{color:#E5484D}
-.micchip{margin-left:auto;padding:6px 10px;font-size:12px;font-weight:700;border-radius:99px;background:#E5484D;color:#fff;border:0;white-space:nowrap}
+.micchip{padding:6px 10px;font-size:12px;font-weight:700;border-radius:99px;background:#E5484D;color:#fff;border:0;white-space:nowrap}
 button.rec.on{background:#E5484D;color:#fff;border-color:#E5484D}
 .clock.recording{color:#E5484D}
 .meter{height:14px;border-radius:7px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
@@ -210,7 +217,7 @@ details.guide summary{cursor:pointer;font-weight:600}
 .guide h3{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:17px;margin:14px 0 4px}
 .guide p,.guide li{font-size:15px;max-width:68ch}
 .guide ul{padding-left:20px}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:30;max-width:min(560px,92vw);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:30;max-width:min(560px,92vw);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px}
 @media (min-width:900px){ body:not(.force1) .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start} .cols > .panel{margin-top:14px} }
 body.force2 .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
 /* top half in two columns: Project | Recording, then Tracks across with its cards side by side */
@@ -254,7 +261,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 33</p>
+  <p class="ver">Version 34</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -281,7 +288,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p><b>Clip fades and crossfades:</b> select a clip in Move mode and set its <b>Fade in</b> and <b>Fade out</b> (seconds) under the edit buttons. To crossfade, overlap two clips, on the same track or different tracks, and give the first a fade out and the second a matching fade in. <b>Crossfade into next clip</b> does it automatically on the same track. Fades use an equal-power curve, so the loudness stays steady through the blend.</p>
     <p><b>Undo</b> steps back through your last 60 edits. Edits never change your original files.</p>
     <h3>Recording</h3>
-    <p>Open <b>Recording</b> and tap <b>Turn on microphone</b>. Use wired headphones so the music doesn't leak into your take; Bluetooth adds delay. Tap the track to record onto, move the playhead to where you want to start, and press the red <b>record</b> button. After the count-in, sing or play along; press the red button or <b>Stop</b> to finish. Each take becomes its own clip, so you can split, trim, move, and duplicate it.</p>
+    <p>Open <b>Recording</b> and tap <b>Turn on microphone</b>. Use wired headphones so the music doesn't leak into your take; Bluetooth adds delay. Tap the track to record onto, move the playhead to where you want to start, and press <b>● Record</b> at the bottom right of the player. After the count-in, sing or play along; press <b>■ Stop</b> (the same button) to finish. Each take becomes its own clip, so you can split, trim, move, and duplicate it.</p>
     <p>To stop the microphone, tap <b>Turn off microphone</b> or the red <b>Mic on</b> button in the player bar. It also turns off by itself when you leave the app, unless you're recording. Run <b>Measure latency</b> once per phone or mic (speaker on, no headphones). It sets the <b>Timing fix</b> so takes line up with the music. If a take still sounds early or late, adjust the slider and record again.</p>
     <h3>EQ</h3>
     <p>Choose what to EQ in <b>EQ for</b>: the whole mix or any single track, each with its own 8 bands. The EQ is locked so scrolling can't bump it; tap <b>Edit EQ</b> to change it, and <b>Done</b> when finished. All bands that are on work together. Pick a band (1 to 8) to see or edit it, and set its type, frequency, gain, and width (Q). <b>Reset band</b> puts one band back to its starting setting. While editing, you can also drag a band's dot on the display. The amber line shows your EQ curve over the live spectrum while the mix plays. The buttons under the display choose which spectrums to show: the whole mix (shaded) and each track (a line in its color). Your EQ is remembered on this device.</p>
@@ -316,6 +323,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 34:</b> Bigger player buttons in two rows, new 5-second steps, and a clearly labeled <b>● Record</b> / <b>■ Stop</b> button set apart at the far right.</li>
       <li><b>Version 33:</b> The bottom player fits the visible screen at any zoom. Waveforms fit to the loud parts of each track instead of one stray click, so Wave size enlarges every track.</li>
       <li><b>Version 32:</b> The player stays at the bottom of the screen even when the page is zoomed in.</li>
       <li><b>Version 31:</b> Player at the bottom of the screen. Taller waveforms that fit each track, plus a Wave size slider. Room past the end of the song. Volumes down to −60 dB, and tap the number to type one. Clip start and end in minutes and seconds, with an <b>Ends at</b> box. <b>Insert silence</b>. Much less work for your phone while playing.</li>
@@ -479,15 +487,19 @@ body.force2 .cols > .panel{margin-top:14px}
     </div>
   </div>
   <div class="transport" id="transportBar">
-    <div class="tbar">
+    <div class="tbar trow1">
       <button class="icon" id="toStart" aria-label="Go to start" title="Go to start"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="5" width="2.5" height="14" fill="currentColor"/><path d="M19 5v14L8.5 12z" fill="currentColor"/></svg></button>
-      <button class="icon" id="back10" aria-label="Back 10 seconds" title="Back 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M11.5 5v14L3 12zM21 5v14l-8.5-7z" fill="currentColor"/></svg></button>
-      <button class="primary" id="play" style="min-width:84px">Play</button>
-      <button class="icon rec" id="recBtn" aria-label="Record" title="Record onto the active track"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="currentColor"/></svg></button>
-      <button class="icon" id="fwd10" aria-label="Forward 10 seconds" title="Forward 10 seconds"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 5v14l8.5-7zM12.5 5v14L21 12z" fill="currentColor"/></svg></button>
+      <button class="icon step" id="back10" aria-label="Back 10 seconds" title="Back 10 seconds">−10</button>
+      <button class="icon step" id="back5" aria-label="Back 5 seconds" title="Back 5 seconds">−5</button>
+      <button class="primary" id="play">Play</button>
+      <button class="icon step" id="fwd5" aria-label="Forward 5 seconds" title="Forward 5 seconds">+5</button>
+      <button class="icon step" id="fwd10" aria-label="Forward 10 seconds" title="Forward 10 seconds">+10</button>
       <button class="icon" id="toEnd" aria-label="Go to end" title="Go to end"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5v14l10.5-7z" fill="currentColor"/><rect x="16.5" y="5" width="2.5" height="14" fill="currentColor"/></svg></button>
+    </div>
+    <div class="tbar trow2">
       <span class="clock" id="clock">0:00.0 <small>/ 0:00.0</small></span>
       <button class="micchip" id="micChip" hidden title="Microphone is on. Tap to turn it off.">Mic on ✕</button>
+      <button class="rec recbtn" id="recBtn" title="Record onto the active track">● Record</button>
     </div>
   </div>
 
@@ -1743,6 +1755,8 @@ const jump=t=>{ const v=Math.max(0,Math.min(t,projectLen())); if(playing) seek(v
 $('toStart').onclick=()=>{ jump(0); viewStart=0; clampView(); drawAll(); };
 $('toEnd').onclick=()=>{ if(playing) pause(); jump(projectLen()); };
 $('back10').onclick=()=>jump(curTime()-10);
+$('back5').onclick=()=>jump(curTime()-5);
+$('fwd5').onclick=()=>jump(curTime()+5);
 $('fwd10').onclick=()=>jump(curTime()+10);
 $('loop').onclick=()=>{ loopOn=!loopOn; $('loop').classList.toggle('on',loopOn); $('loop').setAttribute('aria-pressed',String(loopOn)); if(loopOn && !(sel&&Math.abs(sel.b-sel.a)>0.05)) toast('Select a section to loop it.'); };
 let staleCheckAt=0;
@@ -1865,18 +1879,18 @@ async function startRecording(){
   const chunks=[]; let firstTime=null, chCount=1;
   const stop=await startCapture((ch,time)=>{ if(firstTime===null) firstTime=time; chCount=Math.max(chCount,ch.length); chunks.push(ch); });
   recording={trackId:t.id, p0:playhead, chunks, stop, get firstTime(){ return firstTime; }, get chCount(){ return chCount; }};
-  $('recBtn').classList.add('on'); $('recBtn').setAttribute('aria-label','Stop recording');
+  $('recBtn').classList.add('on'); $('recBtn').textContent='■ Stop';
   await play({recording:true, playAlong:$('playAlong').checked, delay:(t0+countDur)-c.currentTime});
   $('play').textContent='Stop';
   $('recStatus').textContent = beats ? `Count-in… recording starts after ${beats} clicks.` : 'Recording…';
-  setTimeout(()=>{ if(recording) $('recStatus').textContent='Recording… tap Stop or the red button to finish.'; }, Math.max(0,(t0+countDur-c.currentTime)*1000));
+  setTimeout(()=>{ if(recording) $('recStatus').textContent='Recording… tap ■ Stop to finish.'; }, Math.max(0,(t0+countDur-c.currentTime)*1000));
 }
 function stopRecording(){
   const r=recording; if(!r) return;
   const c=actx, endPlayhead=curTime();
   r.stop(); recording=null;
   stopSources(); playing=false; $('play').textContent='Play';
-  $('recBtn').classList.remove('on'); $('recBtn').setAttribute('aria-label','Record');
+  $('recBtn').classList.remove('on'); $('recBtn').textContent='● Record';
   const total=r.chunks.reduce((a,ch)=>a+ch[0].length,0);
   if(!total || r.firstTime===null){ $('recStatus').textContent='Nothing was recorded.'; playhead=r.p0; drawAll(); return; }
   const nCh=Math.min(2,r.chCount), buf=c.createBuffer(nCh,total,c.sampleRate);
