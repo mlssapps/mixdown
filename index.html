@@ -254,7 +254,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 32</p>
+  <p class="ver">Version 33</p>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -316,6 +316,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 33:</b> The bottom player fits the visible screen at any zoom. Waveforms fit to the loud parts of each track instead of one stray click, so Wave size enlarges every track.</li>
       <li><b>Version 32:</b> The player stays at the bottom of the screen even when the page is zoomed in.</li>
       <li><b>Version 31:</b> Player at the bottom of the screen. Taller waveforms that fit each track, plus a Wave size slider. Room past the end of the song. Volumes down to −60 dB, and tap the number to type one. Clip start and end in minutes and seconds, with an <b>Ends at</b> box. <b>Insert silence</b>. Much less work for your phone while playing.</li>
       <li><b>Version 30:</b> A version history (this list), and bigger, easier-to-read frequency numbers on the EQ-screen video.</li>
@@ -829,7 +830,8 @@ let vzoom=1; try{ vzoom=Math.max(1,Math.min(8,+localStorage.getItem('mixdown-vzo
 $('vzoom').value=Math.log(vzoom)/Math.log(8); $('vzoomV').textContent=vzoom.toFixed(1).replace(/\.0$/,'')+'×';
 $('vzoom').oninput=e=>{ vzoom=Math.pow(8,+e.target.value); if(vzoom<1.05){ vzoom=1; } $('vzoomV').textContent=vzoom.toFixed(1).replace(/\.0$/,'')+'×'; try{ localStorage.setItem('mixdown-vzoom',String(vzoom)); }catch(err){} drawAll(); };
 // each track's waveform is scaled to its own loudest point, so quiet recordings fill the lane (picture only)
-function peakOf(P){ if(P._pk==null){ let m=0; for(let i=0;i<P.mx.length;i++){ const a=Math.max(P.mx[i],-P.mn[i]); if(a>m) m=a; } P._pk=m; } return P._pk; }
+// fit to the loud parts, not to one stray click: the 99.5th percentile of the waveform's peaks
+function peakOf(P){ if(P._pk==null){ const n=P.mx.length, step=Math.max(1,Math.floor(n/20000)), v=[]; for(let i=0;i<n;i+=step){ const a=Math.max(P.mx[i],-P.mn[i]); if(a>1e-5) v.push(a); } v.sort((a,b)=>a-b); P._pk=v.length?v[Math.min(v.length-1,Math.floor(v.length*0.995))]:0; } return P._pk; }
 function trackFit(t){ let m=0; for(const c of t.clips) m=Math.max(m,peakOf(c.peaks)); return 0.92/Math.max(m,0.003); }
 $('zoom').oninput=()=>{ const c=viewStart+visDur()/2; setZoomFromSlider(); viewStart=c-visDur()/2; clampView(); drawAll(); };
 $('view').oninput=()=>{ const maxStart=Math.max(0,viewLen()-visDur()); viewStart=+$('view').value*maxStart; drawAll(); };
@@ -1762,9 +1764,10 @@ let selInfoAt=0;
 // so they slide away as you scroll a zoomed-in view. Follow the visible area instead.
 (function(){ const vv=window.visualViewport, bar=$('transportBar'); if(!vv||!bar) return;
   bar.style.transformOrigin='left bottom';
-  let raf=0; const place=()=>{ raf=0; const lh=document.documentElement.clientHeight;
-    if(vv.scale<=1.01 && Math.abs(vv.offsetTop)<1 && Math.abs(vv.offsetLeft)<1 && Math.abs(vv.height-lh)<2){ bar.style.transform=''; return; }
-    const dy=vv.offsetTop+vv.height-lh; bar.style.transform=`translate(${vv.offsetLeft}px, ${dy}px) scale(${1/vv.scale})`; };
+  let raf=0; const place=()=>{ raf=0; const de=document.documentElement, lw=de.clientWidth, lh=de.clientHeight;
+    if(Math.abs(vv.width-lw)<1 && Math.abs(vv.height-lh)<2 && Math.abs(vv.offsetTop)<1 && Math.abs(vv.offsetLeft)<1){ bar.style.transform=''; return; }
+    // shrink the full-width bar to exactly the visible width, and pin it to the visible bottom
+    const k=vv.width/lw, dy=vv.offsetTop+vv.height-lh; bar.style.transform=`translate(${vv.offsetLeft}px, ${dy}px) scale(${k})`; };
   const q=()=>{ if(!raf) raf=requestAnimationFrame(place); };
   vv.addEventListener('resize',q); vv.addEventListener('scroll',q); window.addEventListener('scroll',q,{passive:true}); q(); })();
 // the spectrum is only worth computing when someone can see it
