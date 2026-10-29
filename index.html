@@ -128,6 +128,7 @@ body.tracklock .lane canvas{touch-action:none}
 .edits{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .insrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:14px}
 .insrow input{width:72px}
+.restorebox{border:1px solid var(--accent);border-radius:14px;padding:12px 14px;margin:0 0 12px;background:var(--panel);font-size:15px}
 .valedit{display:flex;gap:6px;align-items:center;margin-top:6px;font-size:14px}
 .valedit input{width:84px}
 .cliprow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:14px}
@@ -261,7 +262,9 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 34</p>
+  <p class="ver">Version 36</p>
+  <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
   <p class="sub">Line up to twelve tracks, record, trim and fade them, shape the sound with EQ, and export the mix.</p>
 
@@ -291,7 +294,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Open <b>Recording</b> and tap <b>Turn on microphone</b>. Use wired headphones so the music doesn't leak into your take; Bluetooth adds delay. Tap the track to record onto, move the playhead to where you want to start, and press <b>● Record</b> at the bottom right of the player. After the count-in, sing or play along; press <b>■ Stop</b> (the same button) to finish. Each take becomes its own clip, so you can split, trim, move, and duplicate it.</p>
     <p>To stop the microphone, tap <b>Turn off microphone</b> or the red <b>Mic on</b> button in the player bar. It also turns off by itself when you leave the app, unless you're recording. Run <b>Measure latency</b> once per phone or mic (speaker on, no headphones). It sets the <b>Timing fix</b> so takes line up with the music. If a take still sounds early or late, adjust the slider and record again.</p>
     <h3>EQ</h3>
-    <p>Choose what to EQ in <b>EQ for</b>: the whole mix or any single track, each with its own 8 bands. The EQ is locked so scrolling can't bump it; tap <b>Edit EQ</b> to change it, and <b>Done</b> when finished. All bands that are on work together. Pick a band (1 to 8) to see or edit it, and set its type, frequency, gain, and width (Q). <b>Reset band</b> puts one band back to its starting setting. While editing, you can also drag a band's dot on the display. The amber line shows your EQ curve over the live spectrum while the mix plays. The buttons under the display choose which spectrums to show: the whole mix (shaded) and each track (a line in its color). Your EQ is remembered on this device.</p>
+    <p>Choose what to EQ in <b>EQ for</b>: the whole mix or any single track, each with its own 8 bands. The EQ is locked so scrolling can't bump it; tap <b>Edit EQ</b> to change it, and <b>Done</b> when finished. All bands that are on work together. Pick a band (1 to 8) to see or edit it, and set its type, frequency, gain, and width (Q). <b>Reset band</b> puts one band back to its starting setting. While editing, you can also drag a band's dot on the display. The amber line shows your EQ curve over the live spectrum while the mix plays. The buttons under the display choose which spectrums to show: the whole mix (shaded) and each track (a line in its color). Each project keeps its own EQ; a new project starts with every band off at a common starting point, with a note on what that band is usually used for.</p>
     <h3>Effects</h3>
     <p>Each track has an <b>Effects</b> section at the bottom of its card: <b>Noise gate</b>, <b>Compressor</b>, <b>Saturation</b>, <b>Chorus / flanger</b>, <b>Phaser</b>, <b>Tremolo</b>, <b>Echo / delay</b> (can sync to the tempo in Recording), and <b>Reverb</b> (room, hall, or plate). Check an effect to turn it on and show its controls. They run in that order, after the track's EQ. Changes apply when you let go of a slider. Reverb and echo tails are kept at the end of an export instead of being cut off.</p>
     <h3>Tone tracks</h3>
@@ -315,7 +318,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <li>Volume, pan, and gain sliders move only when you drag the circle itself, so scrolling past can't bump them. Double-tap a slider to reset it. Tap a track's volume number to type an exact value (down to −60 dB) or reset it; tap other changed numbers to reset them. Volumes also snap to 0 dB as you pass it.</li>
       <li>The player stays at the bottom of the screen. Waveforms are scaled to fit each track so quiet recordings are easy to see; <b>Wave size</b> enlarges them further. Neither changes the sound.</li>
       <li><b>Insert silence</b> (with the edit buttons) pushes everything after the playhead later on every track. A selected clip's <b>Starts at</b> and <b>Ends at</b> take minutes and seconds (1:15.2) or plain seconds; an earlier end trims the clip.</li>
-      <li>Your audio never leaves your device. Files aren't saved when you close the app, so choose them again next time.</li>
+      <li>Your audio never leaves your device. Your current session saves itself on this device as you work; if the app closes or refreshes, it offers to <b>Restore</b> it next time. Use <b>Save project</b> for copies you want to keep or move.</li>
       <li>Open the app in Chrome or Safari, not inside Instagram or Facebook, or choosing files may not work.</li>
       <li>The <b>Peak</b> reading after export tells you if the mix clips (goes over 0 dB). Turn on mastering to keep the export from clipping.</li>
     </ul>
@@ -323,6 +326,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 36:</b> Fixed: EQ bands that were turned off still shifted the timing of low and high frequencies, which softened punch and raised peaks by several dB (so mastering limited more than it needed to). Off bands now leave the sound exactly as it is.</li>
+      <li><b>Version 35:</b> Your session auto-saves on this device and can be restored after a refresh. New projects start at 0 dB with EQ bands off and common starting points. <b>Measure loudness only</b>. <b>End song here</b>. Muted tracks no longer add silence at the end. Section fix can mute. Tag tools moved out of the way. More room past the end.</li>
       <li><b>Version 34:</b> Bigger player buttons in two rows, new 5-second steps, and a clearly labeled <b>● Record</b> / <b>■ Stop</b> button set apart at the far right.</li>
       <li><b>Version 33:</b> The bottom player fits the visible screen at any zoom. Waveforms fit to the loud parts of each track instead of one stray click, so Wave size enlarges every track.</li>
       <li><b>Version 32:</b> The player stays at the bottom of the screen even when the page is zoomed in.</li>
@@ -466,6 +471,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <button class="small" id="trimSel">Trim to selection</button>
       <button class="small" id="clearSel">Clear selection</button>
       <button class="small" id="insSil">Insert silence</button>
+      <button class="small" id="endHere">End song here</button>
       <button class="small undoBtn" id="undo">Undo</button>
       <button class="small redoBtn" id="redo">Redo</button>
     </div>
@@ -532,6 +538,7 @@ body.force2 .cols > .panel{margin-top:14px}
             </select>
           </div>
         </div>
+        <p class="hint" id="bandHint" style="margin:8px 0 0"></p>
         <div class="field" style="margin-top:12px">
           <label for="bFreq">Frequency <span class="val" id="bFreqV"></span></label>
           <input type="range" id="bFreq" min="0" max="1" step="0.001">
@@ -568,7 +575,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <button class="primary" id="clHear" style="width:100%;margin-top:6px">Hear cleanup</button>
       <p class="hint">Renders the master with cleanup, then press Play. Uncheck <b>Listen to the master</b> under Mastering to compare with the original.</p>
       <h3 style="margin:16px 0 4px">Section fix <span class="hint" style="font-weight:400">(whole mix)</span></h3>
-      <p class="hint" style="margin-top:0">Turn the volume or treble up or down in one part of the song, with smooth ramps in and out. Select the part on the timeline first, or type the times.</p>
+      <p class="hint" style="margin-top:0">Turn the volume or treble up or down in one part of the song, with smooth ramps in and out. Select the part on the timeline first, or type the times. This changes the <b>whole mix</b>; −60 dB mutes it. To silence just one track, select that part on its lane and tap <b>Silence</b>.</p>
       <div id="secList"></div>
       <button id="secAdd" style="width:100%">Add section</button>
     </div>
@@ -604,6 +611,8 @@ body.force2 .cols > .panel{margin-top:14px}
         <input type="range" id="mRel" min="10" max="1000" step="1" value="150">
       </div>
       <button class="primary" id="mRun" style="width:100%">Master now</button>
+      <button id="mMeasure" style="width:100%;margin-top:8px">Measure loudness only</button>
+      <p class="hint" style="margin:4px 0 0">Shows how loud the mix is right now (LUFS and true peak) without changing anything. Handy for checking a professional song: add it as a track and measure.</p>
       <div class="progress" id="mProgress" hidden><div></div></div>
       <div class="mstats" id="mStats" hidden></div>
       <label class="check" id="mListenRow" style="margin-top:10px" hidden><input type="checkbox" id="mListen"> Listen to the master (press Play)</label>
@@ -674,14 +683,6 @@ body.force2 .cols > .panel{margin-top:14px}
         <div style="display:flex;gap:8px;align-items:center"><input type="text" id="fileName" placeholder="my-mix" autocomplete="off" style="flex:1;min-width:0"><button class="small" id="fileMatch" type="button" hidden>Match title</button></div>
       </div>
       </div>
-      <label class="check" style="margin:4px 0 12px"><input type="checkbox" id="tagOnly"> Only edit the tags of a song I already have</label>
-      <div id="tagOnlyBox" hidden>
-        <p class="hint" style="margin:0 0 10px">Open a WAV, MP3, M4A, or MP4. Its details and cover art fill in below; change them and tap <b>Save tagged copy</b>. The audio isn't touched.</p>
-        <div class="field" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <span class="pick"><span class="pickface">Open a song</span><input type="file" id="teFile" accept="audio/*,video/mp4,.wav,.mp3,.m4a,.mp4,.aac"></span>
-          <span class="hint" id="teName" style="margin:0"></span>
-        </div>
-      </div>
       <details class="tags" id="tagsBox">
         <summary>Song details (tags)</summary>
         <div class="field"><label for="tgTitle">Title</label><input type="text" id="tgTitle" autocomplete="off"></div>
@@ -714,6 +715,16 @@ body.force2 .cols > .panel{margin-top:14px}
       <div class="progress" id="progress" hidden><div></div></div>
       <div class="status" id="status" role="status"></div>
       <a class="savebtn" id="saveBtn" href="#" hidden>Save</a>
+      <details class="tagtool" style="margin-top:16px;border-top:1px solid var(--line);padding-top:10px"><summary class="hint" style="cursor:pointer">Tag tools</summary>
+      <label class="check" style="margin:8px 0 12px"><input type="checkbox" id="tagOnly"> Only edit the tags of a song I already have (hides Export)</label>
+      <div id="tagOnlyBox" hidden>
+        <p class="hint" style="margin:0 0 10px">Open a WAV, MP3, M4A, or MP4. Its details and cover art fill in under Song details; change them and tap <b>Save tagged copy</b>. The audio isn't touched.</p>
+        <div class="field" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <span class="pick"><span class="pickface">Open a song</span><input type="file" id="teFile" accept="audio/*,video/mp4,.wav,.mp3,.m4a,.mp4,.aac"></span>
+          <span class="hint" id="teName" style="margin:0"></span>
+        </div>
+      </div>
+      </details>
     </div>
   </div>
 </div>
@@ -779,7 +790,7 @@ const projectLen = () => Math.max(tracks.reduce((m,t)=>Math.max(m,trackEnd(t)),0
 const newClip = (buf,peaks,segs,offset,name) => ({id:nextClip++, buf, peaks, segs, offset, name});
 // Where each audio buffer came from, so projects can save it: {id, name, bytes (original file), kind}
 const sources=new Map(); let nextSrc=1; const bufSrc=new WeakMap();
-function registerSource(buf, name, bytes, kind){ const id=nextSrc++; sources.set(id,{id,name,bytes,kind,buf}); bufSrc.set(buf,id); return id; }
+function registerSource(buf, name, bytes, kind, uid){ const id=nextSrc++; sources.set(id,{id,name,bytes,kind,buf,uid:uid||(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)+'-'+id)}); bufSrc.set(buf,id); return id; }
 const findClip = id => { for(const t of tracks){ const c=t.clips.find(x=>x.id===id); if(c) return {t,c}; } return null; };
 function clipAt(t,time){ for(let i=t.clips.length-1;i>=0;i--){ const c=t.clips[i]; if(time>=c.offset && time<clipEnd(c)) return c; } return null; }
 const activeTrack = () => tracks.find(t=>t.id===activeId)||null;
@@ -829,7 +840,7 @@ function afterHistory(){ if(activeClipId && !findClip(activeClipId)) activeClipI
 // ---------- view ----------
 let pps=50, viewStart=0, playhead=0, sel=null, mode='select';
 // the view runs a few seconds past the last clip, so the end of a song is easy to reach (export still ends with the music)
-const viewLen = () => { const L=projectLen(); return L+Math.max(3, L*0.06); };
+const viewLen = () => { const L=projectLen(), w=$('ruler').clientWidth||300; return L+Math.max(3, L*0.06, 96*L/Math.max(120,w-96)); };
 function minPps(){ const w=$('ruler').clientWidth||300; const L=Math.max(viewLen(),10); return w/L; }
 function setZoomFromSlider(){ const z=+$('zoom').value, lo=minPps(), hi=400; pps = lo*Math.pow(hi/lo,z); clampView(); drawAll(); }
 function visDur(){ return ($('ruler').clientWidth||300)/pps; }
@@ -1475,6 +1486,13 @@ function insertSilence(d){ const at=playhead;
   tracks.forEach(t=>{ t.clips.forEach(c=>{ if(c.offset>=at-1e-6) c.offset+=d; else if(clipEnd(c)>at+1e-6){ const u=at-c.offset, L=clipLen(c); c.segs=[...cutSegs(c.segs,0,u,'keep'),{sil:d},...cutSegs(c.segs,u,L,'keep')]; } }); });
   secs.forEach(x=>{ if(x.a>=at) x.a+=d; if(x.b>=at) x.b+=d; }); try{ renderSecs(); }catch(e){}
   renderAll(); restartIfPlaying(); toast(`Inserted ${d} s of silence at ${fmt(at)}.`); }
+// trims every track at the playhead: later clips are removed, clips crossing it end there with a tiny fade
+$('endHere').onclick=()=>{ const at=playhead; if(!tracks.some(hasAudio)) return; if(at<0.5){ toast('Move the playhead to where the song should end.'); return; }
+  if(!confirm(`End the song at ${fmt(at)}? Everything after it is removed from every track. (Undo can bring it back.)`)) return;
+  pushUndo(`End song at ${fmt(at)}`);
+  tracks.forEach(t=>{ t.clips=t.clips.filter(c=>c.offset<at-1e-6); t.clips.forEach(c=>{ if(clipEnd(c)>at+1e-6){ c.segs=cutSegs(c.segs,0,at-c.offset,'keep'); c.fo=Math.max(c.fo||0,0.05); } }); });
+  secs=secs.filter(x=>x.a<at); secs.forEach(x=>{ if(x.b>at) x.b=at; }); try{ renderSecs(); }catch(e){}
+  if(activeClipId && !findClip(activeClipId)) activeClipId=null; renderAll(); restartIfPlaying(); toast(`The song now ends at ${fmt(at)}.`); };
 $('insSil').onclick=()=>{ if(!tracks.some(hasAudio)) return; const r=$('insRow'); r.hidden=!r.hidden; if(!r.hidden) $('insLen').focus(); };
 $('insCancel').onclick=()=>{ $('insRow').hidden=true; };
 $('insGo').onclick=()=>{ const d=Math.round((+$('insLen').value||0)*100)/100; if(!(d>0)){ toast('Type how many seconds to insert.'); return; } $('insRow').hidden=true; insertSilence(Math.min(600,d)); };
@@ -1506,29 +1524,35 @@ $('modeMove').onclick=()=>{ mode='move'; $('modeMove').classList.add('on'); $('m
 // ---------- EQ ----------
 // Every target (the whole mix, or one track) has its own 8 bands. All bands that are on apply together.
 const FMIN=20, FMAX=20000;
+// every band starts off, parked at the spot people most often reach for
 const DEFAULT_EQ=[
   {on:false,type:'highpass',f:30,g:0,q:0.71},
-  {on:true,type:'lowshelf',f:100,g:0,q:0.71},
-  {on:true,type:'peaking',f:250,g:0,q:1},
-  {on:true,type:'peaking',f:800,g:0,q:1},
-  {on:true,type:'peaking',f:2500,g:0,q:1},
-  {on:true,type:'peaking',f:6000,g:0,q:1},
-  {on:true,type:'highshelf',f:10000,g:0,q:0.71},
+  {on:false,type:'lowshelf',f:100,g:0,q:0.71},
+  {on:false,type:'peaking',f:250,g:0,q:1},
+  {on:false,type:'peaking',f:500,g:0,q:1},
+  {on:false,type:'peaking',f:3000,g:0,q:1},
+  {on:false,type:'peaking',f:6500,g:0,q:1.4},
+  {on:false,type:'highshelf',f:10000,g:0,q:0.71},
   {on:false,type:'lowpass',f:18000,g:0,q:0.71}
 ];
+const BAND_HINTS=['Common use: cut rumble below about 30–80 Hz (on vocals, try 80–100 Hz).','Common use: warmth and weight; a small boost of 1–4 dB adds body, a cut tightens boom.','Common use: mud; cut 1–3 dB around 200–300 Hz if the mix sounds cloudy.','Common use: boxy or honky sound; cut 1–3 dB around 400–800 Hz.','Common use: presence and harshness; a small cut around 2.5–4 kHz softens harsh vocals, a boost brings them forward.','Common use: sibilance and bite; cut around 5–8 kHz if S sounds or cymbals are sharp.','Common use: air and sparkle; a small boost opens it up, a 1–2 dB cut tames hiss and brightness.','Common use: cut fizz above about 15–18 kHz.'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 let eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}, eqTarget='mix', curBand=1, masterDb=0, eqEditing=false;
-try{ const s=JSON.parse(localStorage.getItem('mixdown-eq')||'null'); if(s && Array.isArray(s.eq) && s.eq.length===8){ eqs.mix={bands:s.eq,bypass:!!s.bypass}; masterDb=+s.master||0; } }catch(e){}
-function saveEq(){ try{ localStorage.setItem('mixdown-eq',JSON.stringify({eq:eqs.mix.bands,bypass:eqs.mix.bypass,master:masterDb})); }catch(e){} }
+// EQ and master volume belong to the project (saved with it and in the auto-saved session), so a new project starts flat at 0 dB
+try{ localStorage.removeItem('mixdown-eq'); localStorage.removeItem('mixdown-clean'); }catch(e){}
+function saveEq(){ autosaveSoon(); }
 function eqFor(key){ if(!eqs[key]) eqs[key]={bands:clone(DEFAULT_EQ),bypass:false}; return eqs[key]; }
 const curEq=()=>eqFor(eqTarget);
 const fToSlider=f=>Math.log(f/FMIN)/Math.log(FMAX/FMIN), sliderToF=v=>FMIN*Math.pow(FMAX/FMIN,v);
 const qToSlider=q=>Math.log(q/0.1)/Math.log(180), sliderToQ=v=>0.1*Math.pow(180,v);
 const fmtF=f=>f>=1000?(f/1000).toFixed(f>=10000?1:2)+' kHz':Math.round(f)+' Hz';
 const noGain=t=>['highpass','lowpass','notch'].includes(t);
+// A band that's off must leave the sound exactly as it was. (An all-pass filter keeps the level flat but shifts
+// the timing of low and high frequencies, which smears punch and can raise peaks by several dB.)
+// A peaking filter at 0 dB is a perfect pass-through.
 function applyBand(node,b,bypass){
   const on=b.on && !bypass;
-  node.type = on ? b.type : 'allpass';
+  node.type = on ? b.type : 'peaking';
   node.frequency.value=b.f; node.Q.value=b.q; node.gain.value = on ? b.g : 0;
 }
 function makeEqChain(c, set){ const nodes=set.bands.map(b=>{ const n=c.createBiquadFilter(); applyBand(n,b,set.bypass); return n; }); for(let i=1;i<nodes.length;i++) nodes[i-1].connect(nodes[i]); return {first:nodes[0], last:nodes[nodes.length-1], nodes}; }
@@ -1569,7 +1593,7 @@ function renderBands(){
 const bandLabel=b=>({peaking:'Peak',lowshelf:'Low shelf',highshelf:'High shelf',highpass:'High-pass',lowpass:'Low-pass',notch:'Notch'})[b.type]+' '+fmtF(b.f);
 function syncBand(){
   const set=curEq(), b=set.bands[curBand];
-  $('bOn').checked=b.on; $('bType').value=b.type;
+  $('bOn').checked=b.on; $('bType').value=b.type; if($('bandHint')) $('bandHint').textContent=(b.on?'':'Off. ')+BAND_HINTS[curBand];
   $('bFreq').value=fToSlider(b.f); $('bFreqV').textContent=fmtF(b.f);
   $('bGain').value=b.g; $('bGainV').textContent=noGain(b.type)?'n/a':(b.g>0?'+':'')+b.g.toFixed(1)+' dB'; $('bGainV').classList.toggle('changed',!noGain(b.type)&&Math.abs(b.g)>0.05);
   $('bGain').disabled = !eqEditing || noGain(b.type);
@@ -1581,8 +1605,8 @@ function applyAll(){ const set=curEq(); liveNodes(eqTarget).forEach((n,i)=>apply
 function bandChanged(){ const set=curEq(), n=liveNodes(eqTarget)[curBand]; if(n) applyBand(n,set.bands[curBand],set.bypass); if(eqTarget==='mix') saveEq(); syncBand(); renderBands(); drawSpec(); }
 const cb=()=>curEq().bands[curBand];
 $('bOn').onchange=e=>{ cb().on=e.target.checked; bandChanged(); };
-$('bType').onchange=e=>{ cb().type=e.target.value; bandChanged(); };
-$('bFreq').oninput=e=>{ cb().f=sliderToF(+e.target.value); bandChanged(); };
+$('bType').onchange=e=>{ cb().type=e.target.value; cb().on=true; bandChanged(); };
+$('bFreq').oninput=e=>{ cb().f=sliderToF(+e.target.value); if(noGain(cb().type)) cb().on=true; bandChanged(); };
 $('bGain').oninput=e=>{ let v=+e.target.value; if(Math.abs(v)<0.3){ v=0; e.target.value=0; } cb().g=v; cb().on=true; bandChanged(); };
 $('bQ').oninput=e=>{ cb().q=sliderToQ(+e.target.value); bandChanged(); };
 $('eqBypass').onchange=e=>{ curEq().bypass=e.target.checked; applyAll(); if(eqTarget==='mix') saveEq(); drawSpec(); };
@@ -2148,9 +2172,11 @@ let masterBuf=null, masterSig='', listenMaster=false;
 const masterStale=()=>masterSig!==mixSignature(+$('rate').value);
 function masterOff(){ listenMaster=false; const c=$('mListen'); if(c) c.checked=false; toast('You changed the mix, so Play now uses your live mix. Tap Master now (or Hear cleanup) to hear the processed version again.'); }
 function mixSignature(sr){ return JSON.stringify({cl:cleans, sc:secs, bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
+// the song ends where the last track you can hear ends (muted tracks don't add silence)
+const renderLen = () => { const a=tracks.filter(t=>hasAudio(t)&&audible(t)); return a.length ? Math.max(...a.map(trackEnd)) : projectLen(); };
 async function renderMix(sr, opts={}){
-  const live=tracks.filter(hasAudio), tail=Math.max(0,...live.map(fxTail));
-  const L=projectLen()+tail, len=Math.max(1,Math.ceil(L*sr));
+  const live=tracks.filter(hasAudio), tail=Math.max(0,...live.filter(audible).map(fxTail));
+  const L=renderLen()+tail, len=Math.max(1,Math.ceil(L*sr));
   const perTrack=opts.stems || live.some(t=>cleanActive(t.id));
   let out;
   if(!perTrack){
@@ -2212,6 +2238,15 @@ async function masterMix(sr, prog){
   const pk=peakEnvelope([out.getChannelData(0),out.getChannelData(1)],set.tp); let mx=0; for(let i=0;i<n;i++) if(pk[i]>mx) mx=pk[i];
   return {buf:out, before, after:got, gainDb:gdb, maxGR:-20*Math.log10(minG), peakDb:20*Math.log10(mx||1e-9), inPeakDb:20*Math.log10(inPk||1e-9), tp:set.tp, target:set.target};
 }
+$('mMeasure').onclick=async()=>{
+  if(!tracks.some(hasAudio)){ toast('Add audio first.'); return; }
+  pause(); $('mMeasure').disabled=true; const sr=+$('rate').value; setProg($('mProgress'),0.2,'Measuring…'); await sleep();
+  try{ const mix=await renderMix(sr), chs=[mix.getChannelData(0),mix.getChannelData(1)], L=lufs(chs,sr,1,null), pk=peakEnvelope(chs,true); let m=0; for(let i=0;i<pk.length;i++) if(pk[i]>m) m=pk[i];
+    const el=$('mStats'); el.hidden=false;
+    el.innerHTML=`<div><b>${isFinite(L)?L.toFixed(1):'—'}</b><span>LUFS right now</span></div><div><b>${(20*Math.log10(m||1e-9)).toFixed(1)}</b><span>dBTP true peak</span></div><div class="note">Measured only. Nothing was changed${tracks.filter(audible).length>1?' (this is all audible tracks together)':''}.</div>`;
+    status('Measured: '+(isFinite(L)?L.toFixed(1)+' LUFS':'silent')+'.',true);
+  }catch(e){ toast('Measuring failed on this device.'); }
+  setProg($('mProgress'),null); $('mMeasure').disabled=false; };
 function showStats(r){
   const el=$('mStats'); el.hidden=false;
   const reached=Math.abs(r.after-r.target)<0.3;
@@ -2246,12 +2281,12 @@ function renderClean(){
   $('clMods').querySelectorAll('select[data-a]').forEach(s=>{ s.value=set[s.dataset.a].amt; s.onchange=()=>{ cleanFor(clTarget)[s.dataset.a].amt=s.value; cleanChanged(); }; });
   $('clMods').querySelectorAll('input[data-k]').forEach(c=>c.onchange=()=>{ cleanFor(clTarget)[c.dataset.k].on=c.checked; cleanChanged(); });
 }
-function cleanChanged(){ try{ localStorage.setItem('mixdown-clean',JSON.stringify({mix:cleans.mix||null})); }catch(e){} if(listenMaster && masterBuf) toast('Cleanup changed. Tap Hear cleanup to update what you hear.'); }
+function cleanChanged(){ autosaveSoon(); if(listenMaster && masterBuf) toast('Cleanup changed. Tap Hear cleanup to update what you hear.'); }
 renderClean(); renderSecs();
 $('endGlitch').checked=endGlitchOn(); $('endGlitch').onchange=e=>{ try{ localStorage.setItem('mixdown-endglitch',e.target.checked?'1':'0'); }catch(err){} toast(e.target.checked?'New audio will have end glitches trimmed.':'New audio will keep its original ending.'); };
 $('clTarget').onchange=e=>{ clTarget=e.target.value==='mix'?'mix':+e.target.value; renderClean(); };
 $('clHear').onclick=()=>{ if(!tracks.some(hasAudio)){ status('Choose an audio file for a track first.'); return; } $('mRun').click(); };
-try{ const sv=JSON.parse(localStorage.getItem('mixdown-clean')||'null'); if(sv && sv.mix) cleans.mix=sv.mix; }catch(e){}
+
 const mmss=x=>{ x=Math.max(0,+x||0); const m=Math.floor(x/60), s=x-m*60; return m+':'+(s<10?'0':'')+s.toFixed(1); };
 const parseT=v=>{ v=String(v).trim(); if(!v) return 0; if(v.includes(':')){ const [m,s]=v.split(':'); return (+m||0)*60+(+s||0); } return +v||0; };
 function renderSecs(){
@@ -2259,10 +2294,10 @@ function renderSecs(){
   if(!secs.length){ box.innerHTML='<p class="hint" style="margin:0 0 8px">No sections yet.</p>'; return; }
   secs.forEach((x,i)=>{ const d=document.createElement('div'); d.className='secrow';
     d.innerHTML=`<div class="row"><div class="field"><label>Start</label><input type="text" inputmode="decimal" data-f="a" value="${mmss(x.a)}"></div><div class="field"><label>End</label><input type="text" inputmode="decimal" data-f="b" value="${mmss(x.b)}"></div></div>
-      <div class="row"><div class="field"><label>Volume (dB)</label><input type="number" step="0.5" min="-24" max="12" inputmode="decimal" data-f="vol" value="${x.vol||0}"></div><div class="field"><label>Treble (dB)</label><input type="number" step="0.5" min="-12" max="6" inputmode="decimal" data-f="treb" value="${x.treb||0}"></div></div>
+      <div class="row"><div class="field"><label>Volume (dB)</label><input type="number" step="0.5" min="-60" max="12" inputmode="decimal" data-f="vol" value="${x.vol||0}"></div><div class="field"><label>Treble (dB)</label><input type="number" step="0.5" min="-12" max="6" inputmode="decimal" data-f="treb" value="${x.treb||0}"></div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small" data-act="go">Go to start</button><button class="small" data-act="del">Remove</button></div>`;
     d.querySelectorAll('input[data-f]').forEach(inp=>inp.onchange=()=>{ const f=inp.dataset.f; let v = (f==='a'||f==='b') ? parseT(inp.value) : (+inp.value||0);
-      if(f==='vol') v=Math.max(-24,Math.min(12,v)); if(f==='treb') v=Math.max(-12,Math.min(6,v)); x[f]=v; if(x.b<x.a){ const t=x.a; x.a=x.b; x.b=t; } renderSecs(); cleanChanged(); });
+      if(f==='vol') v=Math.max(-60,Math.min(12,v)); if(f==='treb') v=Math.max(-12,Math.min(6,v)); x[f]=v; if(x.b<x.a){ const t=x.a; x.a=x.b; x.b=t; } renderSecs(); cleanChanged(); });
     d.querySelector('[data-act=go]').onclick=()=>seek(x.a);
     d.querySelector('[data-act=del]').onclick=()=>{ secs.splice(i,1); renderSecs(); cleanChanged(); };
     box.appendChild(d); });
@@ -2808,13 +2843,10 @@ const projSlug=()=>(($('projName').value||'untitled').trim().toLowerCase().repla
 $('projSave').onclick=async()=>{
   if(!window.JSZip){ projStatus('Saving projects needs one online visit first, so the app can download its zip tool.'); return; }
   if(recording){ projStatus('Stop recording first.'); return; }
-  pause(); const zip=new JSZip(), used=new Set();
+  pause(); const zip=new JSZip();
   $('projSave').disabled=true; $('projSaveBtn').hidden=true; setProg($('projProg'),0.05); projStatus('Packing your project…', true); await sleep();
   try{
-    const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs, cleans, secs,
-      tracks:tracks.map(t=>({id:t.id,hidden:!!t.hidden,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
-        clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0,gl:c.glitch||0}; })})),
-      sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
+    const {data,used}=projectData();
     let k=0;
     for(const sid of used){
       const src=sources.get(sid); let bytes=src.bytes;
@@ -2830,15 +2862,22 @@ $('projSave').onclick=async()=>{
   }catch(e){ projStatus('The project couldn’t be saved on this device.'); }
   setProg($('projProg'),null); $('projSave').disabled=false;
 };
+function projectData(){ const used=new Set();
+  const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs, cleans, secs,
+    tracks:tracks.map(t=>({id:t.id,hidden:!!t.hidden,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
+      clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0,gl:c.glitch||0}; })})),
+    sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
+  return {data,used}; }
 function clearProject(){
   pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
-  eqs={mix:eqs.mix}; sources.clear(); cleans={mix:cleans.mix}; secs=[]; clTarget='mix'; lastStems=null; renderClean(); renderSecs();
+  eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; renderClean(); renderSecs();
+  try{ applyAll(); syncBand(); renderBands(); }catch(e){}
 }
 $('projNew').onclick=()=>{
   if(tracks.some(hasAudio) && !confirm('Start a new project? Save this one first if you want to keep it.')) return;
   clearProject(); nextId=1; tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
   ['projName','tgTitle','fileName','tgTrack','tgComment','tgLyrics'].forEach(id=>$(id).value=''); showCover(null); lastTitle=''; syncFileMatch(); hideSave();
-  renderAll(); setZoomFromSlider(); projStatus('New project started. Artist, album, year, and genre stay filled in.');
+  renderAll(); setZoomFromSlider(); projStatus('New project started. Artist, album, year, and genre stay filled in.'); autosaveNow();
 };
 $('projOpen').onchange=async e=>{
   const f=e.target.files[0]; e.target.value=''; if(!f) return;
@@ -2850,12 +2889,20 @@ $('projOpen').onchange=async e=>{
     if(!zip.file('project.json')){ setProg($('projProg'),null); projStatus('That zip has no project in it. If it’s stems, use Open stems zip under Tracks.'); return; }
     const data=JSON.parse(await zip.file('project.json').async('string'));
     if(data.app!=='mixdown') throw new Error('notproj');
+    await applyProject(data, sd=>zip.file(sd.path).async('uint8array'));
+    { const t=$('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,''); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
+    projStatus(`Opened ${$('projName').value}.`+(glitchFixedOnOpen?` Removed end glitches from ${glitchFixedOnOpen} file${glitchFixedOnOpen>1?'s':''}; each track shows a Put it back button.`:''));
+    autosaveNow();
+  }catch(err){ projStatus(err&&err.message==='notproj'?'That zip isn’t a Mixdown project.':'That project couldn’t be opened.'); }
+  setProg($('projProg'),null);
+};
+async function applyProject(data, getBytes){
     clearProject(); const a=ctx(), bufs={};
     let k=0;
     for(const sd of data.sources){
-      const bytes=await zip.file(sd.path).async('uint8array');
+      const bytes=await getBytes(sd); if(!bytes) continue;
       const buf=await new Promise((res,rej)=>{ const p=a.decodeAudioData(bytes.slice(0).buffer,res,rej); if(p&&p.then) p.then(res,rej); });
-      registerSource(buf, sd.name, bytes, sd.kind); bufs[sd.id]={buf, peaks:computePeaks(buf)};
+      registerSource(buf, sd.name, bytes, sd.kind, sd.uid); bufs[sd.id]={buf, peaks:computePeaks(buf)};
       setProg($('projProg'),0.1+0.7*(++k/Math.max(1,data.sources.length))); await sleep();
     }
     setFields(data.fields||{});
@@ -2880,13 +2927,54 @@ $('projOpen').onchange=async e=>{
     eqs={mix:(data.eqs&&data.eqs.mix)||eqs.mix}; if(data.eqs) Object.keys(data.eqs).forEach(key=>{ if(key!=='mix') eqs[key]=data.eqs[key]; });
     cleans=data.cleans||{}; secs=Array.isArray(data.secs)?data.secs:[]; clTarget='mix'; renderSecs();
     showCover(data.cover ? {mime:data.cover.mime, bytes:unb64(data.cover.data)} : null);
-    saveEq(); syncM(); syncFmt(); syncLoop(); syncLatency(); renderAll(); renderBands(); syncBand(); setZoomFromSlider(); drawSpec();
-    { const t=$('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,''); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
-    projStatus(`Opened ${$('projName').value}.`+(glitchFixedOnOpen?` Removed end glitches from ${glitchFixedOnOpen} file${glitchFixedOnOpen>1?'s':''}; each track shows a Put it back button.`:''));
-  }catch(err){ projStatus(err&&err.message==='notproj'?'That zip isn’t a Mixdown project.':'That project couldn’t be opened.'); }
-  setProg($('projProg'),null);
-};
+    if(masterGain) masterGain.gain.value=dbToGain(masterDb);
+    syncM(); syncFmt(); syncLoop(); syncLatency(); renderAll(); renderBands(); syncBand(); applyAll(); setZoomFromSlider(); drawSpec();
+}
 
+// ---------- auto-saved session: kept on this device, restored after a refresh or an accidental close ----------
+var AS={db:null, timer:0, lastSig:'', saving:false, failedOnce:false, written:new Set()};
+function asDB(){ if(AS.db) return AS.db; AS.db=new Promise((res,rej)=>{ if(!window.indexedDB){ rej(new Error('noidb')); return; } const r=indexedDB.open('mixdown-auto',1); r.onupgradeneeded=()=>{ const d=r.result; if(!d.objectStoreNames.contains('kv')) d.createObjectStore('kv'); if(!d.objectStoreNames.contains('src')) d.createObjectStore('src'); }; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); return AS.db; }
+function asReq(store,mode,fn){ return asDB().then(d=>new Promise((res,rej)=>{ const tx=d.transaction(store,mode), st=tx.objectStore(store); let out; const rq=fn(st); if(rq) rq.onsuccess=()=>{ out=rq.result; }; tx.oncomplete=()=>res(out); tx.onerror=()=>rej(tx.error); tx.onabort=()=>rej(tx.error); })); }
+function autosaveSoon(){ if(typeof AS==='undefined'||!AS) return; clearTimeout(AS.timer); AS.timer=setTimeout(()=>autosaveNow(),2500); }
+async function autosaveNow(){
+  if(AS.saving || recording || AS.blocked) return; AS.saving=true;
+  try{
+    const {data,used}=projectData(); const has=tracks.some(hasAudio);
+    if(!has){ await asReq('kv','readwrite',st=>st.delete('session')); AS.lastSig=''; AS.saving=false; return; }
+    const uids=[];
+    for(const sid of used){ const src=sources.get(sid); if(!src) continue; uids.push(src.uid);
+      data.sources.push({id:sid,uid:src.uid,name:src.name,kind:src.kind});
+      if(!AS.written.has(src.uid)){ let bytes=src.bytes; if(!bytes){ bytes=new Uint8Array(await encodeWav(src.buf,24,null).arrayBuffer()); src.bytes=bytes; }
+        await asReq('src','readwrite',st=>st.put({name:src.name,kind:src.kind,bytes},src.uid)); AS.written.add(src.uid); } }
+    const sig=JSON.stringify({...data, savedAt:0, cover:data.cover?data.cover.data.length:0});
+    if(sig!==AS.lastSig){ await asReq('kv','readwrite',st=>st.put(data,'session')); AS.lastSig=sig; }
+    // drop audio no longer used by the session
+    const keys=await asReq('src','readonly',st=>st.getAllKeys()); const keep=new Set(uids);
+    const extra=(keys||[]).filter(k=>!keep.has(k)); if(extra.length){ await asReq('src','readwrite',st=>{ extra.forEach(k=>st.delete(k)); }); extra.forEach(k=>AS.written.delete(k)); }
+  }catch(e){ if(!AS.failedOnce){ AS.failedOnce=true; toast('Auto-save isn’t available here (storage may be full or blocked). Use Save project to keep your work.'); } }
+  AS.saving=false;
+}
+// save a few seconds after any change, and right away when the app is hidden or closed
+setInterval(()=>{ if(!playing && !recording && !AS.blocked) autosaveNow(); }, 8000);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') autosaveNow(); });
+window.addEventListener('pagehide',()=>autosaveNow());
+document.addEventListener('change',()=>autosaveSoon(),true);
+const _pushUndo=pushUndo; pushUndo=function(label){ _pushUndo(label); autosaveSoon(); };
+// offer the last session when the app opens
+(async()=>{ AS.blocked=true; let data=null; try{ data=await asReq('kv','readonly',st=>st.get('session')); }catch(e){}
+  if(!data || !data.tracks || !data.sources || !data.sources.length){ AS.blocked=false; return; }
+  const when=new Date(data.savedAt||Date.now()), name=(data.fields&&data.fields.projName)||'Untitled';
+  $('restoreInfo').textContent=`“${name}”, ${data.tracks.filter(t=>t.clips&&t.clips.length).length} tracks, last changed ${when.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}.`;
+  $('restoreBox').hidden=false;
+  $('restoreNo').onclick=async()=>{ $('restoreBox').hidden=true; AS.blocked=false; try{ await asReq('kv','readwrite',st=>st.delete('session')); await asReq('src','readwrite',st=>st.clear()); }catch(e){} };
+  $('restoreGo').onclick=async()=>{ $('restoreGo').disabled=true; $('restoreInfo').textContent='Restoring…';
+    try{ await applyProject(data, async sd=>{ const r=await asReq('src','readonly',st=>st.get(sd.uid)); return r?r.bytes:null; });
+      data.sources.forEach(sd=>AS.written.add(sd.uid));
+      const t=$('projName').value.trim(); lastTitle=t; syncFileMatch(); hideSave();
+      $('restoreBox').hidden=true; projStatus('Restored your last session.'); toast('Restored your last session.');
+    }catch(e){ $('restoreInfo').textContent='That session couldn’t be restored.'; }
+    AS.blocked=false; setProg($('projProg'),null); };
+})();
 // ---------- open a zip of stems: each audio file becomes its own track ----------
 const AUDIO_RE=/\.(wav|mp3|m4a|aac|flac|ogg|opus|aif|aiff|webm)$/i;
 const escH=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
