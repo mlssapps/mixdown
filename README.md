@@ -4,7 +4,7 @@ A free audio studio for your phone: multitrack editing, recording, EQ, effects, 
 
 **Open the app:** https://mlssapps.github.io/mixdown/
 
-Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No account, no ads, and your audio never leaves your device.
+Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No account, no ads, and your audio never leaves your device. Your current session saves itself on your device as you work, so a refresh or accidental close doesn't lose it.
 
 ## Tones and noise
 
@@ -18,7 +18,10 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 ## Editing and recording
 
 - **Up to 12 tracks** with waveforms scaled to fit each track: split, cut, copy, paste, duplicate, trim, delete, silence, insert silence, and undo
-- **Player at the bottom of the screen,** with exact clip start and end times you can type
+- **Player at the bottom of the screen,** with a big Undo button and a clock you can tap to type an exact time (numbers only: 31425 becomes 3:14.250)
+- **Exact selections:** type a selection's start and end to the millisecond, and exact clip start and end times
+- **Blends** between clips: both, fade out, fade in, or dip, with separate fade lengths, a sharp-to-wave curve, and a live picture of the curves
+- **Tap any slider's number to type a value,** with the number shown above your finger while you drag
 - **Recording** with count-in, live level meter, and an automatic timing (latency) fix
 - **Per-track and whole-mix 8-band parametric EQ** with a live spectrum analyzer
 - **Effects per track:** noise gate, compressor, saturation, chorus/flanger, phaser, tremolo, echo/delay (tempo sync), and reverb (room, hall, plate)
@@ -27,6 +30,10 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 
 - **Loudness target** from 0 to -20 LUFS
 - **Hard or soft limiter** with look-ahead, release, ceiling, and true peak
+- **Measure loudness only:** check any song's LUFS and true peak without changing it
+- **Your defaults:** save your usual mastering settings; every new project starts with them
+- **Clean slate:** turn off every EQ band and Cleanup tool on every track in one tap, and undo it
+- **Settings summary:** everything you changed, track by track, ready to copy as a recipe for another song
 
 ## Export
 
@@ -35,6 +42,7 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 - **MP4 cover art video:** square, 9:16, or 16:9, with your cover art (or black) and optional title and artist, ready to post, plus moving visuals including an EQ-screen view with a line for each track
 - **Tags in every format:** title, artist, album, year, track, genre, comment, lyrics, and cover art
 - **Cleanup for AI music:** de-esser, hiss quieter, shimmer tamer, harsh tamer, mud tamer, mouth-click remover, and pop softener that act only when each problem happens, plus section volume and treble fixes, and automatic trimming of the split-second glitch at the end of Suno stems (with a Put it back button)
+- **Repeat and loops:** play a song 2, 3, or 5 times or fill up to 30 minutes, with blended joins (including a dip that sounds like a quiet moment), or make a single file that loops smoothly
 - **Tag editor:** change the details and cover art of existing WAV, MP3, M4A, and MP4 files without re-encoding
 
 ## What's new
@@ -52,4 +60,4 @@ After one online visit it works offline. Recording needs the microphone, which b
 
 Designed by Melissa Landrum (MLSS). Built with Claude by Anthropic.
 
-MP4 and M4A export use [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) by Vanilagy, under the MIT License.
+MP4 and M4A export use [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) by Vanilagy, under the MIT License. Project and stem zips use [JSZip](https://stuk.github.io/jszip/), under the MIT License.
