@@ -319,7 +319,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 41</p>
+  <p class="ver">Version 42</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -400,6 +400,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 42:</b> Fixed: tapping a <b>Listen at</b> time or a pin while the song was playing started a second copy that Pause couldn't stop. Only one playback can run now.</li>
       <li><b>Version 41:</b> <b>Ring tamer</b> in Cleanup: finds up to three ringing notes and dips each one only at the moments it sticks out, easing in and out. The helper suggests it first, before an all-song EQ cut.</li>
       <li><b>Version 40:</b> <b>Send to Lyric Scroll</b> in Export. Found notes also shade the track where they ring, red when not fixed and green when fixed, with switches for pins and shading plus <b>Hide all marks</b>. Opening a project or starting new work now turns auto-save back on, so the restore offer always shows your latest song.</li>
       <li><b>Version 39:</b> <b>Find it for me</b> finds up to three ringing notes, worst first, and cuts each on its own EQ band with its own switch. Numbered marks on the timeline and <b>Listen at</b> buttons show where each one rings hardest; tap one to play from just before it.</li>
@@ -2012,13 +2013,19 @@ function scheduleTrack(c, t, dest, at, when0){
   }
   return {srcs, vol, pan, t, an, eqNodes:teq.nodes};
 }
+// Only one playback can ever run: each start gets a ticket, and a start that was overtaken (another tap,
+// a seek, Pause) quietly gives up; anything still sounding is stopped before new sound begins.
+let playTicket=0;
 async function play(opts={}){
+  const my=++playTicket;
   const c=ctx(); try{ await c.resume(); }catch(e){}
   if(!opts.recording){
     if(!tracks.some(hasAudio)){ toast('Choose an audio file for a track first.'); return; }
     if(playhead>=projectLen()-0.05) playhead=0;
   }
   await prepareFx(c);
+  if(my!==playTicket) return;
+  stopSources();
   startAt=playhead; startCtxTime=c.currentTime+(opts.delay||0.05);
   if(!opts.recording && listenMaster && masterBuf && masterStale()) masterOff();
   if(!opts.recording && listenMaster && masterBuf){
@@ -2030,7 +2037,7 @@ async function play(opts={}){
   playing=true; $('play').textContent='Pause'; requestAnimationFrame(tick);
 }
 function stopSources(){ if(session) session.forEach(s=>s.srcs.forEach(x=>{ try{x.stop();}catch(e){} try{x.disconnect();}catch(e){} })); session=null; }
-function pause(){ if(recording){ stopRecording(); return; } if(playing){ playhead=curTime(); } stopSources(); playing=false; $('play').textContent='Play'; drawAll(); drawSpec(); }
+function pause(){ if(recording){ stopRecording(); return; } playTicket++; if(playing){ playhead=curTime(); } stopSources(); playing=false; $('play').textContent='Play'; drawAll(); drawSpec(); }
 function curTime(){ return playing ? startAt + Math.max(0, actx.currentTime-startCtxTime) : playhead; }
 function seek(t){ if(recording) return; playhead=Math.max(0,Math.min(t,projectLen())); if(playing){ stopSources(); playing=false; play(); } else drawAll(); }
 function restartIfPlaying(){ if(playing){ playhead=curTime(); stopSources(); playing=false; play(); } }
@@ -3257,7 +3264,7 @@ function fxLines(t){ if(!t.fx) return []; return FX.filter(e=>t.fx[e.k]&&t.fx[e.
   if(p.opts){ const o=p.opts.find(x=>x[0]===v); return `${p.l} ${o?o[1]:v}`; } return `${p.l} ${(+v).toFixed(p.step<1?(p.step<0.1?2:1):0)}${p.u===':1'?':1':' '+p.u}`; }).join(', ')); }
 function settingsSummary(){
   const L=[], s=mSettings(), title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 41)`);
+  L.push(`${title}: Mixdown settings (Version 42)`);
   L.push(''); L.push('MASTERING');
   L.push(`Target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms. Master when exporting: ${$('mOn').checked?'on':'off'}.`);
   if(Math.abs(masterDb)>0.05) L.push(`Master volume: ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB`);
@@ -3501,7 +3508,7 @@ var marksHidden=false;
 function syncMarksBtn(){ const b=$('marksBtn'); if(!b || !ringMarks) return; b.hidden=!ringMarks.length; b.textContent=marksHidden?'Show marks':'Hide all marks'; b.classList.toggle('on',!marksHidden && ringMarks.length>0); }
 // what the marks on one track look like right now (part of the lane's drawing cache key)
 function laneMarkSig(t){ if(marksHidden || !ringMarks || !ringMarks.length) return ''; return ringMarks.filter(m=>String(m.rec.tg)===String(t.id) && m.rec.showLanes!==false).map(m=>m.r.n+(m.r.on?'y':'n')).join(''); }
-function listenAt(t){ seek(Math.max(0,t-1.5)); if(!playing) play(); }
+function listenAt(t){ const at=Math.max(0,t-1.5); if(playing) seek(at); else { playhead=Math.min(at,projectLen()); drawAll(); play(); } }
 $('marksBtn').onclick=()=>{ marksHidden=!marksHidden; syncMarksBtn(); drawAll(); toast(marksHidden?'Marks hidden. Your fixes stay on.':'Marks showing.'); };
 const helpKey=(pk,i,tg)=>`${pk}:${i}:${tg}`;
 function eqAfter(tg){ const set=eqFor(tg); try{ liveNodes(tg).forEach((n,i)=>applyBand(n,set.bands[i],set.bypass)); }catch(e){}
