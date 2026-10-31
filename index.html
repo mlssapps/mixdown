@@ -80,6 +80,12 @@ span.val:not(#meterV){cursor:pointer;text-decoration:underline dotted;text-under
 .helpbox .hfix.on{border-color:var(--accent)}
 .helpbox .hfix input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
 .helpbox .hfix .hint{display:block;margin:2px 0 0}
+.helpbox .hrings{margin:-2px 0 8px 18px;padding-left:10px;border-left:3px solid var(--accent)}
+.helpbox .hring{padding:6px 0;border-bottom:1px solid var(--line)}
+.helpbox .hring:last-of-type{border-bottom:0}
+.helpbox .hring:not(.on) .hrname{opacity:.6;text-decoration:line-through}
+.helpbox .hrtimes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.helpbox .hrtimes button{padding:5px 9px;font-variant-numeric:tabular-nums}
 .clsum{font-size:14px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
 .clsum b{color:var(--accent)}
 .slaterow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 4px}
@@ -150,7 +156,7 @@ button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var
 
 /* timeline */
 .timeline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 26px 8px 8px;margin-top:4px}
-.ruler{display:block;width:100%;height:26px;touch-action:none;cursor:pointer}
+.ruler{display:block;width:100%;height:34px;touch-action:none;cursor:pointer}
 .lanes{display:grid;gap:6px;margin-top:4px}
 .lane{position:relative;border-radius:8px;background:var(--lane);border:2px solid transparent;overflow:hidden}
 .lane.active{border-color:var(--accent)}
@@ -311,7 +317,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 38</p>
+  <p class="ver">Version 39</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -365,7 +371,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
     <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
     <h3>What do you hear?</h3>
-    <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. <b>Find it for me</b> listens for a note that rings out and cuts it right there. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
+    <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. <b>Find it for me</b> listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pink marks on the timeline show where each note rings hardest, and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
     <h3>Keep it smooth</h3>
     <ul>
       <li><b>Pause before big jobs.</b> Master now, Hear cleanup, and Export reprocess the whole song. Let them work without live playback at the same time.</li>
@@ -390,6 +396,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 39:</b> <b>Find it for me</b> finds up to three ringing notes, worst first, and cuts each on its own EQ band with its own switch. Numbered marks on the timeline and <b>Listen at</b> buttons show where each one rings hardest; tap one to play from just before it.</li>
       <li><b>Version 38:</b> <b>What do you hear?</b> in EQ and Cleanup: tap a problem in plain words and turn suggested fixes on or off, including <b>Find it for me</b> for a note that stings. <b>Timeline and editing</b> folds away like the other sections. Mastering stops adding gain once more gain would only add limiting, so songs that can’t reach the target don’t get crushed.</li>
       <li><b>Version 37:</b> <b>Clean slate</b>, <b>Settings summary</b>, and a Cleanup summary. Mastering remembers <b>your defaults</b>. Bigger gold slider numbers, a number above your finger while you drag, and tap any number to type it. Bigger messages that stay until you've read them. <b>Blend</b> styles with separate lengths, a wave-like curve, and a live picture, for clips and loops. Type the playhead time and exact selections. A big <b>Undo</b> in the player. The player stays put when the keyboard opens, the page stays put when you change a setting, and video export keeps the screen awake.</li>
       <li><b>Version 36:</b> Fixed: EQ bands that were turned off still shifted the timing of low and high frequencies, which softened punch and raised peaks by several dB (so mastering limited more than it needed to). Off bands now leave the sound exactly as it is.</li>
@@ -1026,6 +1033,10 @@ function drawRuler(){
     const m=Math.floor(t/60), s=t%60;
     g.fillText(step<1 ? m+':'+s.toFixed(1).padStart(4,'0') : m+':'+String(Math.round(s)).padStart(2,'0'), x+3, 12);
   }
+  // marks where a ringing note found by "Find it for me" rings hardest (numbered by how bad it is)
+  if(typeof ringMarks!=='undefined' && ringMarks.length){ g.font='bold 10px Figtree, sans-serif';
+    ringMarks.forEach(({r})=>{ g.fillStyle=css('--t3'); g.globalAlpha=r.on?1:.4; r.times.forEach(tm=>{ const x=(tm-viewStart)*pps; if(x<-8||x>w+8) return;
+      g.fillRect(x-1,h-14,2,14); g.beginPath(); g.arc(x,h-17,6,0,Math.PI*2); g.fill(); g.fillStyle=css('--panel'); g.fillText(String(r.n),x-2.8,h-13.5); g.fillStyle=css('--t3'); }); g.globalAlpha=1; }); }
   const px=(playhead-viewStart)*pps;
   g.fillStyle=css('--accent'); g.beginPath(); g.moveTo(px-6,h-10); g.lineTo(px+6,h-10); g.lineTo(px,h); g.fill();
 }
@@ -1192,7 +1203,10 @@ function attachLane(el,t){
   // the browser took over the touch to scroll the page: do nothing
   c.addEventListener('pointercancel',()=>{ if(down && down.pushed){ const u=undoStack.pop(); if(u) restore(u.snap); updateUndoUI(); } down=null; drawAll(); });
 }
-$('ruler').addEventListener('pointerdown',e=>{ const r=$('ruler').getBoundingClientRect(); seek(viewStart+(e.clientX-r.left)/pps); });
+$('ruler').addEventListener('pointerdown',e=>{ const r=$('ruler').getBoundingClientRect(), x=e.clientX-r.left;
+  // tapping a ring mark plays from just before it
+  if(typeof ringMarks!=='undefined') for(const {r:rg} of ringMarks) for(const tm of rg.times){ if(Math.abs((tm-viewStart)*pps-x)<=12){ listenAt(tm); return; } }
+  seek(viewStart+x/pps); });
 
 function toneHTML(){
   return `
@@ -3179,7 +3193,7 @@ function fxLines(t){ if(!t.fx) return []; return FX.filter(e=>t.fx[e.k]&&t.fx[e.
   if(p.opts){ const o=p.opts.find(x=>x[0]===v); return `${p.l} ${o?o[1]:v}`; } return `${p.l} ${(+v).toFixed(p.step<1?(p.step<0.1?2:1):0)}${p.u===':1'?':1':' '+p.u}`; }).join(', ')); }
 function settingsSummary(){
   const L=[], s=mSettings(), title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 38)`);
+  L.push(`${title}: Mixdown settings (Version 39)`);
   L.push(''); L.push('MASTERING');
   L.push(`Target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms. Master when exporting: ${$('mOn').checked?'on':'off'}.`);
   if(Math.abs(masterDb)>0.05) L.push(`Master volume: ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB`);
@@ -3211,7 +3225,7 @@ $('sumCopy').onclick=async()=>{ const txt=$('sumText').textContent; let ok=false
   toast(ok?'Copied. Paste it into your notes.':'Select the text above and copy it.'); };
 function clearProject(){
   pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
-  eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; syncSlate(); renderClean(); renderSecs();
+  eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); }catch(e){} syncSlate(); renderClean(); renderSecs();
   try{ applyAll(); syncBand(); renderBands(); }catch(e){}
 }
 $('projNew').onclick=()=>{
@@ -3390,7 +3404,7 @@ const HELP=[
     {kind:'clean', mod:'deess', amt:'medium', name:'De-esser, Medium', what:'Turns S sounds down when they spike. Best on a vocal track.'},
     {kind:'eq', band:5, type:'peaking', f:6500, g:-3, q:2, name:'Cut at 6.5 kHz', what:'A narrow cut where S sounds live (EQ band 6).'} ]},
   {k:'sting', name:'One note that stings', desc:'One note, or a few, that ring, sting, or distort every time they come around.', fixes:[
-    {kind:'find', band:3, g:-4, q:5, name:'Find it for me', what:'Listens to this track (or the whole mix) for the ringing note and puts a narrow −4 dB cut right there (EQ band 4).'},
+    {kind:'find', band:3, g:-4, q:5, name:'Find it for me', what:'Listens to this track (or the whole mix) for up to three ringing notes, worst first, and puts a narrow −4 dB cut on each, with its own switch and times to listen at.'},
     {kind:'manual', band:3, f:1000, g:-4, q:5, name:'I’ll find it by hand', what:'Puts a narrow −4 dB cut on EQ band 4 and opens the EQ, so you can slide it to the note while it plays.'},
     {kind:'clean', mod:'harsh', amt:'gentle', name:'Harsh tamer, Gentle', what:'If the sting is high and edgy, this eases it when it flares up.'} ]},
   {k:'buried', name:'Vocals buried', desc:'You can’t make out the words.', fixes:[
@@ -3412,6 +3426,9 @@ const HELP=[
     {kind:'trim', name:'Trim 0.25 s and fade out the end', what:'On this track, or on every track you can hear when Whole mix is chosen.'} ]}
 ];
 const helpApplied=new Map(); let helpState={target:'mix', prob:null};
+var ringMarks=[];   // [{rec, r}] notes found by Find it for me, shown as marks on the timeline
+function setRing(r,on){ const set=eqFor(r.tg); if(on){ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:-4,q:5}; } else { set.bands[r.band]=clone(r.prev); } r.on=on; eqAfter(r.tg); drawRuler(); }
+function listenAt(t){ seek(Math.max(0,t-1.5)); if(!playing) play(); }
 const helpKey=(pk,i,tg)=>`${pk}:${i}:${tg}`;
 function eqAfter(tg){ const set=eqFor(tg); try{ liveNodes(tg).forEach((n,i)=>applyBand(n,set.bands[i],set.bypass)); }catch(e){}
   if(String(tg)===String(eqTarget)){ renderBands(); syncBand(); } drawSpec(); autosaveSoon(); if(slateBackup){ slateBackup=null; syncSlate(); } }
@@ -3419,7 +3436,8 @@ function cleanAfter(tg){ if(String(clTarget)===String(tg)) renderClean(); cleanC
 function fixOn(pk,i,fx,tg){ const rec=helpApplied.get(helpKey(pk,i,tg));
   if(fx.kind==='clean'){ const o=cleans[tg]&&cleans[tg][fx.mod]; return !!(o&&o.on&&o.amt===fx.amt); }
   if(fx.kind==='eq'){ const b=eqs[tg]&&eqs[tg].bands[fx.band]; return !!(b&&b.on&&b.type===fx.type&&Math.abs(b.f-fx.f)<0.5&&Math.abs(b.g-fx.g)<0.05&&Math.abs(b.q-fx.q)<0.01); }
-  if(fx.kind==='find'||fx.kind==='manual'){ const b=eqs[tg]&&eqs[tg].bands[fx.band]; return !!(rec && b && b.on); }
+  if(fx.kind==='find') return !!rec;
+  if(fx.kind==='manual'){ const b=eqs[tg]&&eqs[tg].bands[fx.band]; return !!(rec && b && b.on); }
   return !!rec; }
 // a small FFT, for finding a ringing note
 function fftMag(re){ const n=re.length, im=new Float64Array(n);
@@ -3428,40 +3446,57 @@ function fftMag(re){ const n=re.length, im=new Float64Array(n);
     for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let k=0;k<len/2;k++){ const ur=re[i+k], ui=im[i+k], vr=re[i+k+len/2]*cr-im[i+k+len/2]*ci, vi=re[i+k+len/2]*ci+im[i+k+len/2]*cr;
       re[i+k]=ur+vr; im[i+k]=ui+vi; re[i+k+len/2]=ur-vr; im[i+k+len/2]=ui-vi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } }
   const m=new Float64Array(n/2); for(let k=0;k<n/2;k++) m[k]=re[k]*re[k]+im[k]*im[k]; return m; }
-// Average the spectrum over the song (loud moments count most), then find the narrow peak that stands
-// highest above its neighbors between 250 Hz and 6 kHz: that's a note that rings out.
-async function findSting(tg){
-  let sig, sr;
+// Average the spectrum over the song (loud moments count most), then find the narrow peaks that stand highest
+// above their neighbors between 250 Hz and 6 kHz: notes that ring out. Up to `maxN`, worst first, at least a
+// third of an octave apart. For each one, also find the moments in the song where it rings hardest.
+async function findStings(tg, maxN){
+  let sig, sr, t0=0;
   if(tg==='mix'){ sr=+$('rate').value; const m=await renderMix(sr); const a=m.getChannelData(0), b=m.getChannelData(1); sig=new Float32Array(a.length); for(let i=0;i<a.length;i++) sig[i]=(a[i]+b[i])/2; }
-  else { const t=tracks.find(x=>String(x.id)===String(tg)); if(!t||!hasAudio(t)) return null; sr=t.clips[0].buf.sampleRate; const parts=[];
-    for(const cl of t.clips) for(const g of cl.segs){ if(g.sil!=null) continue; const ch=cl.buf.numberOfChannels, d0=cl.buf.getChannelData(0), d1=ch>1?cl.buf.getChannelData(1):d0, a=Math.floor(g.s*sr), b=Math.floor(g.e*sr), p=new Float32Array(Math.max(0,b-a)); for(let i=0;i<p.length;i++) p[i]=(d0[a+i]+d1[a+i])/2; parts.push(p); }
-    const L=parts.reduce((x,p)=>x+p.length,0); sig=new Float32Array(L); let o=0; parts.forEach(p=>{ sig.set(p,o); o+=p.length; }); }
-  const N=8192; if(sig.length<N*2) return null;
-  const frames=Math.min(300, Math.floor(sig.length/N)), hop=Math.floor((sig.length-N)/Math.max(1,frames-1)), win=new Float64Array(N); for(let i=0;i<N;i++) win[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
-  const acc=new Float64Array(N/2); let used=0;
+  else { const t=tracks.find(x=>String(x.id)===String(tg)); if(!t||!hasAudio(t)) return []; sr=t.clips[0].buf.sampleRate;
+    // lay the track's clips out on the song's timeline, so the times we report match the player
+    t0=0; const end=trackEnd(t); sig=new Float32Array(Math.ceil(end*sr)+1);
+    for(const cl of t.clips){ let pos=Math.round(cl.offset*sr); const ch=cl.buf.numberOfChannels, d0=cl.buf.getChannelData(0), d1=ch>1?cl.buf.getChannelData(1):d0, csr=cl.buf.sampleRate;
+      for(const g of cl.segs){ const L=Math.round(segLen(g)*sr); if(g.sil==null){ const a=Math.floor(g.s*csr); for(let i=0;i<L && pos+i<sig.length;i++){ const k=a+Math.round(i*csr/sr); if(k<d0.length) sig[pos+i]+=(d0[k]+d1[k])/2; } } pos+=L; } } }
+  const N=8192; if(sig.length<N*2) return [];
+  const frames=Math.min(400, Math.floor(sig.length/N)), hop=Math.floor((sig.length-N)/Math.max(1,frames-1)), win=new Float64Array(N); for(let i=0;i<N;i++) win[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
+  const acc=new Float64Array(N/2), keep=[]; let used=0;
   for(let f=0;f<frames;f++){ const st=f*hop; let e=0; for(let i=0;i<N;i++) e+=sig[st+i]*sig[st+i]; if(e/N<1e-7) continue;
-    const re=new Float64Array(N); for(let i=0;i<N;i++) re[i]=sig[st+i]*win[i]; const m=fftMag(re); for(let k=0;k<N/2;k++) acc[k]+=m[k]; used++; if(f%20===0) await sleep(); }
-  if(!used) return null;
+    const re=new Float64Array(N); for(let i=0;i<N;i++) re[i]=sig[st+i]*win[i]; const m=fftMag(re); for(let k=0;k<N/2;k++) acc[k]+=m[k];
+    keep.push({t:(st+N/2)/sr+t0, m:Float32Array.from(m)}); used++; if(f%20===0) await sleep(); }
+  if(!used) return [];
   const db=new Float64Array(N/2); for(let k=0;k<N/2;k++) db[k]=10*Math.log10(acc[k]/used+1e-20);
-  const binHz=sr/N, k0=Math.ceil(250/binHz), k1=Math.floor(6000/binHz); let best=-1, bestP=0;
-  for(let k=k0;k<=k1;k++){ const lo=Math.floor(k*Math.pow(2,-1/3)), hi=Math.ceil(k*Math.pow(2,1/3)); let s2=0, c=0;
-    for(let j=lo;j<=hi;j++){ if(Math.abs(j-k)<=2) continue; s2+=db[j]; c++; } const prom=db[k]-s2/Math.max(1,c);
-    if(prom>bestP && db[k]>=db[k-1] && db[k]>=db[k+1]){ bestP=prom; best=k; } }
-  if(best<0 || bestP<4) return null;
-  // refine between bins
-  const a=db[best-1], b=db[best], c=db[best+1], d=(a-c)/(2*(a-2*b+c)||1); return {f:Math.round((best+(isFinite(d)?Math.max(-0.5,Math.min(0.5,d)):0))*binHz), prom:bestP};
+  const binHz=sr/N, k0=Math.ceil(250/binHz), k1=Math.floor(6000/binHz);
+  const promAt=(arr,k)=>{ const lo=Math.floor(k*Math.pow(2,-1/3)), hi=Math.ceil(k*Math.pow(2,1/3)); let s2=0,c=0; for(let j=lo;j<=hi;j++){ if(Math.abs(j-k)<=2) continue; s2+=arr[j]; c++; } return arr[k]-s2/Math.max(1,c); };
+  const cands=[]; for(let k=k0;k<=k1;k++){ if(!(db[k]>=db[k-1] && db[k]>=db[k+1])) continue; const p=promAt(db,k); if(p>=4) cands.push({k,p}); }
+  cands.sort((a,b)=>b.p-a.p);
+  const picks=[]; for(const c of cands){ if(picks.every(q=>Math.abs(Math.log2(c.k/q.k))>=1/3)) picks.push(c); if(picks.length>=maxN) break; }
+  return picks.map(c=>{ const k=c.k, a=db[k-1], b=db[k], cc=db[k+1], d=(a-cc)/(2*(a-2*b+cc)||1), f=Math.round((k+(isFinite(d)?Math.max(-0.5,Math.min(0.5,d)):0))*binHz);
+    // when does it ring? frames where this note stands out most (and the music isn't quiet), merged and kept to 8
+    const sc=keep.map(fr=>{ const dbf=x=>10*Math.log10(fr.m[x]+1e-20); let s2=0,cn=0; const lo=Math.floor(k*Math.pow(2,-1/3)), hi=Math.ceil(k*Math.pow(2,1/3)); for(let j=lo;j<=hi;j++){ if(Math.abs(j-k)<=2) continue; s2+=dbf(j); cn++; } const pk=Math.max(dbf(k-1),dbf(k),dbf(k+1)); return {t:fr.t, s:pk-s2/Math.max(1,cn), lv:pk}; });
+    const lvTop=Math.max(...sc.map(x=>x.lv)), best=sc.filter(x=>x.lv>lvTop-24).sort((x,y)=>y.s-x.s), times=[];
+    for(const x of best){ if(x.s<Math.max(6, best[0].s-8)) break; if(times.every(tt=>Math.abs(tt-x.t)>3)) times.push(x.t); if(times.length>=8) break; }
+    times.sort((x,y)=>x-y); return {f, prom:c.p, times}; });
 }
 async function applyFix(pk,i,fx,tg){
   const key=helpKey(pk,i,tg), t=tg==='mix'?null:tracks.find(x=>String(x.id)===String(tg));
   if(fx.kind==='clean'){ const o=cleanFor(tg)[fx.mod], prev={...o}; o.on=true; o.amt=fx.amt; helpApplied.set(key,{undo:()=>{ Object.assign(cleanFor(tg)[fx.mod],prev); cleanAfter(tg); }}); cleanAfter(tg); return true; }
-  if(fx.kind==='eq'||fx.kind==='manual'||fx.kind==='find'){
+  if(fx.kind==='find'){
+    toast('Listening for ringing notes… this can take a few seconds.'); await sleep();
+    const found=await findStings(tg,3);
+    if(!found.length){ toast('No ringing note stands out here. Try “I’ll find it by hand,” or pick the track it’s on.'); return false; }
+    // each note gets its own EQ band: free bands first (4, 5, 3, 6), so your other EQ stays as it is
+    const set=eqFor(tg), prevBy=set.bypass, order=[3,4,2,5], free=order.filter(b=>!set.bands[b].on), bands=free.concat(order.filter(b=>!free.includes(b)));
+    const rings=found.map((r,n)=>({tg, f:r.f, band:bands[n], times:r.times, prev:clone(set.bands[bands[n]]), on:true, n:n+1}));
+    rings.forEach(r=>{ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:fx.g,q:fx.q}; }); set.bypass=false;
+    const rec={rings, undo:()=>{ const s2=eqFor(tg); rings.forEach(r=>{ s2.bands[r.band]=r.prev; }); s2.bypass=prevBy; eqAfter(tg); ringMarks=ringMarks.filter(m=>m.rec!==rec); drawRuler(); }};
+    helpApplied.set(key,rec); rings.forEach(r=>ringMarks.push({rec, r})); eqAfter(tg); drawRuler();
+    toast(`Found ${rings.length} ringing note${rings.length>1?'s':''}: ${rings.map(r=>fmtF(r.f)).join(', ')}, worst first. Each has a narrow −4 dB cut and its own switch. Tap a time to listen there, or the marks on the timeline.`);
+    return true; }
+  if(fx.kind==='eq'||fx.kind==='manual'){
     let f=fx.f;
-    if(fx.kind==='find'){ toast('Listening for the ringing note… this can take a few seconds.'); await sleep(); const r=await findSting(tg);
-      if(!r){ toast('No single ringing note stands out here. Try “I’ll find it by hand,” or pick the track it’s on.'); return false; } f=r.f; }
     const set=eqFor(tg), prev=clone(set.bands[fx.band]), prevBy=set.bypass;
     set.bands[fx.band]={on:true, type:fx.type||'peaking', f, g:fx.g, q:fx.q}; set.bypass=false;
     helpApplied.set(key,{undo:()=>{ const s2=eqFor(tg); s2.bands[fx.band]=prev; s2.bypass=prevBy; eqAfter(tg); }}); eqAfter(tg);
-    if(fx.kind==='find') toast(`Found a ringing note at ${fmtF(f)}. Cut −4 dB there, narrow. Play it to check; turn the fix off to compare.`);
     if(fx.kind==='manual'){ eqTarget=tg; curBand=fx.band; renderTargets(); renderBands(); setEditing(true); const p=document.querySelector('[data-sec="eq"]'); if(p.classList.contains('collapsed')) p.querySelector(':scope > h2').click(); p.scrollIntoView({behavior:'smooth',block:'start'});
       toast('Play the part that stings, then slide Frequency until it stops stinging. Tap Done when it sounds right.'); }
     return true; }
@@ -3506,7 +3541,20 @@ function renderHelp(){
           else if(f.kind==='eq'){ eqFor(tg).bands[f.band]=clone(DEFAULT_EQ[f.band]); eqAfter(tg); } } }
       catch(e){ toast('That fix couldn’t be applied here.'); cb.checked=false; }
       renderHelp(); };
-    fx.appendChild(l); });
+    fx.appendChild(l);
+    const rec=f.kind==='find' && helpApplied.get(helpKey(pr.k,i,tg));
+    if(rec && rec.rings){ const box=document.createElement('div'); box.className='hrings';
+      rec.rings.forEach(r=>{ const row=document.createElement('div'); row.className='hring'+(r.on?' on':'');
+        row.innerHTML=`<label class="check" style="margin:0"><input type="checkbox"${r.on?' checked':''}> <span class="hrname"></span></label><div class="hrtimes"></div>`;
+        row.querySelector('.hrname').textContent=`${r.n}. ${fmtF(r.f)}${r.n===1?' (worst)':''}, EQ band ${r.band+1}`;
+        row.querySelector('input').onchange=e=>{ setRing(r,e.target.checked); renderHelp(); };
+        const tt=row.querySelector('.hrtimes'); if(!r.times.length) tt.textContent='Rings all through the song.';
+        else { const lab=document.createElement('span'); lab.className='hint'; lab.style.margin='0'; lab.textContent='Listen at: '; tt.appendChild(lab);
+          r.times.forEach(tm=>{ const b2=document.createElement('button'); b2.type='button'; b2.className='small'; b2.textContent=fmt(tm); b2.title='Plays from just before this spot'; b2.onclick=()=>listenAt(tm); tt.appendChild(b2); }); }
+        box.appendChild(row); });
+      const h=document.createElement('p'); h.className='hint'; h.style.margin='4px 0 0'; h.textContent='Each time button plays from just before that spot. Switch a note off and on while it plays to hear the difference. Keep only the cuts that clearly help.'; box.appendChild(h);
+      fx.appendChild(box); }
+  });
 }
 document.querySelectorAll('.helpBtn').forEach(b=>b.onclick=()=>{ const box=$('helpBox');
   const moved=box.previousElementSibling!==b; b.after(box); if(box.hidden||moved){ helpState.target = b.dataset.from==='eq' ? eqTarget : clTarget; box.hidden=false; renderHelp(); } else box.hidden=true; });
