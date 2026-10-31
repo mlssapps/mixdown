@@ -319,7 +319,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 40</p>
+  <p class="ver">Version 41</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -375,7 +375,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
     <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
     <h3>What do you hear?</h3>
-    <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. <b>Find it for me</b> listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pins on the timeline show where each note rings hardest, and the track it was found on is shaded over each stretch where it rings: red while it's not fixed, green once its cut is on. <b>Show pins</b> and <b>Show on the track</b> switch them on and off for each search, and <b>Hide all marks</b> by the timeline buttons clears them all, so your waveforms look clean when you're done (the fixes stay on). <b>Listen at</b> buttons and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
+    <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. Try the <b>Ring tamer</b> first: it's a Cleanup tool that dips a ringing note only at the moments it sticks out, so the note is left alone the rest of the time (good for melody notes that only sting sometimes). If a note stings every time it plays, use <b>Find it for me</b>, which listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pins on the timeline show where each note rings hardest, and the track it was found on is shaded over each stretch where it rings: red while it's not fixed, green once its cut is on. <b>Show pins</b> and <b>Show on the track</b> switch them on and off for each search, and <b>Hide all marks</b> by the timeline buttons clears them all, so your waveforms look clean when you're done (the fixes stay on). <b>Listen at</b> buttons and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
     <h3>Keep it smooth</h3>
     <ul>
       <li><b>Pause before big jobs.</b> Master now, Hear cleanup, and Export reprocess the whole song. Let them work without live playback at the same time.</li>
@@ -400,6 +400,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 41:</b> <b>Ring tamer</b> in Cleanup: finds up to three ringing notes and dips each one only at the moments it sticks out, easing in and out. The helper suggests it first, before an all-song EQ cut.</li>
       <li><b>Version 40:</b> <b>Send to Lyric Scroll</b> in Export. Found notes also shade the track where they ring, red when not fixed and green when fixed, with switches for pins and shading plus <b>Hide all marks</b>. Opening a project or starting new work now turns auto-save back on, so the restore offer always shows your latest song.</li>
       <li><b>Version 39:</b> <b>Find it for me</b> finds up to three ringing notes, worst first, and cuts each on its own EQ band with its own switch. Numbered marks on the timeline and <b>Listen at</b> buttons show where each one rings hardest; tap one to play from just before it.</li>
       <li><b>Version 38:</b> <b>What do you hear?</b> in EQ and Cleanup: tap a problem in plain words and turn suggested fixes on or off, including <b>Find it for me</b> for a note that stings. <b>Timeline and editing</b> folds away like the other sections. Mastering stops adding gain once more gain would only add limiting, so songs that can’t reach the target don’t get crushed.</li>
@@ -2382,6 +2383,7 @@ function limiterGain(p, sr, gain, set, out, work){
 }
 // ---------- cleanup (offline, moment-by-moment) ----------
 const CLEAN=[
+  {k:'ring', name:'Ring tamer', hint:'Finds up to three notes that ring out here and dips each one, narrowly, only at the moments it sticks out, easing in and out. The rest of the time those notes are left alone, so try this before an EQ cut. It listens after this track’s EQ, so notes you already cut there count less.'},
   {k:'deess', name:'De-esser', hint:'Turns down harsh S, SH, and T sounds when they spike (about 5–9 kHz). Best on a vocal track.', f:6500, q:1.0, pct:75, att:1, rel:60, max:10},
   {k:'hiss', name:'Hiss quieter', hint:'Lowers hiss above about 4.5 kHz only in quiet gaps between phrases. The music itself passes through.'},
   {k:'shimmer', name:'Shimmer tamer', hint:'Smooths swirly, metallic high end (about 8–16 kHz) when it flares up.', f:11500, q:0.7, pct:70, att:5, rel:120, max:8},
@@ -2454,9 +2456,30 @@ function popSoft(chs,sr,amt){
     gs = tg>gs ? gA*gs+(1-gA)*tg : gR*gs+(1-gR)*tg;
     if(gs>0.003) for(let c=0;c<chs.length;c++) chs[c][i]+=gs*(thin[c][i]-chs[c][i]); }
 }
-async function applyClean(chs,sr,set){
+// Ring tamer: find the notes that stand out (same listening as Find it for me), then for each one follow how far it
+// sticks up above its neighbors moment by moment. Only when it rises clearly above its own usual amount does a
+// narrow dip come in (easing in over ~15 ms, out over ~200 ms), capped by the amount. Gentle about −3, Medium −5, Strong −8 dB.
+const ringLog={};
+async function ringTame(chs,sr,amt,key){
+  const n=chs[0].length, mono=new Float32Array(n); for(let i=0;i<n;i++){ let v=0; for(const x of chs) v+=x[i]; mono[i]=v/chs.length; }
+  const found=await analyzeRings(mono,sr,0,3); if(key!=null) ringLog[key]=found.map(r=>r.f);
+  for(const r of found){
+    const f=r.f, cB=bqc('bp',f,5,sr), cL=bqc('bp',f*Math.pow(2,-1/3),3,sr), cH=bqc('bp',f*Math.pow(2,1/3),3,sr);
+    const band=chs.map(x=>bqRun(x,cB)), eb=follow(band,sr,5,80), eL=follow([bqRun(mono,cL)],sr,5,80), eH=follow([bqRun(mono,cH)],sr,5,80);
+    // how far the note sticks up above its neighbors, and its usual amount over the loud parts of the song
+    const pd=new Float32Array(n), loud=pctDb(eb,40), samp=[]; for(let i=0;i<n;i++){ const b=20*Math.log10(eb[i]+1e-12), nb=20*Math.log10((eL[i]+eH[i])/2+1e-12); pd[i]=b-nb; if(i%256===0 && b>loud) samp.push(pd[i]); }
+    samp.sort((a,b)=>a-b); const usual=samp.length?samp[Math.floor(samp.length*0.5)]:0;
+    const thr=usual+4-amt*3, maxCut=9*amt, slope=1.1, LA=Math.round(sr*0.015);
+    const gA=Math.exp(-1/(sr*0.015)), gR=Math.exp(-1/(sr*0.2)); let gs=0;
+    for(let i=0;i<n;i++){ const j=Math.min(n-1,i+LA), b=20*Math.log10(eb[j]+1e-12); const tg = b>loud-12 ? Math.min(maxCut,Math.max(0,(pd[j]-thr)*slope)) : 0;
+      gs = tg>gs ? gA*gs+(1-gA)*tg : gR*gs+(1-gR)*tg;
+      if(gs>0.01){ const k=Math.pow(10,-gs/20)-1; for(let ch=0;ch<chs.length;ch++) chs[ch][i]+=k*band[ch][i]; } }
+    await sleep();
+  }
+}
+async function applyClean(chs,sr,set,key){
   for(const m of CLEAN){ const st=set[m.k]; if(!st||!st.on) continue; const amt=CL_AMT[st.amt]||0.6;
-    if(m.k==='hiss') hissQuiet(chs,sr,amt); else if(m.k==='declick') deClick(chs,sr,amt); else if(m.k==='pops') popSoft(chs,sr,amt); else dynCut(chs,sr,m,amt); await sleep(); }
+    if(m.k==='ring') await ringTame(chs,sr,amt,key); else if(m.k==='hiss') hissQuiet(chs,sr,amt); else if(m.k==='declick') deClick(chs,sr,amt); else if(m.k==='pops') popSoft(chs,sr,amt); else dynCut(chs,sr,m,amt); await sleep(); }
 }
 // a few milliseconds of fade at the very start and end, so a file never begins or stops on a click
 function edgeFade(chs,sr){ const n=chs[0].length, fi=Math.min(n>>1,Math.round(sr*0.003)), fo=Math.min(n>>1,Math.round(sr*0.012));
@@ -2495,7 +2518,7 @@ async function renderMix(sr, opts={}){
       const oc=new OfflineAudioContext(2, len, sr); await prepareFx(oc);
       scheduleTrack(oc,t,oc.destination,0,0);
       const b=await oc.startRendering(), chs=[b.getChannelData(0), b.getChannelData(1)];
-      if(cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id]);
+      if(cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id],t.id);
       for(let c=0;c<2;c++){ const s0=sum[c], x=chs[c]; for(let i=0;i<len;i++) s0[i]+=x[i]; }
       if(opts.stems){ const m=new Float32Array(len>>1); for(let i=0;i<m.length;i++) m[i]=(chs[0][2*i]+chs[1][2*i]+chs[0][2*i+1]+chs[1][2*i+1])*0.25; stems.push({mono:m, color:css(t.colorVar)}); }
       await sleep();
@@ -2507,7 +2530,7 @@ async function renderMix(sr, opts={}){
     if(opts.stems) lastStems={sig:mixSignature(sr), sr:sr/2, list:stems};
   }
   const chs=[out.getChannelData(0), out.getChannelData(1)];
-  if(cleanActive('mix')) await applyClean(chs,sr,cleans.mix);
+  if(cleanActive('mix')) await applyClean(chs,sr,cleans.mix,'mix');
   sectionFix(chs,sr);
   edgeFade(chs,sr);
   return out;
@@ -2569,6 +2592,7 @@ $('mRun').onclick=async()=>{
   const sr=+$('rate').value;
   try{
     const r=await masterMix(sr,(f,m)=>setProg($('mProgress'),f,m));
+    try{ renderClean(); }catch(e){}
     masterBuf=r.buf; masterSig=mixSignature(sr); showStats(r);
     $('mListenRow').hidden=false; $('mListen').checked=true; listenMaster=true;
     status('Mastered. Press Play to listen, or export below.');
@@ -2584,7 +2608,7 @@ function renderClean(){
   sel.value=String(clTarget);
   const set=cleanFor(clTarget);
   $('clMods').innerHTML=CLEAN.map(m=>`<div class="clmod"><div class="clhead"><label class="check"><input type="checkbox" data-k="${m.k}"${set[m.k].on?' checked':''}> <b>${m.name}</b></label>
-    <select data-a="${m.k}" aria-label="${m.name} amount"><option value="gentle">Gentle</option><option value="medium">Medium</option><option value="strong">Strong</option></select></div><p class="hint">${m.hint}</p></div>`).join('');
+    <select data-a="${m.k}" aria-label="${m.name} amount"><option value="gentle">Gentle</option><option value="medium">Medium</option><option value="strong">Strong</option></select></div><p class="hint">${m.hint}${m.k==='ring' && ringLog[clTarget] ? `<br><b>Last time you mastered, it worked on:</b> ${ringLog[clTarget].length?ringLog[clTarget].map(fmtF).join(', '):'nothing stood out'}.` : ''}</p></div>`).join('');
   $('clMods').querySelectorAll('select[data-a]').forEach(s=>{ s.value=set[s.dataset.a].amt; s.onchange=()=>{ cleanFor(clTarget)[s.dataset.a].amt=s.value; cleanChanged(); }; });
   $('clMods').querySelectorAll('input[data-k]').forEach(c=>c.onchange=()=>{ cleanFor(clTarget)[c.dataset.k].on=c.checked; cleanChanged(); });
   syncClSum();
@@ -3233,7 +3257,7 @@ function fxLines(t){ if(!t.fx) return []; return FX.filter(e=>t.fx[e.k]&&t.fx[e.
   if(p.opts){ const o=p.opts.find(x=>x[0]===v); return `${p.l} ${o?o[1]:v}`; } return `${p.l} ${(+v).toFixed(p.step<1?(p.step<0.1?2:1):0)}${p.u===':1'?':1':' '+p.u}`; }).join(', ')); }
 function settingsSummary(){
   const L=[], s=mSettings(), title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 40)`);
+  L.push(`${title}: Mixdown settings (Version 41)`);
   L.push(''); L.push('MASTERING');
   L.push(`Target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms. Master when exporting: ${$('mOn').checked?'on':'off'}.`);
   if(Math.abs(masterDb)>0.05) L.push(`Master volume: ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB`);
@@ -3447,8 +3471,9 @@ const HELP=[
   {k:'ess', name:'Sharp “s” sounds', desc:'S, SH, and T sounds that spit or sting.', fixes:[
     {kind:'clean', mod:'deess', amt:'medium', name:'De-esser, Medium', what:'Turns S sounds down when they spike. Best on a vocal track.'},
     {kind:'eq', band:5, type:'peaking', f:6500, g:-3, q:2, name:'Cut at 6.5 kHz', what:'A narrow cut where S sounds live (EQ band 6).'} ]},
-  {k:'sting', name:'One note that stings', desc:'One note, or a few, that ring, sting, or distort every time they come around.', fixes:[
-    {kind:'find', band:3, g:-4, q:5, name:'Find it for me', what:'Listens to this track (or the whole mix) for up to three ringing notes, worst first, and puts a narrow −4 dB cut on each, with its own switch and times to listen at.'},
+  {k:'sting', name:'One note that stings', desc:'One note, or a few, that ring, sting, or distort. Try the Ring tamer first: it only acts when a note sticks out. If a note stings every time it plays, use Find it for me (an EQ cut that’s on all song).', fixes:[
+    {kind:'clean', mod:'ring', amt:'medium', name:'Ring tamer, Medium (Cleanup)', what:'Finds up to three ringing notes and dips each one only at the moments it sticks out. Tap Master now to hear it.'},
+    {kind:'find', band:3, g:-4, q:5, name:'Find it for me (EQ, all song)', what:'For notes that sting every time. Finds up to three ringing notes, worst first, and puts a narrow −4 dB EQ cut on each, with its own switch and times to listen at.'},
     {kind:'manual', band:3, f:1000, g:-4, q:5, name:'I’ll find it by hand', what:'Puts a narrow −4 dB cut on EQ band 4 and opens the EQ, so you can slide it to the note while it plays.'},
     {kind:'clean', mod:'harsh', amt:'gentle', name:'Harsh tamer, Gentle', what:'If the sting is high and edgy, this eases it when it flares up.'} ]},
   {k:'buried', name:'Vocals buried', desc:'You can’t make out the words.', fixes:[
@@ -3506,6 +3531,9 @@ async function findStings(tg, maxN){
     t0=0; const end=trackEnd(t); sig=new Float32Array(Math.ceil(end*sr)+1);
     for(const cl of t.clips){ let pos=Math.round(cl.offset*sr); const ch=cl.buf.numberOfChannels, d0=cl.buf.getChannelData(0), d1=ch>1?cl.buf.getChannelData(1):d0, csr=cl.buf.sampleRate;
       for(const g of cl.segs){ const L=Math.round(segLen(g)*sr); if(g.sil==null){ const a=Math.floor(g.s*csr); for(let i=0;i<L && pos+i<sig.length;i++){ const k=a+Math.round(i*csr/sr); if(k<d0.length) sig[pos+i]+=(d0[k]+d1[k])/2; } } pos+=L; } } }
+  return analyzeRings(sig, sr, t0, maxN);
+}
+async function analyzeRings(sig, sr, t0, maxN){
   const N=8192; if(sig.length<N*2) return [];
   const frames=Math.min(400, Math.floor(sig.length/N)), hop=Math.floor((sig.length-N)/Math.max(1,frames-1)), win=new Float64Array(N); for(let i=0;i<N;i++) win[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
   const acc=new Float64Array(N/2), keep=[]; let used=0;

@@ -44,7 +44,7 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 - **M4A:** 256 kbps AAC, small and phone-friendly
 - **MP4 cover art video:** square, 9:16, or 16:9, with your cover art (or black) and optional title and artist, ready to post, plus moving visuals including an EQ-screen view with a line for each track
 - **Tags in every format:** title, artist, album, year, track, genre, comment, lyrics, and cover art
-- **Cleanup for AI music:** de-esser, hiss quieter, shimmer tamer, harsh tamer, mud tamer, mouth-click remover, and pop softener that act only when each problem happens, plus section volume and treble fixes, and automatic trimming of the split-second glitch at the end of Suno stems (with a Put it back button)
+- **Cleanup for AI music:** ring tamer (dips ringing notes only when they stick out), de-esser, hiss quieter, shimmer tamer, harsh tamer, mud tamer, mouth-click remover, and pop softener that act only when each problem happens, plus section volume and treble fixes, and automatic trimming of the split-second glitch at the end of Suno stems (with a Put it back button)
 - **Repeat and loops:** play a song 2, 3, or 5 times or fill up to 30 minutes, with blended joins (including a dip that sounds like a quiet moment), or make a single file that loops smoothly
 - **Send to Lyric Scroll:** hand the finished song, title, artist, cover art, and lyrics straight to [Lyric Scroll](https://mlssapps.github.io/lyric-scroll/) on the same device, ready to time
 - **Tag editor:** change the details and cover art of existing WAV, MP3, M4A, and MP4 files without re-encoding
