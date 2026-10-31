@@ -81,6 +81,8 @@ span.val:not(#meterV){cursor:pointer;text-decoration:underline dotted;text-under
 .helpbox .hfix input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
 .helpbox .hfix .hint{display:block;margin:2px 0 0}
 .helpbox .hrings{margin:-2px 0 8px 18px;padding-left:10px;border-left:3px solid var(--accent)}
+.helpbox .hshow{display:flex;gap:14px;flex-wrap:wrap;padding:4px 0 6px;border-bottom:1px solid var(--line)}
+.helpbox .hshow .check{margin:0;font-size:14px}
 .helpbox .hring{padding:6px 0;border-bottom:1px solid var(--line)}
 .helpbox .hring:last-of-type{border-bottom:0}
 .helpbox .hring:not(.on) .hrname{opacity:.6;text-decoration:line-through}
@@ -317,7 +319,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 39</p>
+  <p class="ver">Version 40</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -362,6 +364,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with optional visual rows in your color: a live waveform, a slow waveform that shows beats and pulses, spectrum bars (plain, mirrored, stacked in track colors, or <b>EQ screen</b>: the whole mix shaded with a glowing line for each track, like the live EQ display), and a whole-song waveform with a progress marker; check any combination). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
     <h3>Repeat and loops</h3>
     <p>In Export, <b>Repeat</b> plays the song 2, 3, or 5 times in one file, or <b>fills</b> 3 to 30 minutes, ending with a gentle fade. Turn on <b>Blend the joins</b> to choose how each repeat flows into the next, with the same styles as clip blends. The first play always starts clean and the last one ends naturally. <b>Dip</b> fades the ending out and the beginning back in, so a repeat sounds like a quiet moment in the song. With Repeat off, Blend the joins makes a single file that loops smoothly when a player repeats it; Dip keeps its very start clean. Long files are large, so M4A is a good choice for them.</p>
+    <h3>Send to Lyric Scroll</h3>
+    <p>Fill in <b>Song details</b> (title, artist, lyrics, and cover art), then tap <b>Send to Lyric Scroll</b> under Export. Mixdown hands over the finished song (mastered when Master when exporting is on) through your phone's own storage, then shows <b>Open Lyric Scroll</b>. Lyric Scroll offers to load everything; then you time the lyrics yourself as usual. Nothing is uploaded anywhere.</p>
     <h3>Editing tags only</h3>
     <p>In Export, check <b>Only edit the tags of a song I already have</b>, then <b>Open a song</b> (WAV, MP3, M4A, or MP4). Its details and cover art fill in under Song details. Change them and tap <b>Save tagged copy</b>; it makes a new file with "-tagged" added to the name, without re-encoding the audio. Uncheck the box to go back to exporting your mix.</p>
     <p>Music players show cover art in their own frame, usually a square, whatever shape the picture is. For a full-screen look, use the MP4 video export in the shape you want.</p>
@@ -371,7 +375,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
     <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
     <h3>What do you hear?</h3>
-    <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. <b>Find it for me</b> listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pink marks on the timeline show where each note rings hardest, and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
+    <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. <b>Find it for me</b> listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pins on the timeline show where each note rings hardest, and the track it was found on is shaded over each stretch where it rings: red while it's not fixed, green once its cut is on. <b>Show pins</b> and <b>Show on the track</b> switch them on and off for each search, and <b>Hide all marks</b> by the timeline buttons clears them all, so your waveforms look clean when you're done (the fixes stay on). <b>Listen at</b> buttons and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
     <h3>Keep it smooth</h3>
     <ul>
       <li><b>Pause before big jobs.</b> Master now, Hear cleanup, and Export reprocess the whole song. Let them work without live playback at the same time.</li>
@@ -396,6 +400,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 40:</b> <b>Send to Lyric Scroll</b> in Export. Found notes also shade the track where they ring, red when not fixed and green when fixed, with switches for pins and shading plus <b>Hide all marks</b>. Opening a project or starting new work now turns auto-save back on, so the restore offer always shows your latest song.</li>
       <li><b>Version 39:</b> <b>Find it for me</b> finds up to three ringing notes, worst first, and cuts each on its own EQ band with its own switch. Numbered marks on the timeline and <b>Listen at</b> buttons show where each one rings hardest; tap one to play from just before it.</li>
       <li><b>Version 38:</b> <b>What do you hear?</b> in EQ and Cleanup: tap a problem in plain words and turn suggested fixes on or off, including <b>Find it for me</b> for a note that stings. <b>Timeline and editing</b> folds away like the other sections. Mastering stops adding gain once more gain would only add limiting, so songs that can’t reach the target don’t get crushed.</li>
       <li><b>Version 37:</b> <b>Clean slate</b>, <b>Settings summary</b>, and a Cleanup summary. Mastering remembers <b>your defaults</b>. Bigger gold slider numbers, a number above your finger while you drag, and tap any number to type it. Bigger messages that stay until you've read them. <b>Blend</b> styles with separate lengths, a wave-like curve, and a live picture, for clips and loops. Type the playhead time and exact selections. A big <b>Undo</b> in the player. The player stays put when the keyboard opens, the page stays put when you change a setting, and video export keeps the screen awake.</li>
@@ -527,6 +532,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <button class="icon" id="loop" aria-label="Loop the selection" aria-pressed="false" title="Loop the selection"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M17 4l3 3-3 3M4 11V9a2 2 0 0 1 2-2h14M7 20l-3-3 3-3M20 13v2a2 2 0 0 1-2 2H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="margin-left:6px">Loop</span></button>
       <button class="icon" id="trackLock" aria-pressed="true" title="Edit: swipes on the tracks select or move. Scroll: swipes on the tracks scroll the page.">Swipe on tracks: Edit</button>
       <button class="icon" id="selTimes" aria-expanded="false">Exact times &#9662;</button>
+      <button class="icon" id="marksBtn" type="button" hidden>Hide all marks</button>
     </div>
     <div class="selrow" id="selRow" hidden>
       <label class="inl">Start <input type="text" class="tmask" id="selA" inputmode="numeric" autocomplete="off" placeholder="0:00.000"></label>
@@ -814,6 +820,9 @@ body.force2 .cols > .panel{margin-top:14px}
       <div class="progress" id="progress" hidden><div></div></div>
       <div class="status" id="status" role="status"></div>
       <a class="savebtn" id="saveBtn" href="#" hidden>Save</a>
+      <button id="toLyric" style="width:100%;margin-top:14px">Send to Lyric Scroll</button>
+      <a class="savebtn" id="toLyricOpen" href="../lyric-scroll/" target="_blank" rel="noopener" hidden>Open Lyric Scroll</a>
+      <p class="hint">Sends the finished song (mastered when <b>Master when exporting</b> is on) with the title, artist, cover art, and lyrics from Song details. Lyric Scroll opens with them loaded, ready for you to time. Nothing leaves your phone.</p>
       <details class="tagtool" style="margin-top:16px;border-top:1px solid var(--line);padding-top:10px"><summary class="hint" style="cursor:pointer">Tag tools</summary>
       <label class="check" style="margin:8px 0 12px"><input type="checkbox" id="tagOnly"> Only edit the tags of a song I already have (hides Export)</label>
       <div id="tagOnlyBox" hidden>
@@ -1021,6 +1030,7 @@ function fitCanvas(c){
   if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){ c.width=Math.round(w*dpr); c.height=Math.round(h*dpr); }
   const g=c.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); return {g,w,h};
 }
+const MARK_FOUND='#E5484D', MARK_FIXED='#2FA35E';
 function drawRuler(){
   const {g,w,h}=fitCanvas($('ruler'));
   g.clearRect(0,0,w,h);
@@ -1034,9 +1044,13 @@ function drawRuler(){
     g.fillText(step<1 ? m+':'+s.toFixed(1).padStart(4,'0') : m+':'+String(Math.round(s)).padStart(2,'0'), x+3, 12);
   }
   // marks where a ringing note found by "Find it for me" rings hardest (numbered by how bad it is)
-  if(typeof ringMarks!=='undefined' && ringMarks.length){ g.font='bold 10px Figtree, sans-serif';
-    ringMarks.forEach(({r})=>{ g.fillStyle=css('--t3'); g.globalAlpha=r.on?1:.4; r.times.forEach(tm=>{ const x=(tm-viewStart)*pps; if(x<-8||x>w+8) return;
-      g.fillRect(x-1,h-14,2,14); g.beginPath(); g.arc(x,h-17,6,0,Math.PI*2); g.fill(); g.fillStyle=css('--panel'); g.fillText(String(r.n),x-2.8,h-13.5); g.fillStyle=css('--t3'); }); g.globalAlpha=1; }); }
+  // red = found, not fixed (its switch is off); green = fixed
+  if(typeof ringMarks!=='undefined' && ringMarks.length && !marksHidden){ g.font='bold 10px Figtree, sans-serif';
+    // whole-mix finds: their stretches shade the ruler strip
+    ringMarks.forEach(({rec,r})=>{ if(rec.tg!=='mix' || rec.showLanes===false) return; g.fillStyle=r.on?MARK_FIXED:MARK_FOUND; g.globalAlpha=.30;
+      (r.spans||[]).forEach(sp=>{ const x0=(sp.a-viewStart)*pps, x1=(sp.b-viewStart)*pps; if(x1<0||x0>w) return; g.fillRect(x0,h-22,Math.max(2,x1-x0),22); }); g.globalAlpha=1; });
+    ringMarks.forEach(({rec,r})=>{ if(rec.showPins===false) return; r.times.forEach(tm=>{ const x=(tm-viewStart)*pps; if(x<-8||x>w+8) return;
+      g.fillStyle=r.on?MARK_FIXED:MARK_FOUND; g.fillRect(x-1,h-14,2,14); g.beginPath(); g.arc(x,h-17,6.5,0,Math.PI*2); g.fill(); g.fillStyle='#fff'; g.fillText(String(r.n),x-2.8,h-13.5); }); }); }
   const px=(playhead-viewStart)*pps;
   g.fillStyle=css('--accent'); g.beginPath(); g.moveTo(px-6,h-10); g.lineTo(px+6,h-10); g.lineTo(px,h); g.fill();
 }
@@ -1046,7 +1060,7 @@ function drawLane(t){
   const c=document.querySelector(`.lane[data-id="${t.id}"] canvas`); if(!c || !c.clientWidth || !c.clientHeight) return;   // hidden (section collapsed)
   const {g,w,h}=fitCanvas(c), live=!!(recording && recording.trackId===t.id);
   const key=[c.width,c.height,viewStart,pps,vzoom,activeClipId,(sel&&sel.id===t.id)?[sel.a,sel.b].join(':'):'',t.gainDb,t.fadeIn,t.fadeOut,css(t.colorVar),css('--ink'),
-    t.clips.map(cl=>[cl.id,cl.offset,cl.fi||0,cl.fo||0,JSON.stringify(cl.segs)].join(';')).join('|')].join(',');
+    t.clips.map(cl=>[cl.id,cl.offset,cl.fi||0,cl.fo||0,JSON.stringify(cl.segs)].join(';')).join('|'), laneMarkSig(t)].join(',');
   if(live || !t._lc || t._lc.key!==key){
     if(!t._lc) t._lc={cv:document.createElement('canvas')};
     const cv=t._lc.cv; if(cv.width!==c.width||cv.height!==c.height){ cv.width=c.width; cv.height=c.height; }
@@ -1068,6 +1082,12 @@ function drawLaneBody(g,w,h,t){
     g.fillStyle=css('--sel'); g.fillRect(x0,0,Math.max(1,x1-x0),h);
     g.fillStyle=css('--accent'); g.fillRect(x0-1,0,2,h); g.fillRect(x1-1,0,2,h);
   }
+  // stretches where a note found on this track rings: red = not fixed, green = fixed, with its number
+  if(laneMarkSig(t)){ g.font='bold 11px Figtree, sans-serif';
+    ringMarks.forEach(({rec,r})=>{ if(String(rec.tg)!==String(t.id) || rec.showLanes===false) return; const c=r.on?MARK_FIXED:MARK_FOUND;
+      (r.spans||[]).forEach(sp=>{ const x0=(sp.a-viewStart)*pps, x1=(sp.b-viewStart)*pps; if(x1<0||x0>w) return; const ww=Math.max(3,x1-x0);
+        g.fillStyle=c; g.globalAlpha=.22; g.fillRect(x0,0,ww,h); g.globalAlpha=.9; g.fillRect(x0,h-3,ww,3); g.globalAlpha=1;
+        g.beginPath(); g.arc(x0+8,h-12,7,0,Math.PI*2); g.fill(); g.fillStyle='#fff'; g.fillText(String(r.n),x0+5,h-8); g.fillStyle=c; }); }); }
   if(hasAudio(t)){
     g.fillStyle=col; g.globalAlpha=.35; g.fillRect(0,mid-0.5,w,1); g.globalAlpha=1;
     const T0=trackStart(t), T=trackEnd(t)-T0;
@@ -1205,7 +1225,7 @@ function attachLane(el,t){
 }
 $('ruler').addEventListener('pointerdown',e=>{ const r=$('ruler').getBoundingClientRect(), x=e.clientX-r.left;
   // tapping a ring mark plays from just before it
-  if(typeof ringMarks!=='undefined') for(const {r:rg} of ringMarks) for(const tm of rg.times){ if(Math.abs((tm-viewStart)*pps-x)<=12){ listenAt(tm); return; } }
+  if(typeof ringMarks!=='undefined' && !marksHidden) for(const {rec,r:rg} of ringMarks){ if(rec.showPins===false) continue; for(const tm of rg.times){ if(Math.abs((tm-viewStart)*pps-x)<=12){ listenAt(tm); return; } } }
   seek(viewStart+x/pps); });
 
 function toneHTML(){
@@ -1355,7 +1375,7 @@ function keepScroll(fn){
 function renderAll(){ keepScroll(()=>{ renderLanes(); renderTrackPanels(); renderShowRow(); renderTargets(); try{ renderClean(); }catch(e){} }); }
 
 async function loadFile(t,f,quiet){
-  const a=ctx(); if(!quiet) status(`Loading ${f.name}…`, true);
+  moveOnFromRestore(); const a=ctx(); if(!quiet) status(`Loading ${f.name}…`, true);
   try{
     const ab=await f.arrayBuffer(); const keep=new Uint8Array(ab.slice(0));
     const buf=await new Promise((res,rej)=>{ const p=a.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
@@ -3095,6 +3115,26 @@ $('exportWav').onclick=async()=>{
   }catch(e){ const m=e&&e.message; status(m==='silent'?'The mix is silent, so there’s nothing to export.': m==='noaac'?'This device can’t make AAC audio. Export WAV instead.': m==='toolong'?'That length is too much for this device’s memory. Try a shorter total length, 44.1 kHz, or M4A.': m==='noavc'?'This device can’t make H.264 video. Export WAV or M4A instead.':'Exporting failed on this device. Try 44.1 kHz or a shorter song.'); }
   setProg($('progress'),null); $('exportWav').disabled=false; keepAwake(false);
 };
+// ---------- send to Lyric Scroll: both apps share this site, so they can pass a song through on-device storage ----------
+function handoffDB(){ return new Promise((res,rej)=>{ if(!window.indexedDB){ rej(new Error('noidb')); return; } const r=indexedDB.open('mlss-handoff',1); r.onupgradeneeded=()=>{ if(!r.result.objectStoreNames.contains('box')) r.result.createObjectStore('box'); }; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+async function handoffPut(key,val){ const d=await handoffDB(); await new Promise((res,rej)=>{ const tx=d.transaction('box','readwrite'); tx.objectStore('box').put(val,key); tx.oncomplete=res; tx.onerror=()=>rej(tx.error); tx.onabort=()=>rej(tx.error); }); d.close(); }
+$('toLyric').onclick=async()=>{
+  if(!tracks.some(hasAudio)){ status('Choose an audio file for a track first.'); return; }
+  pause(); $('toLyric').disabled=true; $('toLyricOpen').hidden=true; keepAwake(true); const sr=+$('rate').value, prog=(f,m)=>setProg($('progress'),f,m);
+  try{
+    let out;
+    if($('mOn').checked){ if(masterBuf && masterSig===mixSignature(sr)){ out=masterBuf; prog(0.6,'Using your master…'); } else { const r=await masterMix(sr,prog); masterBuf=r.buf; masterSig=mixSignature(sr); showStats(r); out=r.buf; $('mListenRow').hidden=false; } }
+    else { prog(0.3,'Rendering your mix…'); out=await renderMix(sr); }
+    prog(0.9,'Handing it to Lyric Scroll…'); await sleep();
+    const v=tagValues(), title=($('tgTitle').value||$('projName').value||'').trim();
+    await handoffPut('lyricscroll',{v:1, at:Date.now(), from:'Mixdown', title, artist:($('tgArtist').value||'').trim(), lyrics:$('tgLyrics').value||'',
+      name:exportBase()+'.wav', audio:encodeWav(out,24,null), dur:out.duration, cover: cover ? new Blob([cover.bytes],{type:cover.mime}) : null});
+    $('toLyricOpen').hidden=false;
+    status(`Sent${title?' “'+title+'”':''} to Lyric Scroll. Tap Open Lyric Scroll; it will offer to load the song.`, true);
+    toast('Sent to Lyric Scroll. Tap Open Lyric Scroll below.');
+  }catch(e){ status(e&&e.message==='silent'?'The mix is silent, so there’s nothing to send.':'Couldn’t hand the song to Lyric Scroll on this device. Export the file and choose it in Lyric Scroll instead.'); }
+  setProg($('progress'),null); $('toLyric').disabled=false; keepAwake(false);
+};
 let downloadsP=null;
 function getDownloads(){ if(!downloadsP) downloadsP=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(null); return downloadsP; }
 let lastExport=null;
@@ -3193,7 +3233,7 @@ function fxLines(t){ if(!t.fx) return []; return FX.filter(e=>t.fx[e.k]&&t.fx[e.
   if(p.opts){ const o=p.opts.find(x=>x[0]===v); return `${p.l} ${o?o[1]:v}`; } return `${p.l} ${(+v).toFixed(p.step<1?(p.step<0.1?2:1):0)}${p.u===':1'?':1':' '+p.u}`; }).join(', ')); }
 function settingsSummary(){
   const L=[], s=mSettings(), title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 39)`);
+  L.push(`${title}: Mixdown settings (Version 40)`);
   L.push(''); L.push('MASTERING');
   L.push(`Target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms. Master when exporting: ${$('mOn').checked?'on':'off'}.`);
   if(Math.abs(masterDb)>0.05) L.push(`Master volume: ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB`);
@@ -3225,12 +3265,12 @@ $('sumCopy').onclick=async()=>{ const txt=$('sumText').textContent; let ok=false
   toast(ok?'Copied. Paste it into your notes.':'Select the text above and copy it.'); };
 function clearProject(){
   pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
-  eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); }catch(e){} syncSlate(); renderClean(); renderSecs();
+  eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); marksHidden=false; syncMarksBtn(); }catch(e){} syncSlate(); renderClean(); renderSecs();
   try{ applyAll(); syncBand(); renderBands(); }catch(e){}
 }
 $('projNew').onclick=()=>{
   if(tracks.some(hasAudio) && !confirm('Start a new project? Save this one first if you want to keep it.')) return;
-  clearProject(); applyMDefs(myMDefs(), true); nextId=1; tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
+  moveOnFromRestore(); clearProject(); applyMDefs(myMDefs(), true); nextId=1; tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
   ['projName','tgTitle','fileName','tgTrack','tgComment','tgLyrics'].forEach(id=>$(id).value=''); showCover(null); lastTitle=''; syncFileMatch(); hideSave();
   renderAll(); setZoomFromSlider(); projStatus('New project started. Artist, album, year, and genre stay filled in.'); autosaveNow();
 };
@@ -3244,6 +3284,7 @@ $('projOpen').onchange=async e=>{
     if(!zip.file('project.json')){ setProg($('projProg'),null); projStatus('That zip has no project in it. If it’s stems, use Open stems zip under Tracks.'); return; }
     const data=JSON.parse(await zip.file('project.json').async('string'));
     if(data.app!=='mixdown') throw new Error('notproj');
+    moveOnFromRestore();
     await applyProject(data, sd=>zip.file(sd.path).async('uint8array'));
     { const t=$('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,''); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
     projStatus(`Opened ${$('projName').value}.`+(glitchFixedOnOpen?` Removed end glitches from ${glitchFixedOnOpen} file${glitchFixedOnOpen>1?'s':''}; each track shows a Put it back button.`:''));
@@ -3317,6 +3358,9 @@ document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==
 window.addEventListener('pagehide',()=>autosaveNow());
 document.addEventListener('change',()=>autosaveSoon(),true);
 const _pushUndo=pushUndo; pushUndo=function(label){ _pushUndo(label); autosaveSoon(); };
+// Opening a project, adding audio, or starting a new project means you've moved on from the old session:
+// put the restore offer away and turn auto-save back on, so the new work is what gets saved.
+function moveOnFromRestore(){ const b=$('restoreBox'); if(b && !b.hidden) b.hidden=true; if(AS.blocked) AS.blocked=false; }
 // offer the last session when the app opens
 (async()=>{ AS.blocked=true; let data=null; try{ data=await asReq('kv','readonly',st=>st.get('session')); }catch(e){}
   if(!data || !data.tracks || !data.sources || !data.sources.length){ AS.blocked=false; return; }
@@ -3427,8 +3471,13 @@ const HELP=[
 ];
 const helpApplied=new Map(); let helpState={target:'mix', prob:null};
 var ringMarks=[];   // [{rec, r}] notes found by Find it for me, shown as marks on the timeline
-function setRing(r,on){ const set=eqFor(r.tg); if(on){ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:-4,q:5}; } else { set.bands[r.band]=clone(r.prev); } r.on=on; eqAfter(r.tg); drawRuler(); }
+function setRing(r,on){ const set=eqFor(r.tg); if(on){ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:-4,q:5}; } else { set.bands[r.band]=clone(r.prev); } r.on=on; eqAfter(r.tg); drawAll(); }
+var marksHidden=false;
+function syncMarksBtn(){ const b=$('marksBtn'); if(!b || !ringMarks) return; b.hidden=!ringMarks.length; b.textContent=marksHidden?'Show marks':'Hide all marks'; b.classList.toggle('on',!marksHidden && ringMarks.length>0); }
+// what the marks on one track look like right now (part of the lane's drawing cache key)
+function laneMarkSig(t){ if(marksHidden || !ringMarks || !ringMarks.length) return ''; return ringMarks.filter(m=>String(m.rec.tg)===String(t.id) && m.rec.showLanes!==false).map(m=>m.r.n+(m.r.on?'y':'n')).join(''); }
 function listenAt(t){ seek(Math.max(0,t-1.5)); if(!playing) play(); }
+$('marksBtn').onclick=()=>{ marksHidden=!marksHidden; syncMarksBtn(); drawAll(); toast(marksHidden?'Marks hidden. Your fixes stay on.':'Marks showing.'); };
 const helpKey=(pk,i,tg)=>`${pk}:${i}:${tg}`;
 function eqAfter(tg){ const set=eqFor(tg); try{ liveNodes(tg).forEach((n,i)=>applyBand(n,set.bands[i],set.bypass)); }catch(e){}
   if(String(tg)===String(eqTarget)){ renderBands(); syncBand(); } drawSpec(); autosaveSoon(); if(slateBackup){ slateBackup=null; syncSlate(); } }
@@ -3475,7 +3524,12 @@ async function findStings(tg, maxN){
     const sc=keep.map(fr=>{ const dbf=x=>10*Math.log10(fr.m[x]+1e-20); let s2=0,cn=0; const lo=Math.floor(k*Math.pow(2,-1/3)), hi=Math.ceil(k*Math.pow(2,1/3)); for(let j=lo;j<=hi;j++){ if(Math.abs(j-k)<=2) continue; s2+=dbf(j); cn++; } const pk=Math.max(dbf(k-1),dbf(k),dbf(k+1)); return {t:fr.t, s:pk-s2/Math.max(1,cn), lv:pk}; });
     const lvTop=Math.max(...sc.map(x=>x.lv)), best=sc.filter(x=>x.lv>lvTop-24).sort((x,y)=>y.s-x.s), times=[];
     for(const x of best){ if(x.s<Math.max(6, best[0].s-8)) break; if(times.every(tt=>Math.abs(tt-x.t)>3)) times.push(x.t); if(times.length>=8) break; }
-    times.sort((x,y)=>x-y); return {f, prom:c.p, times}; });
+    times.sort((x,y)=>x-y);
+    // each spot as a stretch: grow out from it while the note keeps standing out (up to 6 s either way)
+    const thr=best.length?Math.max(4, best[0].s-10):4, half=N/2/sr, spans=times.map(tm=>{ let i=sc.findIndex(x=>x.t===tm), a=i, b=i;
+      while(a>0 && sc[a-1].s>=thr && tm-sc[a-1].t<=6) a--; while(b<sc.length-1 && sc[b+1].s>=thr && sc[b+1].t-tm<=6) b++;
+      return {a:Math.max(0,sc[a].t-half), b:sc[b].t+half}; });
+    return {f, prom:c.p, times, spans}; });
 }
 async function applyFix(pk,i,fx,tg){
   const key=helpKey(pk,i,tg), t=tg==='mix'?null:tracks.find(x=>String(x.id)===String(tg));
@@ -3486,10 +3540,10 @@ async function applyFix(pk,i,fx,tg){
     if(!found.length){ toast('No ringing note stands out here. Try “I’ll find it by hand,” or pick the track it’s on.'); return false; }
     // each note gets its own EQ band: free bands first (4, 5, 3, 6), so your other EQ stays as it is
     const set=eqFor(tg), prevBy=set.bypass, order=[3,4,2,5], free=order.filter(b=>!set.bands[b].on), bands=free.concat(order.filter(b=>!free.includes(b)));
-    const rings=found.map((r,n)=>({tg, f:r.f, band:bands[n], times:r.times, prev:clone(set.bands[bands[n]]), on:true, n:n+1}));
+    const rings=found.map((r,n)=>({tg, f:r.f, band:bands[n], times:r.times, spans:r.spans||[], prev:clone(set.bands[bands[n]]), on:true, n:n+1}));
     rings.forEach(r=>{ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:fx.g,q:fx.q}; }); set.bypass=false;
-    const rec={rings, undo:()=>{ const s2=eqFor(tg); rings.forEach(r=>{ s2.bands[r.band]=r.prev; }); s2.bypass=prevBy; eqAfter(tg); ringMarks=ringMarks.filter(m=>m.rec!==rec); drawRuler(); }};
-    helpApplied.set(key,rec); rings.forEach(r=>ringMarks.push({rec, r})); eqAfter(tg); drawRuler();
+    const rec={rings, tg, showPins:true, showLanes:true, undo:()=>{ const s2=eqFor(tg); rings.forEach(r=>{ s2.bands[r.band]=r.prev; }); s2.bypass=prevBy; eqAfter(tg); ringMarks=ringMarks.filter(m=>m.rec!==rec); syncMarksBtn(); drawAll(); }};
+    helpApplied.set(key,rec); rings.forEach(r=>ringMarks.push({rec, r})); marksHidden=false; syncMarksBtn(); eqAfter(tg); drawAll();
     toast(`Found ${rings.length} ringing note${rings.length>1?'s':''}: ${rings.map(r=>fmtF(r.f)).join(', ')}, worst first. Each has a narrow −4 dB cut and its own switch. Tap a time to listen there, or the marks on the timeline.`);
     return true; }
   if(fx.kind==='eq'||fx.kind==='manual'){
@@ -3544,6 +3598,10 @@ function renderHelp(){
     fx.appendChild(l);
     const rec=f.kind==='find' && helpApplied.get(helpKey(pr.k,i,tg));
     if(rec && rec.rings){ const box=document.createElement('div'); box.className='hrings';
+      const sw=document.createElement('div'); sw.className='hshow';
+      sw.innerHTML=`<label class="check"><input type="checkbox" data-w="showPins"${rec.showPins!==false?' checked':''}> Show pins</label><label class="check"><input type="checkbox" data-w="showLanes"${rec.showLanes!==false?' checked':''}> Show on ${tg==='mix'?'the timeline':'the track'}</label>`;
+      sw.querySelectorAll('input').forEach(c=>c.onchange=()=>{ rec[c.dataset.w]=c.checked; if(c.checked) marksHidden=false; syncMarksBtn(); drawAll(); });
+      box.appendChild(sw);
       rec.rings.forEach(r=>{ const row=document.createElement('div'); row.className='hring'+(r.on?' on':'');
         row.innerHTML=`<label class="check" style="margin:0"><input type="checkbox"${r.on?' checked':''}> <span class="hrname"></span></label><div class="hrtimes"></div>`;
         row.querySelector('.hrname').textContent=`${r.n}. ${fmtF(r.f)}${r.n===1?' (worst)':''}, EQ band ${r.band+1}`;
