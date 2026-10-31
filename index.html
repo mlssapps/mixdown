@@ -51,6 +51,11 @@ h1{font-family:"Fraunces",Georgia,serif;font-weight:700;font-size:clamp(28px,6vw
 .panel.collapsed > h2{margin-bottom:-4px}
 .panel.collapsed > h2::after{transform:rotate(-45deg)}
 .panel.collapsed > :not(h2){display:none !important}
+.timeline > h2{font-family:"Fraunces",Georgia,serif;font-size:20px;font-weight:500;margin:0 -18px 8px 0;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-radius:8px;user-select:none;-webkit-user-select:none}
+.timeline > h2::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translate(-2px,-2px)}
+.timeline.collapsed > h2{margin-bottom:0}
+.timeline.collapsed > h2::after{transform:rotate(-45deg)}
+.timeline.collapsed > :not(h2){display:none !important}
 label{display:block;font-size:14px;font-weight:600;margin:0 0 6px}
 .field{margin-bottom:12px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -64,6 +69,17 @@ span.val:not(#meterV){cursor:pointer;text-decoration:underline dotted;text-under
 .typebox{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:14px;clear:both}
 .typebox input{width:96px}
 .tracks,.lanes,#clMods,#secList{overflow-anchor:none}
+.helpbox{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.helpbox .hhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.helpbox .hhead b{font-family:"Fraunces",Georgia,serif;font-size:18px;font-weight:500}
+.helpbox .hprobs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.helpbox .hprobs button{padding:7px 11px;font-size:14px;border-radius:99px}
+.helpbox .hprobs button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.helpbox .hdesc{font-size:15px;margin:4px 0 8px}
+.helpbox .hfix{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;font-weight:500;font-size:15px}
+.helpbox .hfix.on{border-color:var(--accent)}
+.helpbox .hfix input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.helpbox .hfix .hint{display:block;margin:2px 0 0}
 .clsum{font-size:14px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
 .clsum b{color:var(--accent)}
 .slaterow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 4px}
@@ -295,7 +311,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 37</p>
+  <p class="ver">Version 38</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -336,7 +352,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p><b>Add tone track</b> creates a generated tone you can layer under your music. Choose <b>Binaural</b> (a slightly different tone in each ear; needs stereo headphones), <b>Monaural</b> (both tones mixed, works on speakers), or <b>Isochronic</b> (one tone pulsing on and off; adjust how soft the pulse edges are). Set the <b>Carrier</b> (the tone you hear) and the <b>Beat</b> (how fast it pulses), or tap a band button. <b>Glide the beat</b> moves smoothly from one beat rate to another over the track. Add a <b>Noise bed</b> (white, pink, or brown) under the tone and set its level, or choose <b>Noise only</b> for a track of just noise. Press <b>Update tone</b> after changes. Tone tracks work like any other track: volume, fades, EQ, split, and trim. Pan is off for binaural so each ear keeps its own tone.</p>
     <p>Binaural beats only work in stereo. If a phone speaker or app plays your song in mono, they disappear; monaural and isochronic tones survive.</p>
     <h3>Mastering</h3>
-    <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it. If you change anything in the mix afterward, Listen to the master turns itself off so Play always matches what you see; master again to hear the new version. Tap <b>Save as my defaults</b> to keep your usual settings; every new project starts with them, and <b>Use my defaults</b> puts them back on any song (for example, a project whose look-ahead got bumped).</p>
+    <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it. If you change anything in the mix afterward, Listen to the master turns itself off so Play always matches what you see; master again to hear the new version. If a song can't reach the target without piling on limiting, mastering stops where more gain would only squash it and tells you where it stopped. Tap <b>Save as my defaults</b> to keep your usual settings; every new project starts with them, and <b>Use my defaults</b> puts them back on any song (for example, a project whose look-ahead got bumped).</p>
     <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with optional visual rows in your color: a live waveform, a slow waveform that shows beats and pulses, spectrum bars (plain, mirrored, stacked in track colors, or <b>EQ screen</b>: the whole mix shaded with a glowing line for each track, like the live EQ display), and a whole-song waveform with a progress marker; check any combination). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
     <h3>Repeat and loops</h3>
     <p>In Export, <b>Repeat</b> plays the song 2, 3, or 5 times in one file, or <b>fills</b> 3 to 30 minutes, ending with a gentle fade. Turn on <b>Blend the joins</b> to choose how each repeat flows into the next, with the same styles as clip blends. The first play always starts clean and the last one ends naturally. <b>Dip</b> fades the ending out and the beginning back in, so a repeat sounds like a quiet moment in the song. With Repeat off, Blend the joins makes a single file that loops smoothly when a player repeats it; Dip keeps its very start clean. Long files are large, so M4A is a good choice for them.</p>
@@ -348,6 +364,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <h3>Cleanup</h3>
     <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
     <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
+    <h3>What do you hear?</h3>
+    <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. <b>Find it for me</b> listens for a note that rings out and cuts it right there. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
     <h3>Keep it smooth</h3>
     <ul>
       <li><b>Pause before big jobs.</b> Master now, Hear cleanup, and Export reprocess the whole song. Let them work without live playback at the same time.</li>
@@ -358,6 +376,7 @@ body.force2 .cols > .panel{margin-top:14px}
     </ul>
     <h3>Good to know</h3>
     <ul>
+      <li>Every section folds away, including <b>Timeline and editing</b>: tap its title. The player stays at the bottom, so Play, the time, Undo, and Record still work. Fold away what you're not using so you only scroll through what you need.</li>
       <li><b>Clean slate</b> (in EQ and in Cleanup) turns off every EQ band and every Cleanup tool on every track at once. Volumes, fades, edits, and band settings stay, so you can turn bands back on. <b>Undo clean slate</b> brings it all back.</li>
       <li><b>Settings summary</b> (in Project) lists everything you've changed from the defaults, track by track, so you can copy it or use it as a recipe for another song.</li>
       <li>Volume, pan, and gain sliders move only when you drag the circle itself, so scrolling past can't bump them. Double-tap a slider to reset it. Tap any slider's number to type an exact value, or reset it. While you drag, the number also shows just above your finger. Volumes snap to 0 dB as you pass it.</li>
@@ -371,6 +390,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 38:</b> <b>What do you hear?</b> in EQ and Cleanup: tap a problem in plain words and turn suggested fixes on or off, including <b>Find it for me</b> for a note that stings. <b>Timeline and editing</b> folds away like the other sections. Mastering stops adding gain once more gain would only add limiting, so songs that can’t reach the target don’t get crushed.</li>
       <li><b>Version 37:</b> <b>Clean slate</b>, <b>Settings summary</b>, and a Cleanup summary. Mastering remembers <b>your defaults</b>. Bigger gold slider numbers, a number above your finger while you drag, and tap any number to type it. Bigger messages that stay until you've read them. <b>Blend</b> styles with separate lengths, a wave-like curve, and a live picture, for clips and loops. Type the playhead time and exact selections. A big <b>Undo</b> in the player. The player stays put when the keyboard opens, the page stays put when you change a setting, and video export keeps the screen awake.</li>
       <li><b>Version 36:</b> Fixed: EQ bands that were turned off still shifted the timing of low and high frequencies, which softened punch and raised peaks by several dB (so mastering limited more than it needed to). Off bands now leave the sound exactly as it is.</li>
       <li><b>Version 35:</b> Your session auto-saves on this device and can be restored after a refresh. New projects start at 0 dB with EQ bands off and common starting points. <b>Measure loudness only</b>. <b>End song here</b>. Muted tracks no longer add silence at the end. Section fix can mute. Tag tools moved out of the way. More room past the end.</li>
@@ -490,7 +510,8 @@ body.force2 .cols > .panel{margin-top:14px}
 
   </div>
 
-  <div class="timeline">
+  <div class="timeline" data-sec="timeline">
+    <h2>Timeline and editing</h2>
     <div class="tbar">
       <div class="seg" role="group" aria-label="Edit mode">
         <button id="modeSel" class="on">Select</button>
@@ -586,6 +607,7 @@ body.force2 .cols > .panel{margin-top:14px}
         </div>
         <button id="eqEdit" aria-pressed="false">Edit EQ</button>
       </div>
+      <button class="small helpBtn" type="button" data-from="eq" style="margin:0 0 10px">? What do you hear?</button>
       <p class="hint" id="eqLockHint" style="margin:0 0 10px">EQ is locked so scrolling can't change it. Tap <b>Edit EQ</b> to change bands, types, frequencies, and gains.</p>
       <div class="eqwrap"><canvas id="spec" aria-label="Spectrum analyzer with EQ curve"></canvas></div>
       <div class="showrow" id="showRow"></div>
@@ -632,6 +654,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <div class="panel" data-sec="clean">
       <h2>Cleanup</h2>
       <p class="hint" style="margin-top:0">Quiets harsh S sounds, hiss, metallic shimmer, piercing upper mids, and boomy low mids, only at the moments they flare up. It's applied when you master or export.</p>
+      <button class="small helpBtn" type="button" data-from="clean" style="margin:0 0 10px">? What do you hear?</button>
+      <div class="helpbox" id="helpBox" hidden></div>
       <div class="clsum" id="clSum"></div>
       <div class="slaterow" style="margin-top:0"><button class="small slateBtn" type="button">Clean slate</button><span class="hint slateHint" style="margin:0">Turns off every EQ band and every Cleanup tool on every track. Volumes, fades, and edits stay.</span></div>
       <label class="check"><input type="checkbox" id="endGlitch"> Remove end glitches when adding audio</label>
@@ -1008,7 +1032,7 @@ function drawRuler(){
 // Each lane's waveform is drawn once into a hidden copy and reused until something about it changes;
 // while playing, only the playhead line moves. This keeps phones cool.
 function drawLane(t){
-  const c=document.querySelector(`.lane[data-id="${t.id}"] canvas`); if(!c) return;
+  const c=document.querySelector(`.lane[data-id="${t.id}"] canvas`); if(!c || !c.clientWidth || !c.clientHeight) return;   // hidden (section collapsed)
   const {g,w,h}=fitCanvas(c), live=!!(recording && recording.trackId===t.id);
   const key=[c.width,c.height,viewStart,pps,vzoom,activeClipId,(sel&&sel.id===t.id)?[sel.a,sel.b].join(':'):'',t.gainDb,t.fadeIn,t.fadeOut,css(t.colorVar),css('--ink'),
     t.clips.map(cl=>[cl.id,cl.offset,cl.fi||0,cl.fo||0,JSON.stringify(cl.segs)].join(';')).join('|')].join(',');
@@ -1764,7 +1788,7 @@ function buildMaster(){
   const ch=makeChain(actx,analyser); masterGain=ch.input; eqNodes=ch.nodes;
 }
 // the live filter nodes for whatever target is being edited
-function liveNodes(key){ if(key==='mix') return eqNodes; const s=(session||[]).find(x=>String(x.t.id)===String(key)); return s?s.eqNodes:[]; }
+function liveNodes(key){ if(key==='mix') return eqNodes; const s=(session||[]).find(x=>x.t && String(x.t.id)===String(key)); return s?s.eqNodes:[]; }
 const targetName=key=> key==='mix' ? 'Whole mix' : (tracks.find(t=>String(t.id)===String(key))?.name || 'Track');
 function renderTargets(){
   const sel=$('eqTarget'); const keep=eqTarget;
@@ -2467,20 +2491,25 @@ async function masterMix(sr, prog){
   const p=peakEnvelope(chs,set.tp);
   let inPk=0; for(let i=0;i<n;i++) if(p[i]>inPk) inPk=p[i];
   const G=new Float32Array(n), work=new Float32Array(n);
-  let gdb=set.target-before, got=before;
+  // Raise or lower the gain until the loudness lands on the target. If more gain stops buying loudness
+  // (each extra dB adds less than half a dB, because the limiter just squashes it back), stop there:
+  // pushing further only adds limiting and crunch.
+  let gdb=set.target-before, got=before, prevG=null, prevGot=null, capped=false;
   for(let it=0;it<6;it++){
     prog(0.4+it*0.08, `Limiting and checking loudness (pass ${it+1})…`); await sleep();
     limiterGain(p,sr,Math.pow(10,gdb/20),set,G,work);
     got=lufs(chs,sr,Math.pow(10,gdb/20),G);
+    if(prevG!==null && gdb>prevG+0.05 && (got-prevGot) < 0.5*(gdb-prevG)){
+      gdb=prevG; got=prevGot; limiterGain(p,sr,Math.pow(10,gdb/20),set,G,work); capped=true; break; }
     const err=set.target-got; if(Math.abs(err)<0.1) break;
-    gdb+=err;
+    prevG=gdb; prevGot=got; gdb+=err;
   }
   prog(0.9,'Writing the master…'); await sleep();
   const g=Math.pow(10,gdb/20), out=new AudioBuffer({length:n, numberOfChannels:2, sampleRate:sr});
   let minG=1;
   for(let c=0;c<2;c++){ const src=chs[c], dst=out.getChannelData(c); for(let i=0;i<n;i++){ const gi=G[i]; if(gi<minG) minG=gi; dst[i]=src[i]*g*gi; } }
   const pk=peakEnvelope([out.getChannelData(0),out.getChannelData(1)],set.tp); let mx=0; for(let i=0;i<n;i++) if(pk[i]>mx) mx=pk[i];
-  return {buf:out, before, after:got, gainDb:gdb, maxGR:-20*Math.log10(minG), peakDb:20*Math.log10(mx||1e-9), inPeakDb:20*Math.log10(inPk||1e-9), tp:set.tp, target:set.target};
+  return {buf:out, before, after:got, gainDb:gdb, capped, maxGR:-20*Math.log10(minG), peakDb:20*Math.log10(mx||1e-9), inPeakDb:20*Math.log10(inPk||1e-9), tp:set.tp, target:set.target};
 }
 $('mMeasure').onclick=async()=>{
   if(!tracks.some(hasAudio)){ toast('Add audio first.'); return; }
@@ -2498,7 +2527,7 @@ function showStats(r){
   <div><b>${r.peakDb.toFixed(1)}</b><span>${r.tp?'dBTP true peak':'dB peak'}</span></div>
   <div><b>${r.gainDb>=0?'+':''}${r.gainDb.toFixed(1)}</b><span>dB gain added</span></div>
   <div><b>${r.maxGR.toFixed(1)}</b><span>dB most limiting</span></div>
-  <div class="note">${reached?'Target reached.':`Couldn’t fully reach ${r.target} LUFS without more limiting than the ceiling allows; this is as loud as it gets with these settings.`}${r.maxGR>6?' Heavy limiting: if it sounds squashed, try a lower target or the soft limiter.':''}${r.gainDb<0 && r.maxGR>0.5 ? ` Why limiting while turning it down? The song’s peaks are ${(r.inPeakDb-r.before).toFixed(1)} dB above its average loudness, so even at this target they get near the ceiling, where the limiter gently catches them. It’s light and safe; for none at all, lower the Target a little.` : ''}${r.inPeakDb>0.5 ? ` Heads up: before mastering, the mix peaks at +${r.inPeakDb.toFixed(1)} dB, over full scale. Mastering fixes that, but an unmastered export would clip; lower the track volumes or the EQ Master slider if you export without mastering.` : ''}</div>`;
+  <div class="note">${reached?'Target reached.': r.capped ? `Stopped at ${r.after.toFixed(1)} LUFS on purpose: going louder would only have added limiting (squash and crunch), not loudness. To get closer to ${r.target}, tame the loudest peaks first (a spike, or a lot of bass), or set the target to about ${(Math.round(r.after*2)/2).toFixed(1)}.` : `Couldn’t fully reach ${r.target} LUFS without more limiting than the ceiling allows; this is as loud as it gets with these settings.`}${r.maxGR>6?' Heavy limiting: if it sounds squashed, try a lower target or the soft limiter.':''}${r.gainDb<0 && r.maxGR>0.5 ? ` Why limiting while turning it down? The song’s peaks are ${(r.inPeakDb-r.before).toFixed(1)} dB above its average loudness, so even at this target they get near the ceiling, where the limiter gently catches them. It’s light and safe; for none at all, lower the Target a little.` : ''}${r.inPeakDb>0.5 ? ` Heads up: before mastering, the mix peaks at +${r.inPeakDb.toFixed(1)} dB, over full scale. Mastering fixes that, but an unmastered export would clip; lower the track volumes or the EQ Master slider if you export without mastering.` : ''}</div>`;
 }
 $('mRun').onclick=async()=>{
   if(!tracks.some(hasAudio)){ status('Choose an audio file for a track first.'); return; }
@@ -3079,11 +3108,11 @@ function setSaveLink(btn, name, blob){
 // ---------- collapsible sections ----------
 (function(){
   let ui={}; try{ ui=JSON.parse(localStorage.getItem('mixdown-ui')||'{}'); }catch(e){}
-  document.querySelectorAll('.panel[data-sec]').forEach(p=>{
+  document.querySelectorAll('.panel[data-sec], .timeline[data-sec]').forEach(p=>{
     const k=p.dataset.sec, h=p.querySelector(':scope > h2'); h.setAttribute('role','button'); h.tabIndex=0;
     const set=c=>{ p.classList.toggle('collapsed',c); h.setAttribute('aria-expanded',String(!c)); };
     set(!!ui[k]);
-    const tog=()=>{ const c=!p.classList.contains('collapsed'); set(c); ui[k]=c; try{ localStorage.setItem('mixdown-ui',JSON.stringify(ui)); }catch(e){} if(!c){ drawSpec(); drawAll(); } };
+    const tog=()=>{ const c=!p.classList.contains('collapsed'); set(c); ui[k]=c; try{ localStorage.setItem('mixdown-ui',JSON.stringify(ui)); }catch(e){} if(!c){ if(k==='timeline') setZoomFromSlider(); drawSpec(); drawAll(); } };
     h.onclick=tog; h.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tog(); } };
   });
 })();
@@ -3150,7 +3179,7 @@ function fxLines(t){ if(!t.fx) return []; return FX.filter(e=>t.fx[e.k]&&t.fx[e.
   if(p.opts){ const o=p.opts.find(x=>x[0]===v); return `${p.l} ${o?o[1]:v}`; } return `${p.l} ${(+v).toFixed(p.step<1?(p.step<0.1?2:1):0)}${p.u===':1'?':1':' '+p.u}`; }).join(', ')); }
 function settingsSummary(){
   const L=[], s=mSettings(), title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 37)`);
+  L.push(`${title}: Mixdown settings (Version 38)`);
   L.push(''); L.push('MASTERING');
   L.push(`Target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms. Master when exporting: ${$('mOn').checked?'on':'off'}.`);
   if(Math.abs(masterDb)>0.05) L.push(`Master volume: ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB`);
@@ -3337,6 +3366,150 @@ $('stemsZip').onchange=async e=>{
   };
 };
 
+// ---------- "What do you hear?": plain-language problems with fixes you can turn on and off ----------
+// Each fix is a real setting (a Cleanup tool, an EQ band, a volume, the mastering target). Turning a fix off
+// puts back exactly what was there before it.
+const HELP=[
+  {k:'harsh', name:'Harsh or edgy', desc:'Piercing, edgy, or tiring, especially when it’s loud (usually around 2.5–5 kHz).', fixes:[
+    {kind:'clean', mod:'harsh', amt:'gentle', name:'Harsh tamer, Gentle', what:'Eases the edge only at the moments it flares up.'},
+    {kind:'eq', band:4, type:'peaking', f:3000, g:-2.5, q:1.4, name:'Soft cut at 3 kHz', what:'Takes a little edge off all the time (EQ band 5).'},
+    {kind:'target', delta:-1, name:'Lower the target 1 dB', what:'Less limiting, so loud parts don’t crunch.'} ]},
+  {k:'mud', name:'Muddy', desc:'Cloudy or thick; words and instruments blur together (around 200–400 Hz).', fixes:[
+    {kind:'clean', mod:'mud', amt:'gentle', name:'Mud tamer, Gentle', what:'Eases low-mid build-up only when it happens.'},
+    {kind:'eq', band:2, type:'peaking', f:250, g:-2.5, q:1.2, name:'Cut at 250 Hz', what:'Clears the cloudiness all the time (EQ band 3).'},
+    {kind:'eq', band:0, type:'highpass', f:80, g:0, q:0.71, name:'Low cut at 80 Hz', what:'Removes rumble under this track. Skip it on bass and kick.'} ]},
+  {k:'boom', name:'Boomy', desc:'Too much low end; it booms, rumbles, or swallows everything (around 60–150 Hz).', fixes:[
+    {kind:'eq', band:1, type:'lowshelf', f:120, g:-2.5, q:0.71, name:'Lower the low end 2.5 dB', what:'A gentle low shelf (EQ band 2).'},
+    {kind:'eq', band:0, type:'highpass', f:40, g:0, q:0.71, name:'Low cut at 40 Hz', what:'Removes sub-rumble you feel more than hear.'},
+    {kind:'target', delta:-1, name:'Lower the target 1 dB', what:'Big bass makes the limiter work hard; this gives it room.'} ]},
+  {k:'hiss', name:'Hissy', desc:'Steady hiss, fizz, or sparkle, especially in quiet parts.', fixes:[
+    {kind:'clean', mod:'hiss', amt:'gentle', name:'Hiss quieter, Gentle', what:'Lowers hiss only in the gaps between phrases.'},
+    {kind:'eq', band:6, type:'highshelf', f:10000, g:-2.5, q:0.71, name:'Soften the top 2.5 dB', what:'A gentle high shelf at 10 kHz (EQ band 7).'},
+    {kind:'eq', band:7, type:'lowpass', f:16000, g:0, q:0.71, name:'High cut at 16 kHz', what:'Removes fizz above the music (EQ band 8).'} ]},
+  {k:'ess', name:'Sharp “s” sounds', desc:'S, SH, and T sounds that spit or sting.', fixes:[
+    {kind:'clean', mod:'deess', amt:'medium', name:'De-esser, Medium', what:'Turns S sounds down when they spike. Best on a vocal track.'},
+    {kind:'eq', band:5, type:'peaking', f:6500, g:-3, q:2, name:'Cut at 6.5 kHz', what:'A narrow cut where S sounds live (EQ band 6).'} ]},
+  {k:'sting', name:'One note that stings', desc:'One note, or a few, that ring, sting, or distort every time they come around.', fixes:[
+    {kind:'find', band:3, g:-4, q:5, name:'Find it for me', what:'Listens to this track (or the whole mix) for the ringing note and puts a narrow −4 dB cut right there (EQ band 4).'},
+    {kind:'manual', band:3, f:1000, g:-4, q:5, name:'I’ll find it by hand', what:'Puts a narrow −4 dB cut on EQ band 4 and opens the EQ, so you can slide it to the note while it plays.'},
+    {kind:'clean', mod:'harsh', amt:'gentle', name:'Harsh tamer, Gentle', what:'If the sting is high and edgy, this eases it when it flares up.'} ]},
+  {k:'buried', name:'Vocals buried', desc:'You can’t make out the words.', fixes:[
+    {kind:'vol', db:2, name:'Turn this track up 2 dB', what:'Pick the vocal track above.'},
+    {kind:'eq', band:4, type:'peaking', f:3000, g:2, q:1, name:'Presence lift at 3 kHz', what:'Brings the words forward (EQ band 5). Best on the vocal track.'},
+    {kind:'eq', band:2, type:'peaking', f:300, g:-2, q:1.2, name:'Make room at 300 Hz', what:'Pick the bass or music track: clears space for the words without losing the bass.'} ]},
+  {k:'loudvox', name:'Vocals too loud', desc:'The vocals sit on top of everything, blast, or distort.', fixes:[
+    {kind:'vol', db:-3, name:'Turn this track down 3 dB', what:'Pick the vocal track above.'},
+    {kind:'clean', mod:'harsh', amt:'gentle', name:'Harsh tamer, Gentle', what:'Eases the edge on loud notes.'} ]},
+  {k:'crush', name:'Crushed or crunchy', desc:'Drums lose their snap, or the whole song feels squashed or distorted.', fixes:[
+    {kind:'target', delta:-2, name:'Lower the target 2 dB', what:'The most common cause is too much limiting. Check “dB most limiting” after mastering; about 3 or less is gentle.'},
+    {kind:'mdef', name:'Use my mastering defaults', what:'Puts your usual limiter settings back, in case one got bumped.'},
+    {kind:'mixclean', name:'Turn off whole-mix Cleanup', what:'Whole-mix Cleanup can press on drums and bass too. Use it on single tracks instead.'} ]},
+  {k:'thin', name:'Thin, no punch', desc:'Weak low end; nothing hits.', fixes:[
+    {kind:'eq', band:1, type:'lowshelf', f:100, g:2, q:0.71, name:'Low end up 2 dB', what:'Adds weight (EQ band 2). Best on bass or drums.'},
+    {kind:'eq', band:2, type:'peaking', f:250, g:-1.5, q:1.2, name:'Clear a little mud', what:'Lets the low end hit cleaner (EQ band 3).'},
+    {kind:'target', delta:-1, name:'Lower the target 1 dB', what:'Less limiting keeps drum hits punchy.'} ]},
+  {k:'swipe', name:'Swipe at the end', desc:'A click, swipe, or zip right at the very end.', fixes:[
+    {kind:'trim', name:'Trim 0.25 s and fade out the end', what:'On this track, or on every track you can hear when Whole mix is chosen.'} ]}
+];
+const helpApplied=new Map(); let helpState={target:'mix', prob:null};
+const helpKey=(pk,i,tg)=>`${pk}:${i}:${tg}`;
+function eqAfter(tg){ const set=eqFor(tg); try{ liveNodes(tg).forEach((n,i)=>applyBand(n,set.bands[i],set.bypass)); }catch(e){}
+  if(String(tg)===String(eqTarget)){ renderBands(); syncBand(); } drawSpec(); autosaveSoon(); if(slateBackup){ slateBackup=null; syncSlate(); } }
+function cleanAfter(tg){ if(String(clTarget)===String(tg)) renderClean(); cleanChanged(); }
+function fixOn(pk,i,fx,tg){ const rec=helpApplied.get(helpKey(pk,i,tg));
+  if(fx.kind==='clean'){ const o=cleans[tg]&&cleans[tg][fx.mod]; return !!(o&&o.on&&o.amt===fx.amt); }
+  if(fx.kind==='eq'){ const b=eqs[tg]&&eqs[tg].bands[fx.band]; return !!(b&&b.on&&b.type===fx.type&&Math.abs(b.f-fx.f)<0.5&&Math.abs(b.g-fx.g)<0.05&&Math.abs(b.q-fx.q)<0.01); }
+  if(fx.kind==='find'||fx.kind==='manual'){ const b=eqs[tg]&&eqs[tg].bands[fx.band]; return !!(rec && b && b.on); }
+  return !!rec; }
+// a small FFT, for finding a ringing note
+function fftMag(re){ const n=re.length, im=new Float64Array(n);
+  for(let i=1,j=0;i<n;i++){ let bit=n>>1; for(;j&bit;bit>>=1) j^=bit; j^=bit; if(i<j){ const t=re[i]; re[i]=re[j]; re[j]=t; } }
+  for(let len=2;len<=n;len<<=1){ const a=-2*Math.PI/len, wr=Math.cos(a), wi=Math.sin(a);
+    for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let k=0;k<len/2;k++){ const ur=re[i+k], ui=im[i+k], vr=re[i+k+len/2]*cr-im[i+k+len/2]*ci, vi=re[i+k+len/2]*ci+im[i+k+len/2]*cr;
+      re[i+k]=ur+vr; im[i+k]=ui+vi; re[i+k+len/2]=ur-vr; im[i+k+len/2]=ui-vi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } }
+  const m=new Float64Array(n/2); for(let k=0;k<n/2;k++) m[k]=re[k]*re[k]+im[k]*im[k]; return m; }
+// Average the spectrum over the song (loud moments count most), then find the narrow peak that stands
+// highest above its neighbors between 250 Hz and 6 kHz: that's a note that rings out.
+async function findSting(tg){
+  let sig, sr;
+  if(tg==='mix'){ sr=+$('rate').value; const m=await renderMix(sr); const a=m.getChannelData(0), b=m.getChannelData(1); sig=new Float32Array(a.length); for(let i=0;i<a.length;i++) sig[i]=(a[i]+b[i])/2; }
+  else { const t=tracks.find(x=>String(x.id)===String(tg)); if(!t||!hasAudio(t)) return null; sr=t.clips[0].buf.sampleRate; const parts=[];
+    for(const cl of t.clips) for(const g of cl.segs){ if(g.sil!=null) continue; const ch=cl.buf.numberOfChannels, d0=cl.buf.getChannelData(0), d1=ch>1?cl.buf.getChannelData(1):d0, a=Math.floor(g.s*sr), b=Math.floor(g.e*sr), p=new Float32Array(Math.max(0,b-a)); for(let i=0;i<p.length;i++) p[i]=(d0[a+i]+d1[a+i])/2; parts.push(p); }
+    const L=parts.reduce((x,p)=>x+p.length,0); sig=new Float32Array(L); let o=0; parts.forEach(p=>{ sig.set(p,o); o+=p.length; }); }
+  const N=8192; if(sig.length<N*2) return null;
+  const frames=Math.min(300, Math.floor(sig.length/N)), hop=Math.floor((sig.length-N)/Math.max(1,frames-1)), win=new Float64Array(N); for(let i=0;i<N;i++) win[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
+  const acc=new Float64Array(N/2); let used=0;
+  for(let f=0;f<frames;f++){ const st=f*hop; let e=0; for(let i=0;i<N;i++) e+=sig[st+i]*sig[st+i]; if(e/N<1e-7) continue;
+    const re=new Float64Array(N); for(let i=0;i<N;i++) re[i]=sig[st+i]*win[i]; const m=fftMag(re); for(let k=0;k<N/2;k++) acc[k]+=m[k]; used++; if(f%20===0) await sleep(); }
+  if(!used) return null;
+  const db=new Float64Array(N/2); for(let k=0;k<N/2;k++) db[k]=10*Math.log10(acc[k]/used+1e-20);
+  const binHz=sr/N, k0=Math.ceil(250/binHz), k1=Math.floor(6000/binHz); let best=-1, bestP=0;
+  for(let k=k0;k<=k1;k++){ const lo=Math.floor(k*Math.pow(2,-1/3)), hi=Math.ceil(k*Math.pow(2,1/3)); let s2=0, c=0;
+    for(let j=lo;j<=hi;j++){ if(Math.abs(j-k)<=2) continue; s2+=db[j]; c++; } const prom=db[k]-s2/Math.max(1,c);
+    if(prom>bestP && db[k]>=db[k-1] && db[k]>=db[k+1]){ bestP=prom; best=k; } }
+  if(best<0 || bestP<4) return null;
+  // refine between bins
+  const a=db[best-1], b=db[best], c=db[best+1], d=(a-c)/(2*(a-2*b+c)||1); return {f:Math.round((best+(isFinite(d)?Math.max(-0.5,Math.min(0.5,d)):0))*binHz), prom:bestP};
+}
+async function applyFix(pk,i,fx,tg){
+  const key=helpKey(pk,i,tg), t=tg==='mix'?null:tracks.find(x=>String(x.id)===String(tg));
+  if(fx.kind==='clean'){ const o=cleanFor(tg)[fx.mod], prev={...o}; o.on=true; o.amt=fx.amt; helpApplied.set(key,{undo:()=>{ Object.assign(cleanFor(tg)[fx.mod],prev); cleanAfter(tg); }}); cleanAfter(tg); return true; }
+  if(fx.kind==='eq'||fx.kind==='manual'||fx.kind==='find'){
+    let f=fx.f;
+    if(fx.kind==='find'){ toast('Listening for the ringing note… this can take a few seconds.'); await sleep(); const r=await findSting(tg);
+      if(!r){ toast('No single ringing note stands out here. Try “I’ll find it by hand,” or pick the track it’s on.'); return false; } f=r.f; }
+    const set=eqFor(tg), prev=clone(set.bands[fx.band]), prevBy=set.bypass;
+    set.bands[fx.band]={on:true, type:fx.type||'peaking', f, g:fx.g, q:fx.q}; set.bypass=false;
+    helpApplied.set(key,{undo:()=>{ const s2=eqFor(tg); s2.bands[fx.band]=prev; s2.bypass=prevBy; eqAfter(tg); }}); eqAfter(tg);
+    if(fx.kind==='find') toast(`Found a ringing note at ${fmtF(f)}. Cut −4 dB there, narrow. Play it to check; turn the fix off to compare.`);
+    if(fx.kind==='manual'){ eqTarget=tg; curBand=fx.band; renderTargets(); renderBands(); setEditing(true); const p=document.querySelector('[data-sec="eq"]'); if(p.classList.contains('collapsed')) p.querySelector(':scope > h2').click(); p.scrollIntoView({behavior:'smooth',block:'start'});
+      toast('Play the part that stings, then slide Frequency until it stops stinging. Tap Done when it sounds right.'); }
+    return true; }
+  if(fx.kind==='vol'){ if(!t){ toast('Pick the track first, in “Fix it on.”'); return false; } const prev=t.gainDb; pushUndo(`${t.name} volume ${fmtGain(prev)} → ${fmtGain(prev+fx.db)}`); t.gainDb=Math.max(-60,Math.min(12,prev+fx.db)); liveUpdate(t); syncTrackPanel(t); drawLane(t);
+    helpApplied.set(key,{undo:()=>{ pushUndo(`${t.name} volume back to ${fmtGain(prev)}`); t.gainDb=prev; liveUpdate(t); syncTrackPanel(t); drawLane(t); }}); return true; }
+  if(fx.kind==='target'){ const prev=$('mTarget').value; $('mTarget').value=Math.max(-20,Math.min(0,(+prev||-14)+fx.delta)); saveM();
+    helpApplied.set(key,{undo:()=>{ $('mTarget').value=prev; saveM(); }}); toast(`Target is now ${$('mTarget').value} LUFS. Tap Master now to hear it.`); return true; }
+  if(fx.kind==='mdef'){ const s=mSettings(); applyMDefs(myMDefs()); helpApplied.set(key,{undo:()=>applyMDefs(s,true)}); return true; }
+  if(fx.kind==='mixclean'){ const prev=clone(cleans.mix||{}); if(!cleanActive('mix')){ toast('Whole-mix Cleanup is already off.'); } Object.values(cleanFor('mix')).forEach(m=>{ if(m) m.on=false; }); cleanAfter('mix');
+    helpApplied.set(key,{undo:()=>{ cleans.mix=prev; cleanAfter('mix'); }}); return true; }
+  if(fx.kind==='trim'){ const list=(t?[t]:tracks.filter(x=>hasAudio(x)&&audible(x))).filter(hasAudio); if(!list.length) return false;
+    pushUndo('Trim and fade the ending'); const prev=list.map(x=>{ const c=x.clips.reduce((m,c)=>clipEnd(c)>clipEnd(m)?c:m); return {c, segs:JSON.parse(JSON.stringify(c.segs)), fo:c.fo||0}; });
+    prev.forEach(({c})=>{ const L=clipLen(c); if(L>0.6){ c.segs=cutSegs(c.segs,0,L-0.25,'keep'); c.fo=Math.max(c.fo||0,0.3); } });
+    helpApplied.set(key,{undo:()=>{ pushUndo('Put the ending back'); prev.forEach(p=>{ p.c.segs=p.segs; p.c.fo=p.fo; }); renderAll(); restartIfPlaying(); }});
+    renderAll(); restartIfPlaying(); toast(list.length>1?`Trimmed and faded the end of ${list.length} tracks.`:`Trimmed and faded the end of ${list[0].name}.`); return true; }
+  return false;
+}
+function renderHelp(){
+  const box=$('helpBox'); const keep=helpState.target;
+  const opts=['<option value="mix">Whole mix</option>'].concat(tracks.filter(hasAudio).map(t=>`<option value="${t.id}">${escH(t.name)}</option>`));
+  box.innerHTML=`<div class="hhead"><b>What do you hear?</b><button class="small" type="button" data-a="close">Close</button></div>
+    <div class="field" style="margin:0"><label for="helpTarget">Fix it on</label><select id="helpTarget">${opts.join('')}</select></div>
+    <div class="hprobs">${HELP.map(p=>`<button type="button" data-p="${p.k}" class="${helpState.prob===p.k?'on':''}">${p.name}</button>`).join('')}</div>
+    <div class="hfixes"></div>
+    <p class="hint" style="margin:6px 0 0">Tap a problem, then turn fixes on or off in any combination. Turning one off puts back exactly what was there. EQ and volume change right away; for Cleanup and mastering fixes, tap <b>Master now</b> (or Hear cleanup) to hear them.</p>`;
+  const sel=box.querySelector('#helpTarget'); if(![...sel.options].some(o=>o.value===String(keep))) helpState.target='mix'; sel.value=String(helpState.target);
+  sel.onchange=()=>{ helpState.target=sel.value==='mix'?'mix':+sel.value; renderHelp(); };
+  box.querySelector('[data-a=close]').onclick=()=>{ box.hidden=true; };
+  box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ helpState.prob = helpState.prob===b.dataset.p ? null : b.dataset.p; renderHelp(); });
+  const pr=HELP.find(p=>p.k===helpState.prob), fx=box.querySelector('.hfixes'); if(!pr) return;
+  const tg=helpState.target;
+  fx.innerHTML=`<p class="hdesc">${pr.desc}</p>`;
+  pr.fixes.forEach((f,i)=>{ const on=fixOn(pr.k,i,f,tg), needsTrack=(f.kind==='vol')&&tg==='mix';
+    const l=document.createElement('label'); l.className='hfix'+(on?' on':'');
+    l.innerHTML=`<input type="checkbox"${on?' checked':''}${needsTrack?' disabled':''}><span><span class="hname"></span><span class="hint"></span></span>`;
+    l.querySelector('.hname').textContent=f.name; l.querySelector('.hint').textContent=needsTrack?'Pick a track in “Fix it on” first.':f.what;
+    const cb=l.querySelector('input');
+    cb.onchange=async()=>{ cb.disabled=true; const key=helpKey(pr.k,i,tg);
+      try{ if(cb.checked){ const ok=await applyFix(pr.k,i,f,tg); if(!ok) cb.checked=false; }
+        else { const rec=helpApplied.get(key); if(rec){ rec.undo(); helpApplied.delete(key); }
+          else if(f.kind==='clean'){ const o=cleanFor(tg)[f.mod]; o.on=false; cleanAfter(tg); }
+          else if(f.kind==='eq'){ eqFor(tg).bands[f.band]=clone(DEFAULT_EQ[f.band]); eqAfter(tg); } } }
+      catch(e){ toast('That fix couldn’t be applied here.'); cb.checked=false; }
+      renderHelp(); };
+    fx.appendChild(l); });
+}
+document.querySelectorAll('.helpBtn').forEach(b=>b.onclick=()=>{ const box=$('helpBox');
+  const moved=box.previousElementSibling!==b; b.after(box); if(box.hidden||moved){ helpState.target = b.dataset.from==='eq' ? eqTarget : clTarget; box.hidden=false; renderHelp(); } else box.hidden=true; });
 // ---------- track lock: tracks capture every touch (reliable selecting) or let swipes scroll the page ----------
 let trackLock=true; try{ const v=localStorage.getItem('mixdown-tracklock'); if(v!==null) trackLock=v==='1'; }catch(e){}
 function applyTrackLock(){ document.body.classList.toggle('tracklock',trackLock); const b=$('trackLock'); b.textContent='Swipe on tracks: '+(trackLock?'Edit':'Scroll'); b.classList.toggle('on',trackLock); b.setAttribute('aria-pressed',String(trackLock)); }

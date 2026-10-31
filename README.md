@@ -18,6 +18,7 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 ## Editing and recording
 
 - **Up to 12 tracks** with waveforms scaled to fit each track: split, cut, copy, paste, duplicate, trim, delete, silence, insert silence, and undo
+- **Fold away any section,** including the timeline, so you only scroll through what you're working on
 - **Player at the bottom of the screen,** with a big Undo button and a clock you can tap to type an exact time (numbers only: 31425 becomes 3:14.250)
 - **Exact selections:** type a selection's start and end to the millisecond, and exact clip start and end times
 - **Blends** between clips: both, fade out, fade in, or dip, with separate fade lengths, a sharp-to-wave curve, and a live picture of the curves
@@ -33,6 +34,8 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 - **Measure loudness only:** check any song's LUFS and true peak without changing it
 - **Your defaults:** save your usual mastering settings; every new project starts with them
 - **Clean slate:** turn off every EQ band and Cleanup tool on every track in one tap, and undo it
+- **What do you hear?** Tap a problem in plain words (harsh, muddy, boomy, hissy, a note that stings, buried vocals, crushed, and more) and turn suggested fixes on or off. **Find it for me** locates a ringing note and cuts it
+- **Gentle by design:** if a song can't reach its loudness target, mastering stops before extra gain turns into extra limiting
 - **Settings summary:** everything you changed, track by track, ready to copy as a recipe for another song
 
 ## Export
