@@ -36,6 +36,7 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 - **Clean slate:** turn off every EQ band and Cleanup tool on every track in one tap, and undo it
 - **What do you hear?** Tap a problem in plain words (harsh, muddy, boomy, hissy, a note that stings, buried vocals, crushed, and more) and turn suggested fixes on or off. **Find it for me** finds up to three ringing notes, cuts each with its own switch, and marks where they ring on the timeline
 - **Gentle by design:** if a song can't reach its loudness target, mastering stops before extra gain turns into extra limiting
+- **Recipes:** save one song's settings (no audio) and apply them to another song, matched by track name, with an undo
 - **Settings summary:** everything you changed, track by track, ready to copy as a recipe for another song
 
 ## Export

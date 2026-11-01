@@ -92,6 +92,16 @@ span.val:not(#meterV){cursor:pointer;text-decoration:underline dotted;text-under
 .clsum b{color:var(--accent)}
 .slaterow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 4px}
 .sumbox{margin-top:10px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+.sortseg{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+.sortseg span{padding:6px 10px;color:var(--muted);font-weight:600}
+.sortseg button{border:0;border-left:1px solid var(--line);border-radius:0;padding:6px 12px;font-size:13px;font-weight:600;background:var(--panel);color:var(--ink)}
+.sortseg button.on{background:var(--accent);color:var(--accent-ink)}
+.ropts{display:flex;flex-direction:column;gap:4px}
+.ropts .check{margin:0;font-size:14px}
+.rmap{display:flex;flex-direction:column;gap:6px}
+.rrow{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;align-items:center;font-weight:500;font-size:14px;margin:0}
+.rrow select{padding:6px 8px}
+.rlast{font-size:14px}
 .sumbox pre{white-space:pre-wrap;font:inherit;font-size:14px;margin:0 0 10px;max-height:420px;overflow:auto;-webkit-user-select:text;user-select:text}
 .mdefs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
 .selrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;font-size:14px}
@@ -319,7 +329,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 42</p>
+  <p class="ver">Version 43</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -388,7 +398,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <ul>
       <li>Every section folds away, including <b>Timeline and editing</b>: tap its title. The player stays at the bottom, so Play, the time, Undo, and Record still work. Fold away what you're not using so you only scroll through what you need.</li>
       <li><b>Clean slate</b> (in EQ and in Cleanup) turns off every EQ band and every Cleanup tool on every track at once. Volumes, fades, edits, and band settings stay, so you can turn bands back on. <b>Undo clean slate</b> brings it all back.</li>
-      <li><b>Settings summary</b> (in Project) lists everything you've changed from the defaults, track by track, so you can copy it or use it as a recipe for another song.</li>
+      <li><b>Settings summary</b> (in Project) lists everything you've changed from the defaults. Sort it <b>By track</b>, or <b>By what to do</b>: what copies automatically with a recipe, what to run again with the helper (Find it for me cuts, tuned to this song's notes), and what to check by hand (Section fixes and fades). Each EQ band shows which helper fix it came from. Bands that are on but at 0 dB are left out, since they change nothing.</li>
+      <li><b>Recipes:</b> in the finished song, open Settings summary and tap <b>Save as recipe</b> (settings only, no audio). In the next song, tap <b>Apply a recipe</b> → <b>Use it</b>. Tracks are matched by name (so “0 Lead Vocals” matches “Lead Vocals”); pick a match for any that don't line up, or Skip. Choose what to copy; Find it for me cuts are off by default. <b>Undo the recipe</b> puts everything back.</li>
       <li>Volume, pan, and gain sliders move only when you drag the circle itself, so scrolling past can't bump them. Double-tap a slider to reset it. Tap any slider's number to type an exact value, or reset it. While you drag, the number also shows just above your finger. Volumes snap to 0 dB as you pass it.</li>
       <li>The player stays at the bottom of the screen. Waveforms are scaled to fit each track so quiet recordings are easy to see; <b>Wave size</b> enlarges them further. Neither changes the sound.</li>
       <li><b>Insert silence</b> (with the edit buttons) pushes everything after the playhead later on every track. A selected clip's <b>Starts at</b> and <b>Ends at</b> take minutes and seconds (1:15.2) or plain seconds; an earlier end trims the clip.</li>
@@ -400,6 +411,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 43:</b> <b>Recipes:</b> <b>Save as recipe</b> (in Settings summary) keeps one song's settings without the audio, and <b>Apply a recipe</b> copies them to another song by matching track names, with choices of what to copy and an undo. Settings summary can sort <b>By track</b> or <b>By what to do</b>, shows which helper fix each EQ band came from, and leaves out bands that change nothing.</li>
       <li><b>Version 42:</b> Fixed: tapping a <b>Listen at</b> time or a pin while the song was playing started a second copy that Pause couldn't stop. Only one playback can run now.</li>
       <li><b>Version 41:</b> <b>Ring tamer</b> in Cleanup: finds up to three ringing notes and dips each one only at the moments it sticks out, easing in and out. The helper suggests it first, before an all-song EQ cut.</li>
       <li><b>Version 40:</b> <b>Send to Lyric Scroll</b> in Export. Found notes also shade the track where they ring, red when not fixed and green when fixed, with switches for pins and shading plus <b>Hide all marks</b>. Opening a project or starting new work now turns auto-save back on, so the restore offer always shows your latest song.</li>
@@ -462,9 +474,13 @@ body.force2 .cols > .panel{margin-top:14px}
     <button id="sumBtn" style="width:100%;margin-top:4px" aria-expanded="false">Settings summary</button>
     <div class="sumbox" id="sumBox" hidden>
       <p class="hint" style="margin:0 0 8px">Everything changed from the defaults, track by track. Use it as a recipe for another song.</p>
+      <div class="sortseg" id="sumView" role="group" aria-label="Sort the summary" style="margin:0 0 10px"><span>Sort</span><button type="button" data-v="track">By track</button><button type="button" data-v="todo">By what to do</button></div>
       <pre id="sumText"></pre>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small primary" id="sumCopy">Copy</button><button class="small" id="sumRefresh">Refresh</button><button class="small" id="sumClose">Close</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small primary" id="sumCopy">Copy</button><button class="small" id="sumRecipe">Save as recipe</button><button class="small" id="sumRefresh">Refresh</button><button class="small" id="sumClose">Close</button></div>
+      <a class="savebtn" id="sumRecipeBtn" href="#" hidden>Save</a>
     </div>
+    <button id="recipeBtn" style="width:100%;margin-top:8px">Apply a recipe</button>
+    <div class="sumbox" id="recipeBox" hidden></div>
   </div>
 
   <div class="panel" data-sec="tracks">
@@ -1858,7 +1874,7 @@ function syncBand(){
   $('master').value=masterDb; $('masterV').textContent=(masterDb>0?'+':'')+masterDb.toFixed(1)+' dB'; $('masterV').classList.toggle('changed',Math.abs(masterDb)>0.05);
 }
 function applyAll(){ const set=curEq(); liveNodes(eqTarget).forEach((n,i)=>applyBand(n,set.bands[i],set.bypass)); }
-function bandChanged(){ if(slateBackup){ slateBackup=null; syncSlate(); } const set=curEq(), n=liveNodes(eqTarget)[curBand]; if(n) applyBand(n,set.bands[curBand],set.bypass); if(eqTarget==='mix') saveEq(); syncBand(); renderBands(); drawSpec(); }
+function bandChanged(){ if(slateBackup){ slateBackup=null; syncSlate(); } { const b0=curEq().bands[curBand]; if(b0 && b0.src && b0.src!=='sting:manual') delete b0.src; } const set=curEq(), n=liveNodes(eqTarget)[curBand]; if(n) applyBand(n,set.bands[curBand],set.bypass); if(eqTarget==='mix') saveEq(); syncBand(); renderBands(); drawSpec(); }
 const cb=()=>curEq().bands[curBand];
 $('bOn').onchange=e=>{ cb().on=e.target.checked; bandChanged(); };
 $('bType').onchange=e=>{ cb().type=e.target.value; cb().on=true; bandChanged(); };
@@ -3257,22 +3273,56 @@ function projectData(){ const used=new Set();
   return {data,used}; }
 // ---------- settings summary: everything changed from the defaults, as plain text you can copy ----------
 const BTYPE={peaking:'Peak',lowshelf:'Low shelf',highshelf:'High shelf',highpass:'High-pass',lowpass:'Low-pass',notch:'Notch'};
-function eqLines(key){ const s=eqs[key]; if(!s) return []; const on=s.bands.map((b,i)=>[b,i]).filter(([b])=>b.on);
+// a band that's on but at 0 dB (peak or shelf) changes nothing, so it's left out
+const bandMatters=b=>b && b.on && (noGain(b.type) || Math.abs(b.g)>=0.05);
+// where a band came from: the helper fix that set it (remembered from Version 43 on), or recognized by its exact numbers
+function bandSrc(b,i){ if(b.src) return b.src;
+  if(b.type==='peaking' && Math.abs(b.g+4)<0.05 && Math.abs(b.q-5)<0.01) return 'sting:find';
+  for(const p of HELP) for(let k=0;k<p.fixes.length;k++){ const f=p.fixes[k]; if(f.kind==='eq' && f.band===i && f.type===b.type && Math.abs(f.f-b.f)<0.5 && Math.abs(f.g-b.g)<0.05 && Math.abs(f.q-b.q)<0.01) return `${p.k}:${k}`; }
+  return ''; }
+const isFindSrc=src=>src==='sting:find'||src==='sting:manual';
+function srcLabel(src){ if(!src) return ''; if(src==='sting:find') return 'One note that stings → Find it for me'; if(src==='sting:manual') return 'One note that stings → I’ll find it by hand';
+  const [pk,ix]=src.split(':'), p=HELP.find(x=>x.k===pk), f=p&&p.fixes[+ix]; return p&&f ? `${p.name} → ${f.name}` : ''; }
+function bandText(b,i){ return `EQ band ${i+1}: ${BTYPE[b.type]} ${fmtF(b.f)}`+(noGain(b.type)?'':`, ${b.g>0?'+':''}${b.g.toFixed(1)} dB`)+`, Q ${b.q.toFixed(2)}`; }
+// which: 'all' | 'notfind' | 'find'
+function eqLines(key,which){ const s=eqs[key]; if(!s) return []; which=which||'all';
+  const on=s.bands.map((b,i)=>[b,i]).filter(([b])=>bandMatters(b)).filter(([b,i])=>{ const f=isFindSrc(bandSrc(b,i)); return which==='all' || (which==='find'?f:!f); });
   if(s.bypass && on.length) return [`EQ: bypassed (${on.length} band${on.length>1?'s':''} set but not heard)`];
-  return on.map(([b,i])=>`EQ band ${i+1}: ${BTYPE[b.type]} ${fmtF(b.f)}`+(noGain(b.type)?'':`, ${b.g>0?'+':''}${b.g.toFixed(1)} dB`)+`, Q ${b.q.toFixed(2)}`); }
+  return on.map(([b,i])=>{ const l=srcLabel(bandSrc(b,i)); return bandText(b,i)+(l?`  (from: ${l})`:''); }); }
 function fxLines(t){ if(!t.fx) return []; return FX.filter(e=>t.fx[e.k]&&t.fx[e.k].on).map(e=>`${e.name}: `+e.p.map(p=>{ const v=t.fx[e.k][p.k];
   if(p.opts){ const o=p.opts.find(x=>x[0]===v); return `${p.l} ${o?o[1]:v}`; } return `${p.l} ${(+v).toFixed(p.step<1?(p.step<0.1?2:1):0)}${p.u===':1'?':1':' '+p.u}`; }).join(', ')); }
-function settingsSummary(){
-  const L=[], s=mSettings(), title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 42)`);
-  L.push(''); L.push('MASTERING');
-  L.push(`Target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms. Master when exporting: ${$('mOn').checked?'on':'off'}.`);
-  if(Math.abs(masterDb)>0.05) L.push(`Master volume: ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB`);
+function findFreqs(key){ const s=eqs[key]; if(!s||s.bypass) return []; return s.bands.map((b,i)=>[b,i]).filter(([b,i])=>bandMatters(b)&&isFindSrc(bandSrc(b,i))).map(([b])=>fmtF(b.f)); }
+let sumView='track'; try{ sumView=localStorage.getItem('mixdown-sumview')||'track'; }catch(e){}
+function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms.`+(Math.abs(masterDb)>0.05?` Master volume ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB.`:''); }
+const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
+function settingsSummary(view){
+  view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
+  L.push(`${title}: Mixdown settings (Version 43)`);
+  if(view==='todo'){
+    L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
+    L.push(masterLine());
+    const me=eqLines('mix','notfind'), mc=cleanOnList('mix'); if(me.length||mc.length){ L.push(''); L.push('Whole mix'); me.forEach(x=>L.push('  '+x)); if(mc.length) L.push('  Cleanup: '+mc.join(', ')); }
+    sumTracks().forEach(t=>{ const a=[]; if(t.mute) a.push('Muted'); if(Math.abs(t.gainDb)>0.05) a.push('Volume '+fmtGain(t.gainDb)); if(Math.abs(t.pan)>=0.01) a.push('Pan '+fmtPan(t.pan));
+      eqLines(t.id,'notfind').forEach(x=>a.push(x)); const c=cleanOnList(t.id); if(c.length) a.push('Cleanup: '+c.join(', ')); fxLines(t).forEach(x=>a.push(x));
+      if(a.length){ L.push(''); L.push(t.name); a.forEach(x=>L.push('  '+x)); } });
+    L.push(''); L.push('2. RUN AGAIN WITH THE HELPER'); L.push('(These were tuned to this song’s own notes. In the other song: ? What do you hear? → Fix it on: that track → One note that stings. Try the Ring tamer first, or Find it for me.)');
+    let any=false; [['mix','Whole mix']].concat(sumTracks().map(t=>[t.id,t.name])).forEach(([k,n])=>{ const f=findFreqs(k); if(f.length){ any=true; L.push(`  ${n}: found ${f.join(', ')} here`); } });
+    if(!any) L.push('  Nothing.');
+    L.push(''); L.push('3. CHECK BY HAND'); L.push('(These depend on this song’s timing, so look at the other song and decide.)');
+    let hand=false; secs.forEach(x=>{ hand=true; L.push(`  Section fix ${mmss(x.a)} to ${mmss(x.b)}: volume ${x.vol>0?'+':''}${x.vol||0} dB, treble ${x.treb>0?'+':''}${x.treb||0} dB`); });
+    sumTracks().forEach(t=>{ const a=[]; if(t.solo) a.push('Solo is on'); if(t.fadeIn) a.push('Track fade in '+fmtFade(t.fadeIn)); if(t.fadeOut) a.push('Track fade out '+fmtFade(t.fadeOut));
+      t.clips.forEach(cl=>{ if(cl.fi||cl.fo) a.push(`Clip at ${fmt3(cl.offset)}: fade in ${(cl.fi||0).toFixed(2)} s, fade out ${(cl.fo||0).toFixed(2)} s (if the end swipes, use Swipe at the end)`); });
+      if(a.length){ hand=true; L.push(`  ${t.name}: `+a.join('; ')); } });
+    if(!hand) L.push('  Nothing.');
+    L.push(''); L.push('(End glitches are trimmed automatically, so they aren’t listed.)');
+    return L.join('\n');
+  }
+  L.push(''); L.push('MASTERING'); L.push(masterLine()+` Master when exporting: ${$('mOn').checked?'on':'off'}.`);
   L.push(''); L.push('WHOLE MIX');
   const me=eqLines('mix'), mc=cleanOnList('mix'); me.forEach(x=>L.push(x)); if(mc.length) L.push('Cleanup: '+mc.join(', '));
   secs.forEach(x=>L.push(`Section fix ${mmss(x.a)} to ${mmss(x.b)}: volume ${x.vol>0?'+':''}${x.vol||0} dB, treble ${x.treb>0?'+':''}${x.treb||0} dB`));
   if(!me.length && !mc.length && !secs.length) L.push('No changes');
-  tracks.filter(t=>hasAudio(t)||t.tone).forEach((t,i)=>{
+  sumTracks().forEach(t=>{
     L.push(''); L.push(`${(t.name||'Track').toUpperCase()}`); const n=L.length;
     if(t.mute) L.push('Muted'); if(t.solo) L.push('Solo');
     if(Math.abs(t.gainDb)>0.05) L.push('Volume '+fmtGain(t.gainDb)); if(Math.abs(t.pan)>=0.01) L.push('Pan '+fmtPan(t.pan));
@@ -3286,7 +3336,8 @@ function settingsSummary(){
   });
   return L.join('\n');
 }
-function showSummary(){ $('sumText').textContent=settingsSummary(); }
+function showSummary(){ $('sumText').textContent=settingsSummary(); document.querySelectorAll('#sumView button').forEach(b=>b.classList.toggle('on',b.dataset.v===sumView)); }
+document.querySelectorAll('#sumView button').forEach(b=>b.onclick=()=>{ sumView=b.dataset.v; try{ localStorage.setItem('mixdown-sumview',sumView); }catch(e){} showSummary(); });
 $('sumBtn').onclick=()=>{ const b=$('sumBox'), open=b.hidden; b.hidden=!open; $('sumBtn').setAttribute('aria-expanded',String(open)); if(open) showSummary(); };
 $('sumRefresh').onclick=showSummary;
 $('sumClose').onclick=()=>{ $('sumBox').hidden=true; $('sumBtn').setAttribute('aria-expanded','false'); };
@@ -3294,6 +3345,76 @@ $('sumCopy').onclick=async()=>{ const txt=$('sumText').textContent; let ok=false
   try{ if(navigator.clipboard && navigator.clipboard.writeText){ await navigator.clipboard.writeText(txt); ok=true; } }catch(e){}
   if(!ok){ const r=document.createRange(); r.selectNodeContents($('sumText')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); try{ ok=document.execCommand('copy'); }catch(e){} }
   toast(ok?'Copied. Paste it into your notes.':'Select the text above and copy it.'); };
+
+// ---------- recipes: one song's settings (no audio), applied to another song by matching track names ----------
+const normName=n=>String(n||'').toLowerCase().replace(/^\s*\d+[\s._)-]*/,'').replace(/[^a-z0-9]+/g,' ').trim();
+function makeRecipe(){ const s=mSettings(); return {app:'mixdown-recipe', v:1, title:$('projName').value.trim()||'Untitled song', savedAt:new Date().toISOString(),
+  master:{target:s.target, ceil:s.ceil, type:s.type, tp:s.tp, look:s.look, rel:s.rel}, masterDb,
+  mix:{eq:eqs.mix?clone(eqs.mix):null, clean:cleans.mix?clone(cleans.mix):null},
+  tracks:sumTracks().map(t=>({name:t.name, gainDb:t.gainDb, pan:t.pan, mute:!!t.mute, eq:eqs[t.id]?clone(eqs[t.id]):null, clean:cleans[t.id]?clone(cleans[t.id]):null, fx:t.fx?clone(t.fx):null})) }; }
+$('sumRecipe').onclick=async()=>{ const r=makeRecipe(); try{ localStorage.setItem('mixdown-recipe-last',JSON.stringify(r)); }catch(e){}
+  await saveTo($('sumRecipeBtn'), projSlug()+'.recipe.json', new Blob([JSON.stringify(r,null,1)],{type:'application/json'}));
+  toast(`Saved the recipe from “${r.title}”. In the other song, tap Apply a recipe and choose Use it.`); };
+let recipe=null, recipeUndo=null;
+const RECIPE_OPTS=[['master','Mastering settings',true],['vol','Track volumes, pan, and mute',true],['mine','EQ you set yourself',true],['helper','Helper EQ fixes (except Find it for me)',true],['find','Find it for me cuts (tuned to the other song’s notes)',false],['clean','Cleanup',true],['fx','Effects',true],['mix','Whole-mix EQ and Cleanup',true]];
+function renderRecipeBox(){
+  const box=$('recipeBox'); let last=null; try{ last=JSON.parse(localStorage.getItem('mixdown-recipe-last')||'null'); }catch(e){}
+  if(!recipe){ box.innerHTML=`<p class="hint" style="margin:0 0 8px">A recipe is one song’s settings without the audio. Open the song you’re working on, then apply the recipe from a finished one.</p>
+    ${last?`<div class="rlast">Last saved: <b></b> <span class="hint" style="margin:0"></span> <button class="small primary" type="button" id="recUseLast">Use it</button></div>`:''}
+    <span class="pick" style="display:block;margin-top:8px"><span class="pickface" style="display:block;text-align:center">Choose a recipe file</span><input type="file" id="recFile" accept=".json,application/json"></span>
+    <button class="small" type="button" id="recClose" style="margin-top:8px">Close</button>`;
+    if(last){ box.querySelector('.rlast b').textContent=last.title; box.querySelector('.rlast .hint').textContent=new Date(last.savedAt).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); $('recUseLast').onclick=()=>{ recipe=last; renderRecipeBox(); }; }
+    $('recFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; try{ const r=JSON.parse(await f.text()); if(r.app!=='mixdown-recipe') throw 0; recipe=r; renderRecipeBox(); }catch(err){ toast('That file isn’t a Mixdown recipe.'); } };
+    $('recClose').onclick=()=>{ box.hidden=true; };
+    return; }
+  const here=tracks.filter(hasAudio), opts=here.map(t=>`<option value="${t.id}"></option>`).join('');
+  box.innerHTML=`<p style="margin:0 0 6px"><b>Recipe from “<span class="rt"></span>”</b></p>
+    <div class="ropts">${RECIPE_OPTS.map(([k,l,d])=>`<label class="check"><input type="checkbox" data-o="${k}"${d?' checked':''}> ${l}</label>`).join('')}</div>
+    <p style="margin:10px 0 4px;font-weight:600">Copy each track’s settings to</p>
+    <div class="rmap">${recipe.tracks.map((rt,i)=>`<label class="rrow"><span></span><select data-i="${i}"><option value="">Skip</option>${opts}</select></label>`).join('')}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="primary small" type="button" id="recApply">Apply</button><button class="small" type="button" id="recBack">Choose a different recipe</button></div>
+    <p class="hint" style="margin:8px 0 0">Not copied: Section fixes and fades, since they depend on the other song’s timing. You can undo the whole thing right after.</p>`;
+  box.querySelector('.rt').textContent=recipe.title;
+  box.querySelectorAll('.rmap select').forEach(sel=>{ [...sel.options].forEach(o=>{ if(o.value) o.textContent=targetName(o.value); });
+    const rt=recipe.tracks[+sel.dataset.i]; sel.parentElement.querySelector('span').textContent=rt.name;
+    const m=here.find(t=>normName(t.name)===normName(rt.name)); sel.value=m?String(m.id):''; });
+  $('recBack').onclick=()=>{ recipe=null; renderRecipeBox(); };
+  $('recApply').onclick=()=>applyRecipe();
+}
+// copy the chosen kinds of EQ band from a recipe's EQ onto a target's EQ (band by band)
+function copyEq(fromSet,key,o){ if(!fromSet) return 0; const to=eqFor(key); let n=0;
+  fromSet.bands.forEach((b,i)=>{ if(!bandMatters(b)) return; const src=bandSrc(b,i), f=isFindSrc(src), h=!!src&&!f;
+    if((f&&o.find)||(h&&o.helper)||(!src&&o.mine)){ to.bands[i]=clone(b); if(!b.src && src) to.bands[i].src=src; n++; } });
+  if(o.mine && fromSet.bypass) to.bypass=true; return n; }
+function applyRecipe(){
+  const box=$('recipeBox'), o={}; box.querySelectorAll('[data-o]').forEach(c=>o[c.dataset.o]=c.checked);
+  const maps=[...box.querySelectorAll('.rmap select')].map(s=>({rt:recipe.tracks[+s.dataset.i], t:tracks.find(x=>String(x.id)===s.value)})).filter(m=>m.t);
+  recipeUndo={eqs:clone(eqs), cleans:clone(cleans), m:mSettings(), masterDb, snap:snapshot()};
+  pushUndo(`Apply recipe from ${recipe.title}`);
+  if(o.master){ applyMDefs(recipe.master,true); masterDb=recipe.masterDb||0; if(masterGain) masterGain.gain.value=dbToGain(masterDb); }
+  if(o.mix && recipe.mix){ copyEq(recipe.mix.eq,'mix',o); if(o.clean && recipe.mix.clean) cleans.mix=clone(recipe.mix.clean); }
+  const findLeft=[];
+  maps.forEach(({rt,t})=>{
+    if(o.vol){ t.gainDb=rt.gainDb||0; t.pan=rt.pan||0; t.mute=!!rt.mute; }
+    if(rt.eq) copyEq(rt.eq,t.id,o);
+    if(o.clean && rt.clean) cleans[t.id]=clone(rt.clean);
+    if(o.fx && rt.fx){ t.fx=clone(rt.fx); }
+    if(!o.find && rt.eq && rt.eq.bands.some((b,i)=>bandMatters(b)&&isFindSrc(bandSrc(b,i)))) findLeft.push(t.name);
+  });
+  const missed=recipe.tracks.filter(rt=>!maps.some(m=>m.rt===rt)).map(rt=>rt.name);
+  liveUpdateAll(); applyAll(); renderAll(); renderBands(); syncBand(); drawSpec(); syncClSum(); restartIfPlaying(); autosaveSoon();
+  box.innerHTML=`<p style="margin:0 0 6px"><b>Applied the recipe from “<span class="rt"></span>” to ${maps.length} track${maps.length===1?'':'s'}.</b></p>
+    ${missed.length?`<p class="hint" style="margin:0 0 6px">Skipped: <span class="rmiss"></span>.</p>`:''}
+    ${findLeft.length?`<p style="margin:0 0 6px"><b>Run again with the helper:</b> <span class="rfind"></span>. Open <b>? What do you hear?</b>, pick the track in Fix it on, then One note that stings. Try the Ring tamer first.</p>`:''}
+    <p class="hint" style="margin:0 0 8px">Then tap Master now and listen. Section fixes and fades weren’t copied; check them in Settings summary → By what to do.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small" type="button" id="recUndo">Undo the recipe</button><button class="small" type="button" id="recDone">Done</button></div>`;
+  box.querySelector('.rt').textContent=recipe.title; if(missed.length) box.querySelector('.rmiss').textContent=missed.join(', '); if(findLeft.length) box.querySelector('.rfind').textContent=findLeft.join(', ');
+  $('recDone').onclick=()=>{ box.hidden=true; recipe=null; };
+  $('recUndo').onclick=()=>{ const u=recipeUndo; if(!u) return; eqs=u.eqs; cleans=u.cleans; applyMDefs(u.m,true); masterDb=u.masterDb; if(masterGain) masterGain.gain.value=dbToGain(masterDb); restore(u.snap); recipeUndo=null;
+    liveUpdateAll(); applyAll(); renderAll(); renderBands(); syncBand(); drawSpec(); syncClSum(); restartIfPlaying(); autosaveSoon(); box.hidden=true; recipe=null; toast('Undid the recipe. Everything is back the way it was.'); };
+  toast(`Applied the recipe to ${maps.length} track${maps.length===1?'':'s'}.`);
+}
+$('recipeBtn').onclick=()=>{ const b=$('recipeBox'); if(!b.hidden){ b.hidden=true; return; } if(!tracks.some(hasAudio)){ toast('Open the song you want to apply it to first.'); return; } recipe=null; b.hidden=false; renderRecipeBox(); };
 function clearProject(){
   pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
   eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); marksHidden=false; syncMarksBtn(); }catch(e){} syncSlate(); renderClean(); renderSecs();
@@ -3503,7 +3624,7 @@ const HELP=[
 ];
 const helpApplied=new Map(); let helpState={target:'mix', prob:null};
 var ringMarks=[];   // [{rec, r}] notes found by Find it for me, shown as marks on the timeline
-function setRing(r,on){ const set=eqFor(r.tg); if(on){ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:-4,q:5}; } else { set.bands[r.band]=clone(r.prev); } r.on=on; eqAfter(r.tg); drawAll(); }
+function setRing(r,on){ const set=eqFor(r.tg); if(on){ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:-4,q:5,src:'sting:find'}; } else { set.bands[r.band]=clone(r.prev); } r.on=on; eqAfter(r.tg); drawAll(); }
 var marksHidden=false;
 function syncMarksBtn(){ const b=$('marksBtn'); if(!b || !ringMarks) return; b.hidden=!ringMarks.length; b.textContent=marksHidden?'Show marks':'Hide all marks'; b.classList.toggle('on',!marksHidden && ringMarks.length>0); }
 // what the marks on one track look like right now (part of the lane's drawing cache key)
@@ -3576,7 +3697,7 @@ async function applyFix(pk,i,fx,tg){
     // each note gets its own EQ band: free bands first (4, 5, 3, 6), so your other EQ stays as it is
     const set=eqFor(tg), prevBy=set.bypass, order=[3,4,2,5], free=order.filter(b=>!set.bands[b].on), bands=free.concat(order.filter(b=>!free.includes(b)));
     const rings=found.map((r,n)=>({tg, f:r.f, band:bands[n], times:r.times, spans:r.spans||[], prev:clone(set.bands[bands[n]]), on:true, n:n+1}));
-    rings.forEach(r=>{ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:fx.g,q:fx.q}; }); set.bypass=false;
+    rings.forEach(r=>{ set.bands[r.band]={on:true,type:'peaking',f:r.f,g:fx.g,q:fx.q,src:'sting:find'}; }); set.bypass=false;
     const rec={rings, tg, showPins:true, showLanes:true, undo:()=>{ const s2=eqFor(tg); rings.forEach(r=>{ s2.bands[r.band]=r.prev; }); s2.bypass=prevBy; eqAfter(tg); ringMarks=ringMarks.filter(m=>m.rec!==rec); syncMarksBtn(); drawAll(); }};
     helpApplied.set(key,rec); rings.forEach(r=>ringMarks.push({rec, r})); marksHidden=false; syncMarksBtn(); eqAfter(tg); drawAll();
     toast(`Found ${rings.length} ringing note${rings.length>1?'s':''}: ${rings.map(r=>fmtF(r.f)).join(', ')}, worst first. Each has a narrow −4 dB cut and its own switch. Tap a time to listen there, or the marks on the timeline.`);
@@ -3584,7 +3705,7 @@ async function applyFix(pk,i,fx,tg){
   if(fx.kind==='eq'||fx.kind==='manual'){
     let f=fx.f;
     const set=eqFor(tg), prev=clone(set.bands[fx.band]), prevBy=set.bypass;
-    set.bands[fx.band]={on:true, type:fx.type||'peaking', f, g:fx.g, q:fx.q}; set.bypass=false;
+    set.bands[fx.band]={on:true, type:fx.type||'peaking', f, g:fx.g, q:fx.q, src: fx.kind==='manual'?'sting:manual':`${pk}:${i}`}; set.bypass=false;
     helpApplied.set(key,{undo:()=>{ const s2=eqFor(tg); s2.bands[fx.band]=prev; s2.bypass=prevBy; eqAfter(tg); }}); eqAfter(tg);
     if(fx.kind==='manual'){ eqTarget=tg; curBand=fx.band; renderTargets(); renderBands(); setEditing(true); const p=document.querySelector('[data-sec="eq"]'); if(p.classList.contains('collapsed')) p.querySelector(':scope > h2').click(); p.scrollIntoView({behavior:'smooth',block:'start'});
       toast('Play the part that stings, then slide Frequency until it stops stinging. Tap Done when it sounds right.'); }
