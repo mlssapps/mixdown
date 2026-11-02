@@ -329,7 +329,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 43</p>
+  <p class="ver">Version 45</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -411,6 +411,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 45:</b> Fixed: the player could stay hidden after typing in a box (it now hides only while the keyboard is really up). If the phone freezes the audio engine, Play restarts it. Paste says which track it landed on, and warns if that track is muted, hidden, or silent because another track is soloed.</li>
+      <li><b>Version 44:</b> Fixed: on phones, tapping <b>Set</b> in a typed-number box could miss while the keyboard was closing. Frequency boxes understand kHz: 9k, 9 kHz, or just 9 all mean 9,000 Hz.</li>
       <li><b>Version 43:</b> <b>Recipes:</b> <b>Save as recipe</b> (in Settings summary) keeps one song's settings without the audio, and <b>Apply a recipe</b> copies them to another song by matching track names, with choices of what to copy and an undo. Settings summary can sort <b>By track</b> or <b>By what to do</b>, shows which helper fix each EQ band came from, and leaves out bands that change nothing.</li>
       <li><b>Version 42:</b> Fixed: tapping a <b>Listen at</b> time or a pin while the song was playing started a second copy that Pause couldn't stop. Only one playback can run now.</li>
       <li><b>Version 41:</b> <b>Ring tamer</b> in Cleanup: finds up to three ringing notes and dips each one only at the moments it sticks out, easing in and out. The helper suggests it first, before an all-song EQ cut.</li>
@@ -927,15 +929,27 @@ function openTypeBox(r, o){
   const get=o.get||(()=>+r.value);
   const set=o.set||(v=>{ r.value=v; r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); });
   box=document.createElement('div'); box.className='typebox';
-  box.innerHTML=`<input type="text" inputmode="decimal" autocomplete="off" aria-label="Type a value"> <span class="tbu"></span>${min<0?' <button type="button" class="small" data-a="neg" title="Switch between plus and minus">±</button>':''} <button type="button" class="small primary" data-a="set">Set</button>${o.reset?` <button type="button" class="small" data-a="reset"></button>`:''} <button type="button" class="small" data-a="close">Close</button>`;
+  box.innerHTML=`<input type="text" inputmode="${o.unit==='Hz'?'text':'decimal'}" autocomplete="off" aria-label="Type a value"${o.unit==='Hz'?' placeholder="e.g. 9k"':''}> <span class="tbu"></span>${min<0?' <button type="button" class="small" data-a="neg" title="Switch between plus and minus">±</button>':''} <button type="button" class="small primary" data-a="set">Set</button>${o.reset?` <button type="button" class="small" data-a="reset"></button>`:''} <button type="button" class="small" data-a="close">Close</button>`;
   box.querySelector('.tbu').textContent=o.unit||''; if(o.reset) box.querySelector('[data-a=reset]').textContent=o.resetLabel||'Reset';
   const inp=box.querySelector('input'); const dec=step<0.01?3:step<0.1?2:step<1?1:0; inp.value=(+get()).toFixed(dec);
   host.appendChild(box); inp.focus(); try{ inp.select(); }catch(e){}
-  const apply=()=>{ let v=parseFloat(String(inp.value).replace(',','.').replace('−','-')); if(!isFinite(v)){ box.remove(); return; } v=Math.max(min,Math.min(max,v)); set(v); box.remove(); };
-  box.querySelector('[data-a=set]').onclick=apply;
-  const neg=box.querySelector('[data-a=neg]'); if(neg) neg.onclick=()=>{ const s=inp.value.trim(); inp.value = s.startsWith('-')||s.startsWith('−') ? s.replace(/^[-−]/,'') : '-'+s; inp.focus(); };
-  if(o.reset) box.querySelector('[data-a=reset]').onclick=()=>{ box.remove(); o.reset(); };
-  box.querySelector('[data-a=close]').onclick=()=>box.remove();
+  const apply=()=>{ const raw=String(inp.value).trim().replace(',','.').replace('−','-'); let v=parseFloat(raw); if(!isFinite(v)){ box.remove(); return; }
+    // frequencies: "9k", "9 kHz", or a plain number below the lowest frequency all mean kilohertz
+    if(o.unit==='Hz' && (/k/i.test(raw) || v<min)) v*=1000;
+    v=Math.max(min,Math.min(max,v)); set(v); box.remove(); };
+  // On a phone, the first touch outside the box starts closing the keyboard, which shifts the page; act on touch-down
+  // (and keep the keyboard from closing first) so the tap can't miss.
+  // ...and swallow the click that follows, so it can't land on whatever slides under your finger once the box closes.
+  const press=(el,fn)=>{ if(!el) return; let done=false;
+    el.addEventListener('pointerdown',e=>{ e.preventDefault(); done=true;
+      const kill=ev=>{ ev.stopPropagation(); ev.preventDefault(); document.removeEventListener('click',kill,true); };
+      document.addEventListener('click',kill,true); setTimeout(()=>document.removeEventListener('click',kill,true),700);
+      fn(); });
+    el.addEventListener('click',e=>{ if(done){ done=false; return; } fn(); }); };
+  press(box.querySelector('[data-a=set]'),apply);
+  press(box.querySelector('[data-a=neg]'),()=>{ const s=inp.value.trim(); inp.value = s.startsWith('-')||s.startsWith('−') ? s.replace(/^[-−]/,'') : '-'+s; });
+  if(o.reset) press(box.querySelector('[data-a=reset]'),()=>{ box.remove(); o.reset(); });
+  press(box.querySelector('[data-a=close]'),()=>box.remove());
   inp.onkeydown=ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); apply(); } if(ev.key==='Escape') box.remove(); };
 }
 document.addEventListener('click',e=>{ const v=e.target.closest && e.target.closest('span.val'); if(!v || v.id==='meterV') return;
@@ -1672,7 +1686,9 @@ $('delSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(`Delete par
 $('silSel').onclick=()=>{ const t=needSel(); if(!t) return; pushUndo(`Silence part of ${t.name}`); const [A,B]=selRange(); rangeOp(t,A,B,'silence'); afterEdit('Silenced the selection.'); };
 $('cutBtn').onclick=()=>{ const t=needSel(); if(!t) return; const [A,B]=selRange(); const cb=copyRange(t,A,B); if(!cb){ toast('There’s no audio in that selection.'); return; } pushUndo(`Cut from ${t.name}`); clipboard=cb; rangeOp(t,A,B,'cut'); afterEdit('Cut. Move the playhead, choose a track, and tap Paste.'); };
 $('copyBtn').onclick=()=>{ const t=needSel(); if(!t) return; const [A,B]=selRange(); const cb=copyRange(t,A,B); if(!cb){ toast('There’s no audio in that selection.'); return; } clipboard=cb; updateSelInfo(); toast('Copied. Move the playhead, choose a track, and tap Paste.'); };
-$('pasteBtn').onclick=()=>{ const t=activeTrack(); if(!t||!clipboard) return; pushUndo(`Paste on ${t.name}`); const made=pasteAt(t,playhead,clipboard); activeClipId=made[0]?.id||null; afterEdit(`Pasted on ${t.name} at ${fmt(playhead)}.`); };
+$('pasteBtn').onclick=()=>{ const t=activeTrack(); if(!t||!clipboard) return; pushUndo(`Paste on ${t.name}`); const made=pasteAt(t,playhead,clipboard); activeClipId=made[0]?.id||null;
+  const why = t.mute ? ' It’s muted, so you won’t hear it until you unmute it.' : (tracks.some(x=>x.solo&&hasAudio(x)) && !t.solo) ? ' Another track is soloed, so this one is silent until you turn Solo off (or solo it too).' : t.hidden ? ' This track is hidden in the player; it still plays.' : '';
+  afterEdit(`Pasted on ${t.name} at ${fmt(playhead)}.`+why+(why?'':' To paste on a different track, tap that track’s lane first so it has the orange outline.')); };
 $('dupBtn').onclick=()=>{
   const t=activeTrack(); if(!t) return;
   if(sel && sel.id===t.id && Math.abs(sel.b-sel.a)>0.01){
@@ -2034,7 +2050,10 @@ function scheduleTrack(c, t, dest, at, when0){
 let playTicket=0;
 async function play(opts={}){
   const my=++playTicket;
-  const c=ctx(); try{ await c.resume(); }catch(e){}
+  let c=ctx(); try{ await c.resume(); }catch(e){}
+  // phones sometimes freeze the audio engine (after a call, another app, or a long pause); start a fresh one
+  if(c.state!=='running' && !opts.recording){ try{ await Promise.race([c.resume(), new Promise(r=>setTimeout(r,600))]); }catch(e){}
+    if(c.state!=='running'){ try{ c.close(); }catch(e){} actx=null; c=ctx(); try{ await c.resume(); }catch(e){} toast('Your phone had paused the audio, so Mixdown restarted it.'); } }
   if(!opts.recording){
     if(!tracks.some(hasAudio)){ toast('Choose an audio file for a track first.'); return; }
     if(playhead>=projectLen()-0.05) playhead=0;
@@ -2092,7 +2111,9 @@ let selInfoAt=0;
   bar.style.transformOrigin='left bottom';
   const typing=()=>{ const a=document.activeElement; return !!a && (a.tagName==='TEXTAREA' || (a.tagName==='INPUT' && !['range','checkbox','radio','file','color','button'].includes(a.type)) || a.isContentEditable); };
   let raf=0; const place=()=>{ raf=0; const de=document.documentElement, lw=de.clientWidth, lh=de.clientHeight;
-    const kb=typing(), inBar=kb && bar.contains(document.activeElement);
+    // the keyboard is really up only when it has taken a big bite out of the visible height
+    const kbUp = vv.scale<1.01 && (window.innerHeight - vv.height) > 140;
+    const kb=typing() && kbUp, inBar=typing() && bar.contains(document.activeElement);
     bar.style.visibility = kb && !inBar ? 'hidden' : '';
     const zoomed = vv.scale>1.01 || Math.abs(vv.width-lw)>=1 || Math.abs(vv.offsetLeft)>=1;
     if(!zoomed && !inBar){ bar.style.transform=''; return; }
@@ -3297,7 +3318,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 43)`);
+  L.push(`${title}: Mixdown settings (Version 45)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
