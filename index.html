@@ -329,7 +329,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 45</p>
+  <p class="ver">Version 46</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -411,6 +411,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 46:</b> Fixed: the player slid off the bottom of the screen when you scrolled down and Chrome hid its address bar.</li>
       <li><b>Version 45:</b> Fixed: the player could stay hidden after typing in a box (it now hides only while the keyboard is really up). If the phone freezes the audio engine, Play restarts it. Paste says which track it landed on, and warns if that track is muted, hidden, or silent because another track is soloed.</li>
       <li><b>Version 44:</b> Fixed: on phones, tapping <b>Set</b> in a typed-number box could miss while the keyboard was closing. Frequency boxes understand kHz: 9k, 9 kHz, or just 9 all mean 9,000 Hz.</li>
       <li><b>Version 43:</b> <b>Recipes:</b> <b>Save as recipe</b> (in Settings summary) keeps one song's settings without the audio, and <b>Apply a recipe</b> copies them to another song by matching track names, with choices of what to copy and an undo. Settings summary can sort <b>By track</b> or <b>By what to do</b>, shows which helper fix each EQ band came from, and leaves out bands that change nothing.</li>
@@ -2110,16 +2111,20 @@ let selInfoAt=0;
 (function(){ const vv=window.visualViewport, bar=$('transportBar'); if(!vv||!bar) return;
   bar.style.transformOrigin='left bottom';
   const typing=()=>{ const a=document.activeElement; return !!a && (a.tagName==='TEXTAREA' || (a.tagName==='INPUT' && !['range','checkbox','radio','file','color','button'].includes(a.type)) || a.isContentEditable); };
-  let raf=0; const place=()=>{ raf=0; const de=document.documentElement, lw=de.clientWidth, lh=de.clientHeight;
+  // A fixed bar sits at the bottom of the layout viewport, which is window.innerHeight tall. (The page's own height,
+  // clientHeight, stays at the size with the address bar showing, so using it pushed the bar off the bottom of the
+  // screen whenever Chrome hid its address bar while scrolling down.)
+  let raf=0; const place=()=>{ raf=0; const de=document.documentElement, lw=de.clientWidth, lh=window.innerHeight||de.clientHeight;
     // the keyboard is really up only when it has taken a big bite out of the visible height
     const kbUp = vv.scale<1.01 && (window.innerHeight - vv.height) > 140;
     const kb=typing() && kbUp, inBar=typing() && bar.contains(document.activeElement);
     bar.style.visibility = kb && !inBar ? 'hidden' : '';
-    const zoomed = vv.scale>1.01 || Math.abs(vv.width-lw)>=1 || Math.abs(vv.offsetLeft)>=1;
+    const zoomed = vv.scale>1.01 || Math.abs(vv.width-lw)>=2 || Math.abs(vv.offsetLeft)>=1;
     if(!zoomed && !inBar){ bar.style.transform=''; return; }
-    if(!zoomed && inBar && Math.abs(vv.height-lh)<2 && Math.abs(vv.offsetTop)<1){ bar.style.transform=''; return; }
+    if(!zoomed && inBar && !kbUp){ bar.style.transform=''; return; }
     // shrink the full-width bar to exactly the visible width, and pin it to the visible bottom
-    const k=vv.width/lw, dy=vv.offsetTop+vv.height-lh; bar.style.transform=`translate(${vv.offsetLeft}px, ${dy}px) scale(${k})`; };
+    // never below the visible bottom: the bar can only move up into view, not down out of it
+    const k=Math.min(1,vv.width/lw), dy=Math.min(0, vv.offsetTop+vv.height-lh); bar.style.transform=`translate(${vv.offsetLeft}px, ${dy}px) scale(${k})`; };
   const q=()=>{ if(!raf) raf=requestAnimationFrame(place); };
   const settle=()=>{ q(); [80,250,500,900].forEach(ms=>setTimeout(q,ms)); };
   vv.addEventListener('resize',settle); vv.addEventListener('scroll',q); window.addEventListener('scroll',q,{passive:true});
@@ -3318,7 +3323,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 45)`);
+  L.push(`${title}: Mixdown settings (Version 46)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
