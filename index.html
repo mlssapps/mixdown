@@ -329,7 +329,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 46</p>
+  <p class="ver">Version 47</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -411,6 +411,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 47:</b> The player's −5 and +5 buttons are now −1 and +1, for finer moves (−10 and +10 stay). The leftover Save button from the last project now disappears when you start or open a project. Roman numerals in song titles stay in capitals (Act II, not Act Ii).</li>
       <li><b>Version 46:</b> Fixed: the player slid off the bottom of the screen when you scrolled down and Chrome hid its address bar.</li>
       <li><b>Version 45:</b> Fixed: the player could stay hidden after typing in a box (it now hides only while the keyboard is really up). If the phone freezes the audio engine, Play restarts it. Paste says which track it landed on, and warns if that track is muted, hidden, or silent because another track is soloed.</li>
       <li><b>Version 44:</b> Fixed: on phones, tapping <b>Set</b> in a typed-number box could miss while the keyboard was closing. Frequency boxes understand kHz: 9k, 9 kHz, or just 9 all mean 9,000 Hz.</li>
@@ -615,9 +616,9 @@ body.force2 .cols > .panel{margin-top:14px}
     <div class="tbar trow1">
       <button class="icon" id="toStart" aria-label="Go to start" title="Go to start"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="5" width="2.5" height="14" fill="currentColor"/><path d="M19 5v14L8.5 12z" fill="currentColor"/></svg></button>
       <button class="icon step" id="back10" aria-label="Back 10 seconds" title="Back 10 seconds">−10</button>
-      <button class="icon step" id="back5" aria-label="Back 5 seconds" title="Back 5 seconds">−5</button>
+      <button class="icon step" id="back5" aria-label="Back 1 second" title="Back 1 second">−1</button>
       <button class="primary" id="play">Play</button>
-      <button class="icon step" id="fwd5" aria-label="Forward 5 seconds" title="Forward 5 seconds">+5</button>
+      <button class="icon step" id="fwd5" aria-label="Forward 1 second" title="Forward 1 second">+1</button>
       <button class="icon step" id="fwd10" aria-label="Forward 10 seconds" title="Forward 10 seconds">+10</button>
       <button class="icon" id="toEnd" aria-label="Go to end" title="Go to end"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5v14l10.5-7z" fill="currentColor"/><rect x="16.5" y="5" width="2.5" height="14" fill="currentColor"/></svg></button>
     </div>
@@ -2085,8 +2086,8 @@ const jump=t=>{ const v=Math.max(0,Math.min(t,projectLen())); if(playing) seek(v
 $('toStart').onclick=()=>{ jump(0); viewStart=0; clampView(); drawAll(); };
 $('toEnd').onclick=()=>{ if(playing) pause(); jump(projectLen()); };
 $('back10').onclick=()=>jump(curTime()-10);
-$('back5').onclick=()=>jump(curTime()-5);
-$('fwd5').onclick=()=>jump(curTime()+5);
+$('back5').onclick=()=>jump(curTime()-1);
+$('fwd5').onclick=()=>jump(curTime()+1);
 $('fwd10').onclick=()=>jump(curTime()+10);
 $('loop').onclick=()=>{ loopOn=!loopOn; $('loop').classList.toggle('on',loopOn); $('loop').setAttribute('aria-pressed',String(loopOn)); if(loopOn && !(sel&&Math.abs(sel.b-sel.a)>0.05)) toast('Select a section to loop it.'); };
 let staleCheckAt=0;
@@ -3263,7 +3264,12 @@ function setTitle(t, from){
   if(auto) $('fileName').value=autoFileName(t);
   lastTitle=t; syncFileMatch(); refreshSaveName();
 }
+// Roman numerals in titles stay capitals: "Act ii" or "Act Ii" becomes "Act II". A lone I is left alone.
+const fixNumerals=s=>String(s).replace(/\b(ii|iii|iv|vi|vii|viii|ix|xi|xii)\b/gi,m=>m.toUpperCase());
+function numeralsOnLeave(id,kind){ const el=$(id), v=fixNumerals(el.value); if(v!==el.value){ el.value=v; setTitle(v,kind); } }
 $('projName').addEventListener('input',()=>setTitle($('projName').value,'proj'));
+$('projName').addEventListener('change',()=>numeralsOnLeave('projName','proj'));
+$('tgTitle').addEventListener('change',()=>numeralsOnLeave('tgTitle','tag'));
 $('tgTitle').addEventListener('input',()=>setTitle($('tgTitle').value,'tag'));
 $('fileName').addEventListener('input',()=>{ syncFileMatch(); refreshSaveName(); });
 $('fileMatch').onclick=()=>{ $('fileName').value=autoFileName($('projName').value); syncFileMatch(); refreshSaveName(); };
@@ -3323,7 +3329,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 46)`);
+  L.push(`${title}: Mixdown settings (Version 47)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
@@ -3441,7 +3447,9 @@ function applyRecipe(){
   toast(`Applied the recipe to ${maps.length} track${maps.length===1?'':'s'}.`);
 }
 $('recipeBtn').onclick=()=>{ const b=$('recipeBox'); if(!b.hidden){ b.hidden=true; return; } if(!tracks.some(hasAudio)){ toast('Open the song you want to apply it to first.'); return; } recipe=null; b.hidden=false; renderRecipeBox(); };
+function hideProjSave(){ const b=$('projSaveBtn'); if(!b) return; b.hidden=true; if(b._url){ URL.revokeObjectURL(b._url); b._url=null; } }
 function clearProject(){
+  hideProjSave();
   pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
   eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); marksHidden=false; syncMarksBtn(); }catch(e){} syncSlate(); renderClean(); renderSecs();
   try{ applyAll(); syncBand(); renderBands(); }catch(e){}
@@ -3464,7 +3472,7 @@ $('projOpen').onchange=async e=>{
     if(data.app!=='mixdown') throw new Error('notproj');
     moveOnFromRestore();
     await applyProject(data, sd=>zip.file(sd.path).async('uint8array'));
-    { const t=$('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,''); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
+    { const t=fixNumerals($('tgTitle').value.trim()||$('projName').value.trim()||f.name.replace(/(\.mixdown)?\.zip$/i,'')); $('projName').value=t; $('tgTitle').value=t; lastTitle=t; if(!$('fileName').value.trim()) $('fileName').value=autoFileName(t); syncFileMatch(); hideSave(); }
     projStatus(`Opened ${$('projName').value}.`+(glitchFixedOnOpen?` Removed end glitches from ${glitchFixedOnOpen} file${glitchFixedOnOpen>1?'s':''}; each track shows a Put it back button.`:''));
     autosaveNow();
   }catch(err){ projStatus(err&&err.message==='notproj'?'That zip isn’t a Mixdown project.':'That project couldn’t be opened.'); }
