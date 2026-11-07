@@ -329,7 +329,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 47</p>
+  <p class="ver">Version 48</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -411,6 +411,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 48:</b> Fixed: splitting or cutting a clip could leave a click or pop where the audio starts or stops. Every edge now gets a tiny 3 ms fade you can't hear, and a plain split plays straight through as if it were never cut.</li>
       <li><b>Version 47:</b> The player's −5 and +5 buttons are now −1 and +1, for finer moves (−10 and +10 stay). The leftover Save button from the last project now disappears when you start or open a project. Roman numerals in song titles stay in capitals (Act II, not Act Ii).</li>
       <li><b>Version 46:</b> Fixed: the player slid off the bottom of the screen when you scrolled down and Chrome hid its address bar.</li>
       <li><b>Version 45:</b> Fixed: the player could stay hidden after typing in a box (it now hides only while the keyboard is really up). If the phone freezes the audio engine, Play restarts it. Paste says which track it landed on, and warns if that track is muted, hidden, or silent because another track is soloed.</li>
@@ -2035,18 +2036,43 @@ function scheduleTrack(c, t, dest, at, when0){
   const pts=fadePoints(t); fade.gain.setValueAtTime(valueAt(pts,at), when0);
   pts.forEach(([pt,v])=>{ if(pt>at) fade.gain.linearRampToValueAtTime(v, when0+(pt-at)); });
   const srcs=[];
-  for(const cl of t.clips){
-    let pos=0;
-    const cg = (cl.fi>0||cl.fo>0) ? clipFadeGain(c, cl, fade, at, when0) : fade;
-    for(const g of cl.segs){
-      const L=segLen(g), gs=cl.offset+pos, ge=gs+L; pos+=L;
-      if(g.sil!=null || ge<=at) continue;
-      const skip=Math.max(0,at-gs), src=c.createBufferSource(); src.buffer=cl.buf; src.connect(cg);
-      src.start(when0+Math.max(0,gs-at), g.s+skip, L-skip); srcs.push(src);
-    }
+  for(const it of segPlan(t)){
+    if(it.endT<=at) continue;
+    const cl=it.cl;
+    if(!cl._cg) cl._cg = (cl.fi>0||cl.fo>0) ? clipFadeGain(c, cl, fade, at, when0) : fade;
+    const g=c.createGain(); g.connect(cl._cg);
+    const env=it.env; g.gain.setValueAtTime(envAt(env,Math.max(at,it.startT)), when0+Math.max(0,it.startT-at));
+    env.forEach(([pt,v])=>{ if(pt>at && pt>it.startT) g.gain.linearRampToValueAtTime(v, when0+(pt-at)); });
+    const skip=Math.max(0,at-it.startT), src=c.createBufferSource(); src.buffer=cl.buf; src.connect(g);
+    src.start(when0+Math.max(0,it.startT-at), it.srcStart+skip, it.endT-it.startT-skip); srcs.push(src);
   }
+  for(const cl of t.clips) delete cl._cg;
   return {srcs, vol, pan, t, an, eqNodes:teq.nodes};
 }
+// Every edge where audio starts or stops gets a tiny 3 ms fade, so splits and cuts never click.
+// Where two pieces are really one continuous stretch of the same recording (a plain split), they overlap by
+// 3 ms on each side and cross over in a straight line; the copies are identical, so the sound passes through unchanged.
+const EDGE_FADE=0.003;
+function segPlan(t){
+  const items=[];
+  for(const cl of t.clips){ let pos=0;
+    for(const g of cl.segs){ const L=segLen(g), gs=cl.offset+pos; pos+=L; if(g.sil!=null || L<=0) continue; items.push({cl, g, gs, ge:gs+L}); } }
+  items.sort((a,b)=>a.gs-b.gs);
+  for(const it of items){ it.cPrev=false; it.cNext=false; it.x=Math.min(EDGE_FADE, (it.ge-it.gs)/4); }
+  for(let i=0;i+1<items.length;i++){ const a=items[i], b=items[i+1];
+    if(a.cl.buf===b.cl.buf && Math.abs(a.ge-b.gs)<1e-4 && Math.abs(a.g.e-b.g.s)<1e-4){
+      const x=Math.min(a.x,b.x);
+      if(a.g.e+x<=a.cl.buf.duration && b.g.s-x>=0){ a.cNext=true; b.cPrev=true; a.xn=x; b.xp=x; } } }
+  for(const it of items){ const x=it.x, xp=it.xp||x, xn=it.xn||x;
+    it.startT = it.cPrev ? it.gs-xp : it.gs; it.endT = it.cNext ? it.ge+xn : it.ge;
+    it.srcStart = it.g.s - (it.gs-it.startT);
+    const env=[];
+    if(it.cPrev){ env.push([it.gs-xp,0],[it.gs+xp,1]); } else { env.push([it.gs,0],[it.gs+x,1]); }
+    if(it.cNext){ env.push([it.ge-xn,1],[it.ge+xn,0]); } else { env.push([it.ge-x,1],[it.ge,0]); }
+    it.env=env; }
+  return items;
+}
+function envAt(env,t){ if(t<=env[0][0]) return env[0][1]; for(let i=1;i<env.length;i++){ if(t<=env[i][0]){ const [a,va]=env[i-1],[b,vb]=env[i]; return b>a? va+(vb-va)*(t-a)/(b-a) : vb; } } return env[env.length-1][1]; }
 // Only one playback can ever run: each start gets a ticket, and a start that was overtaken (another tap,
 // a seek, Pause) quietly gives up; anything still sounding is stopped before new sound begins.
 let playTicket=0;
@@ -3329,7 +3355,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 47)`);
+  L.push(`${title}: Mixdown settings (Version 48)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
