@@ -329,7 +329,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 48</p>
+  <p class="ver">Version 49</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -411,6 +411,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 49:</b> Fixed: echo kept ringing far longer than its Repeats setting, and above about 80% it never died out at all. Echoes now fade the way the settings say.</li>
       <li><b>Version 48:</b> Fixed: splitting or cutting a clip could leave a click or pop where the audio starts or stops. Every edge now gets a tiny 3 ms fade you can't hear, and a plain split plays straight through as if it were never cut.</li>
       <li><b>Version 47:</b> The player's −5 and +5 buttons are now −1 and +1, for finer moves (−10 and +10 stay). The leftover Save button from the last project now disappears when you start or open a project. Roman numerals in song titles stay in capitals (Act II, not Act Ii).</li>
       <li><b>Version 46:</b> Fixed: the player slid off the bottom of the screen when you scrolled down and Chrome hid its address bar.</li>
@@ -1515,7 +1516,9 @@ function makeFx(c, fx, input, when0){
   if(fx.delay.on){ const bpm=Math.max(40,Math.min(240,+$('bpm').value||100)), q=60/bpm, map={'1/4':q,'1/8':q/2,'1/8d':q*0.75,'1/16':q/4};
     const time=fx.delay.sync!=='off'?map[fx.delay.sync]:fx.delay.time/1000;
     wetDry(n=>{ const d=c.createDelay(4); d.delayTime.value=Math.min(4,time); const fb=c.createGain(); fb.gain.value=fx.delay.fb/100;
-      const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=20000*Math.pow(0.08,fx.delay.tone/100);
+      // Q in dB for a lowpass: -3.01 is a plain roll-off with no resonant bump. The browser's default (1 dB) boosted the top of every
+      // repeat, so echoes rang far longer than Repeats says and ran away (grew louder forever) above about 80%.
+      const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=-3.0103; lp.frequency.value=20000*Math.pow(0.08,fx.delay.tone/100);
       n.connect(d); d.connect(lp); lp.connect(fb); fb.connect(d); return lp; }, fx.delay.mix); }
   if(fx.reverb.on){ wetDry(n=>{ const cv=c.createConvolver(); cv.buffer=impulse(c,fx.reverb.type,fx.reverb.size); n.connect(cv); return cv; }, fx.reverb.mix); }
   lfos.forEach(o=>o.start(when0));
@@ -3355,7 +3358,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 48)`);
+  L.push(`${title}: Mixdown settings (Version 49)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
