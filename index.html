@@ -329,7 +329,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 49</p>
+  <p class="ver">Version 50</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -370,7 +370,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p><b>Add tone track</b> creates a generated tone you can layer under your music. Choose <b>Binaural</b> (a slightly different tone in each ear; needs stereo headphones), <b>Monaural</b> (both tones mixed, works on speakers), or <b>Isochronic</b> (one tone pulsing on and off; adjust how soft the pulse edges are). Set the <b>Carrier</b> (the tone you hear) and the <b>Beat</b> (how fast it pulses), or tap a band button. <b>Glide the beat</b> moves smoothly from one beat rate to another over the track. Add a <b>Noise bed</b> (white, pink, or brown) under the tone and set its level, or choose <b>Noise only</b> for a track of just noise. Press <b>Update tone</b> after changes. Tone tracks work like any other track: volume, fades, EQ, split, and trim. Pan is off for binaural so each ear keeps its own tone.</p>
     <p>Binaural beats only work in stereo. If a phone speaker or app plays your song in mono, they disappear; monaural and isochronic tones survive.</p>
     <h3>Mastering</h3>
-    <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -20 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it. If you change anything in the mix afterward, Listen to the master turns itself off so Play always matches what you see; master again to hear the new version. If a song can't reach the target without piling on limiting, mastering stops where more gain would only squash it and tells you where it stopped. Tap <b>Save as my defaults</b> to keep your usual settings; every new project starts with them, and <b>Use my defaults</b> puts them back on any song (for example, a project whose look-ahead got bumped).</p>
+    <p>In <b>Mastering</b>, type your <b>Target loudness</b> (0 to -30 LUFS) and <b>Ceiling</b>, choose a <b>Hard</b> (brickwall) or <b>Soft</b> (rounded) limiter, and set the <b>Look-ahead</b> and <b>Release</b>. Press <b>Master now</b>: the app measures your mix, raises or lowers it to the target, limits the peaks, and checks again until it lands on the number. You'll see the final loudness, peak, gain added, and how much limiting it took. Turn on <b>Listen to the master</b> and press Play to hear it. If you change anything in the mix afterward, Listen to the master turns itself off so Play always matches what you see; master again to hear the new version. If a song can't reach the target without piling on limiting, mastering stops where more gain would only squash it and tells you where it stopped. Tap <b>Save as my defaults</b> to keep your usual settings; every new project starts with them, and <b>Use my defaults</b> puts them back on any song (for example, a project whose look-ahead got bumped).</p>
     <p>Under Export, pick a <b>Format</b>: <b>WAV</b> (lossless), <b>M4A</b> (smaller, 256 kbps AAC), or <b>MP4 cover art video</b> (your cover art, or black, with the song, square, 9:16, or 16:9, ready to post, with optional visual rows in your color: a live waveform, a slow waveform that shows beats and pulses, spectrum bars (plain, mirrored, stacked in track colors, or <b>EQ screen</b>: the whole mix shaded with a glowing line for each track, like the live EQ display), and a whole-song waveform with a progress marker; check any combination). Fill in <b>Song details</b> to save the title, artist, album, lyrics, and cover art inside the file.</p>
     <h3>Repeat and loops</h3>
     <p>In Export, <b>Repeat</b> plays the song 2, 3, or 5 times in one file, or <b>fills</b> 3 to 30 minutes, ending with a gentle fade. Turn on <b>Blend the joins</b> to choose how each repeat flows into the next, with the same styles as clip blends. The first play always starts clean and the last one ends naturally. <b>Dip</b> fades the ending out and the beginning back in, so a repeat sounds like a quiet moment in the song. With Repeat off, Blend the joins makes a single file that loops smoothly when a player repeats it; Dip keeps its very start clean. Long files are large, so M4A is a good choice for them.</p>
@@ -411,6 +411,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 50:</b> Target loudness now goes down to −30 LUFS (it quietly stopped at −20 before), for soft, quiet songs.</li>
       <li><b>Version 49:</b> Fixed: echo kept ringing far longer than its Repeats setting, and above about 80% it never died out at all. Echoes now fade the way the settings say.</li>
       <li><b>Version 48:</b> Fixed: splitting or cutting a clip could leave a click or pop where the audio starts or stops. Every edge now gets a tiny 3 ms fade you can't hear, and a plain split plays straight through as if it were never cut.</li>
       <li><b>Version 47:</b> The player's −5 and +5 buttons are now −1 and +1, for finer moves (−10 and +10 stay). The leftover Save button from the last project now disappears when you start or open a project. Roman numerals in song titles stay in capitals (Act II, not Act Ii).</li>
@@ -718,7 +719,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <div class="row">
         <div class="field">
           <label for="mTarget">Target loudness (LUFS)</label>
-          <input type="number" id="mTarget" min="-20" max="0" step="0.1" value="-14" inputmode="decimal">
+          <input type="number" id="mTarget" min="-30" max="0" step="0.1" value="-14" inputmode="decimal">
         </div>
         <div class="field">
           <label for="mCeil">Ceiling (dB)</label>
@@ -2363,7 +2364,7 @@ function encodeWav(buf,bits,tags){
 // ---------- mastering ----------
 const sleep=()=>new Promise(r=>setTimeout(r,0));
 function mSettings(){ return {
-  target: Math.max(-20,Math.min(0,+$('mTarget').value||-14)), ceil: Math.max(-6,Math.min(0,+$('mCeil').value||-1)),
+  target: Math.max(-30,Math.min(0,+$('mTarget').value||-14)), ceil: Math.max(-6,Math.min(0,+$('mCeil').value||-1)),
   type: $('mType').value, tp: $('mTP').checked, look: +$('mLook').value, rel: +$('mRel').value }; }
 function syncM(){ $('mLookV').textContent=(+$('mLook').value).toFixed(1)+' ms'; $('mRelV').textContent=$('mRel').value+' ms'; }
 ['mLook','mRel'].forEach(id=>$(id).oninput=()=>{ syncM(); saveM(); });
@@ -3358,7 +3359,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 49)`);
+  L.push(`${title}: Mixdown settings (Version 50)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
@@ -3775,7 +3776,7 @@ async function applyFix(pk,i,fx,tg){
     return true; }
   if(fx.kind==='vol'){ if(!t){ toast('Pick the track first, in “Fix it on.”'); return false; } const prev=t.gainDb; pushUndo(`${t.name} volume ${fmtGain(prev)} → ${fmtGain(prev+fx.db)}`); t.gainDb=Math.max(-60,Math.min(12,prev+fx.db)); liveUpdate(t); syncTrackPanel(t); drawLane(t);
     helpApplied.set(key,{undo:()=>{ pushUndo(`${t.name} volume back to ${fmtGain(prev)}`); t.gainDb=prev; liveUpdate(t); syncTrackPanel(t); drawLane(t); }}); return true; }
-  if(fx.kind==='target'){ const prev=$('mTarget').value; $('mTarget').value=Math.max(-20,Math.min(0,(+prev||-14)+fx.delta)); saveM();
+  if(fx.kind==='target'){ const prev=$('mTarget').value; $('mTarget').value=Math.max(-30,Math.min(0,(+prev||-14)+fx.delta)); saveM();
     helpApplied.set(key,{undo:()=>{ $('mTarget').value=prev; saveM(); }}); toast(`Target is now ${$('mTarget').value} LUFS. Tap Master now to hear it.`); return true; }
   if(fx.kind==='mdef'){ const s=mSettings(); applyMDefs(myMDefs()); helpApplied.set(key,{undo:()=>applyMDefs(s,true)}); return true; }
   if(fx.kind==='mixclean'){ const prev=clone(cleans.mix||{}); if(!cleanActive('mix')){ toast('Whole-mix Cleanup is already off.'); } Object.values(cleanFor('mix')).forEach(m=>{ if(m) m.on=false; }); cleanAfter('mix');

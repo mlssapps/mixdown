@@ -29,7 +29,7 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 
 ## Mastering
 
-- **Loudness target** from 0 to -20 LUFS
+- **Loudness target** from 0 to -30 LUFS
 - **Hard or soft limiter** with look-ahead, release, ceiling, and true peak
 - **Measure loudness only:** check any song's LUFS and true peak without changing it
 - **Your defaults:** save your usual mastering settings; every new project starts with them
