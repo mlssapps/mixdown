@@ -188,8 +188,9 @@ body.tracklock .lane .grip{display:flex}
 body.tracklock .lane canvas{touch-action:none}
 .lane .tag{position:absolute;left:8px;top:4px;font-size:12px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--panel);pointer-events:none;max-width:70%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .lane .tag.muted{opacity:.5;text-decoration:line-through}
-.viewrow{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
-.viewrow #vzoom{grid-column:2 / 4}
+.viewrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px 10px;align-items:center;margin-top:8px;font-size:14px;color:var(--muted)}
+.viewrow #zoom,.viewrow #view{grid-column:2 / 4}
+.viewrow input[type=range]{width:100%;min-width:0}
 .viewrow .vzv{text-align:right;min-width:2.5em}
 .edits{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .insrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:14px}
@@ -329,7 +330,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 50</p>
+  <p class="ver">Version 51</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -382,8 +383,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <h3>Layout</h3>
     <p>The <b>Size</b> buttons (100%, 85%, 70%) shrink the whole page on a phone so more fits on screen; you can still pinch to zoom in. The <b>Layout</b> buttons under the title switch between <b>Auto</b> (side by side on wide screens), <b>1 column</b>, and <b>2 columns</b>, whatever your screen size. Your choice is remembered.</p>
     <h3>Cleanup</h3>
-    <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> and <b>Pop softener</b> on a vocal track, not the whole mix. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
-    <p><b>Section fix</b> turns the volume or treble up or down in one stretch of the song, with smooth half-second ramps in and out, for example a chorus that's too loud or an ending that gets too bright. Select the part on the timeline and tap <b>Add section</b>, or type the start and end.</p>
+    <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> on a vocal track, not the whole mix. For a P or B pop, add a <b>Section fix</b> on that track right around it and set <b>Pop softener (dB)</b>. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
+    <p><b>Section fix</b> changes one stretch of time, with smooth ramps in and out (up to half a second, shorter for short sections). <b>Fix it on</b> picks the <b>whole mix</b> or <b>one track</b>: select a part on a track's lane and tap <b>Add section</b> and it fixes only that track; with nothing selected it adds 10 seconds on the whole mix. Set <b>Volume</b>, <b>Treble</b>, and <b>Pop softener (dB)</b>, which lowers everything below about 150 Hz by that much, for a P or B thump on a vocal. Sections made before Version 51 stay on the whole mix until you change them.</p>
     <h3>What do you hear?</h3>
     <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. Try the <b>Ring tamer</b> first: it's a Cleanup tool that dips a ringing note only at the moments it sticks out, so the note is left alone the rest of the time (good for melody notes that only sting sometimes). If a note stings every time it plays, use <b>Find it for me</b>, which listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pins on the timeline show where each note rings hardest, and the track it was found on is shaded over each stretch where it rings: red while it's not fixed, green once its cut is on. <b>Show pins</b> and <b>Show on the track</b> switch them on and off for each search, and <b>Hide all marks</b> by the timeline buttons clears them all, so your waveforms look clean when you're done (the fixes stay on). <b>Listen at</b> buttons and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
     <h3>Keep it smooth</h3>
@@ -411,6 +412,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 51:</b> <b>Section fixes</b> can work on one track instead of the whole mix (<b>Fix it on</b>), and adding one from a selection on a track fixes just that track. The <b>Pop softener</b> moved out of Cleanup into section fixes, with a dB amount you type, since on instruments it was thinning the bass. Zoom, View, and Wave size each get a full-width slider. <b>Trim the silent end</b> and <b>Then add silence</b> in Export. A newly switched-on <b>Compressor</b> starts at 0 dB makeup and no longer makes the track louder on its own.</li>
       <li><b>Version 50:</b> Target loudness now goes down to −30 LUFS (it quietly stopped at −20 before), for soft, quiet songs.</li>
       <li><b>Version 49:</b> Fixed: echo kept ringing far longer than its Repeats setting, and above about 80% it never died out at all. Echoes now fade the way the settings say.</li>
       <li><b>Version 48:</b> Fixed: splitting or cutting a clip could leave a click or pop where the audio starts or stops. Every edge now gets a tiny 3 ms fade you can't hear, and a plain split plays straight through as if it were never cut.</li>
@@ -705,8 +707,8 @@ body.force2 .cols > .panel{margin-top:14px}
       <div id="clMods"></div>
       <button class="primary" id="clHear" style="width:100%;margin-top:6px">Hear cleanup</button>
       <p class="hint">Renders the master with cleanup, then press Play. Uncheck <b>Listen to the master</b> under Mastering to compare with the original.</p>
-      <h3 style="margin:16px 0 4px">Section fix <span class="hint" style="font-weight:400">(whole mix)</span></h3>
-      <p class="hint" style="margin-top:0">Turn the volume or treble up or down in one part of the song, with smooth ramps in and out. Select the part on the timeline first, or type the times. This changes the <b>whole mix</b>; −60 dB mutes it. To silence just one track, select that part on its lane and tap <b>Silence</b>.</p>
+      <h3 style="margin:16px 0 4px">Section fix</h3>
+      <p class="hint" style="margin-top:0">Change one stretch of time, with smooth ramps in and out. Each section has <b>Fix it on</b>: the <b>whole mix</b>, or <b>one track</b> only. Select a part on a track's lane and tap <b>Add section</b>, and it fixes just that track; with nothing selected it adds 10 seconds on the whole mix. A new section starts at 0 and changes nothing until you set it. <b>Volume</b> (−60 dB mutes), <b>Treble</b> (above about 4 kHz), and <b>Pop softener</b>, which lowers the low end (below about 150 Hz) by the dB you type, for a P or B thump (try −6 to −12, on the vocal track, tight around the pop). Applied when you master or export.</p>
       <div id="secList"></div>
       <button id="secAdd" style="width:100%">Add section</button>
     </div>
@@ -759,6 +761,9 @@ body.force2 .cols > .panel{margin-top:14px}
         <input type="range" id="master" class="thumbonly" min="-24" max="12" step="0.1" value="0">
       </div>
       <div id="exportOnly">
+      <label class="check"><input type="checkbox" id="endTrim" checked> Trim the silent end</label>
+      <div class="field" style="margin-top:6px"><label for="endAdd">Then add silence (seconds)</label><input type="number" id="endAdd" min="0" max="10" step="0.1" value="0" inputmode="decimal"></div>
+      <p class="hint" style="margin-top:0">Echo and reverb get extra room at the end, which can leave seconds of near-silence. <b>Trim the silent end</b> cuts the file 0.1 s after the last sound you could hear (quieter than −72 dB), with a soft fade. <b>Then add silence</b> puts exactly that many seconds after it, for the pause before the next song (0 = none). Not used when Repeat or Blend the joins is on.</p>
       <div class="row">
         <div class="field">
           <label for="rep">Repeat</label>
@@ -1457,7 +1462,7 @@ const FX=[
   {k:'comp',name:'Compressor',hint:'Evens out loud and quiet parts.',p:[
     {k:'thr',l:'Threshold',min:-60,max:0,step:1,u:'dB',d:-20},{k:'ratio',l:'Ratio',min:1,max:20,step:0.5,u:':1',d:3},
     {k:'att',l:'Attack',min:0.5,max:100,step:0.5,u:'ms',d:10},{k:'rel',l:'Release',min:10,max:1000,step:5,u:'ms',d:150},
-    {k:'makeup',l:'Makeup gain',min:0,max:24,step:0.5,u:'dB',d:3}]},
+    {k:'makeup',l:'Makeup gain',min:0,max:24,step:0.5,u:'dB',d:0}]},
   {k:'sat',name:'Saturation',hint:'Adds warmth at low drive and grit at high drive.',p:[
     {k:'drive',l:'Drive',min:0,max:100,step:1,u:'%',d:30},{k:'mix',l:'Mix',min:0,max:100,step:1,u:'%',d:100}]},
   {k:'chorus',name:'Chorus / flanger',hint:'Thickens and swirls the sound.',p:[
@@ -1477,7 +1482,7 @@ const FX=[
     {k:'type',l:'Space',opts:[['room','Room'],['hall','Hall'],['plate','Plate']],d:'hall'},
     {k:'size',l:'Length',min:0.3,max:8,step:0.1,u:'s',d:2.2},{k:'mix',l:'Mix',min:0,max:100,step:1,u:'%',d:25}]}
 ];
-function fxFor(t){ if(!t.fx){ t.fx={}; FX.forEach(e=>{ const o={on:false}; e.p.forEach(p=>o[p.k]=p.d); t.fx[e.k]=o; }); } return t.fx; }
+function fxFor(t){ if(!t.fx){ t.fx={}; FX.forEach(e=>{ const o={on:false}; e.p.forEach(p=>o[p.k]=p.d); if(e.k==='comp') o.honest=true; t.fx[e.k]=o; }); } return t.fx; }
 const GATE_SRC=`class Gate extends AudioWorkletProcessor{constructor(o){super();const p=o.processorOptions||{};this.thr=Math.pow(10,(p.thr||-50)/20);this.rel=Math.exp(-1/((p.rel||120)/1000*sampleRate));this.att=Math.exp(-1/(0.001*sampleRate));this.env=0;this.g=0;this.hold=0;this.holdN=Math.round(0.02*sampleRate);}
 process(ins,outs){const i=ins[0],o=outs[0];if(!i||!i.length){return true;}const n=i[0].length;for(let s=0;s<n;s++){let m=0;for(let c=0;c<i.length;c++){const v=Math.abs(i[c][s]);if(v>m)m=v;}
 this.env=m>this.env?m:this.env*0.999;let open=this.env>this.thr;if(open)this.hold=this.holdN;else if(this.hold>0){this.hold--;open=true;}
@@ -1486,7 +1491,14 @@ registerProcessor('mixdown-gate',Gate);`;
 const gateReady=new WeakMap();
 function loadGate(c){ if(!gateReady.has(c)) gateReady.set(c, c.audioWorklet ? c.audioWorklet.addModule(URL.createObjectURL(new Blob([GATE_SRC],{type:'application/javascript'}))).then(()=>true).catch(()=>false) : Promise.resolve(false)); return gateReady.get(c); }
 const gateOK=new WeakMap();
-async function prepareFx(c){ if(tracks.some(t=>t.fx && t.fx.gate.on)) gateOK.set(c, await loadGate(c)); }
+async function prepareFx(c){ if(tracks.some(t=>t.fx && t.fx.gate.on)) gateOK.set(c, await loadGate(c));
+  for(const t of tracks){ const cp=t.fx&&t.fx.comp; if(cp&&cp.on&&cp.honest&&!compCal.has(compKey(cp))) compCal.set(compKey(cp), await measureCompGain(cp)); } }
+// how much gain the browser's compressor adds to a quiet signal (well below any threshold) at these settings
+const compCal=new Map(), compKey=cp=>cp.thr+'|'+cp.ratio;
+async function measureCompGain(cp){ try{ const sr=22050, oc=new OfflineAudioContext(1,Math.round(sr*0.4),sr), o=oc.createOscillator(), g=oc.createGain(), k=oc.createDynamicsCompressor();
+  o.frequency.value=1000; g.gain.value=Math.pow(10,-80/20); k.threshold.value=cp.thr; k.ratio.value=cp.ratio; k.knee.value=6; k.attack.value=cp.att/1000; k.release.value=cp.rel/1000;
+  o.connect(g); g.connect(k); k.connect(oc.destination); o.start(); const d=(await oc.startRendering()).getChannelData(0); let m=0; for(let i=d.length>>1;i<d.length;i++) m=Math.max(m,Math.abs(d[i]));
+  return m>0 ? 20*Math.log10(m)+80 : 0; }catch(e){ return 0; } }
 const irCache={};
 function impulse(c,type,len){
   const key=type+'|'+len+'|'+c.sampleRate; if(irCache[key]) return irCache[key];
@@ -1507,7 +1519,9 @@ function makeFx(c, fx, input, when0){
   const lfo=(rate,amount,target)=>{ const o=c.createOscillator(), g=c.createGain(); o.frequency.value=rate; g.gain.value=amount; o.connect(g); g.connect(target); lfos.push(o); };
   if(fx.gate.on && gateOK.get(c)){ const g=new AudioWorkletNode(c,'mixdown-gate',{processorOptions:{thr:fx.gate.thr,rel:fx.gate.rel},outputChannelCount:[2]}); node.connect(g); node=g; }
   if(fx.comp.on){ const cp=c.createDynamicsCompressor(); cp.threshold.value=fx.comp.thr; cp.ratio.value=fx.comp.ratio; cp.knee.value=6; cp.attack.value=fx.comp.att/1000; cp.release.value=fx.comp.rel/1000;
-    const mk=c.createGain(); mk.gain.value=dbToGain(fx.comp.makeup); node.connect(cp); cp.connect(mk); node=mk; }
+    // the browser's compressor quietly adds its own makeup gain (about +7 dB at the defaults); "honest" compressors take it back out,
+    // so Makeup gain is the only gain added. Compressors switched on before Version 51 keep their old sound.
+    const mk=c.createGain(); mk.gain.value=dbToGain(fx.comp.makeup-(fx.comp.honest?(compCal.get(compKey(fx.comp))||0):0)); node.connect(cp); cp.connect(mk); node=mk; }
   if(fx.sat.on){ wetDry(n=>{ const ws=c.createWaveShaper(); ws.curve=satCurve(fx.sat.drive); ws.oversample='4x'; const trim=c.createGain(); trim.gain.value=1/(1+fx.sat.drive/100); n.connect(ws); ws.connect(trim); return trim; }, fx.sat.mix); }
   if(fx.chorus.on){ const fl=fx.chorus.mode==='flanger', base=fl?0.003:0.02, dep=(fl?0.0025:0.007)*fx.chorus.depth/100;
     wetDry(n=>{ const d=c.createDelay(0.1); d.delayTime.value=base; n.connect(d); lfo(fx.chorus.rate,dep,d.delayTime);
@@ -1542,7 +1556,10 @@ function wireFx(t,p){
       pr.appendChild(f);
     });
     const on=box.querySelector('.fxon'); on.checked=fx[e.k].on;
-    on.onchange=async()=>{ fx[e.k].on=on.checked; box.classList.toggle('on',on.checked); pr.hidden=!on.checked; count();
+    on.onchange=async()=>{ fx[e.k].on=on.checked;
+      // a compressor from before Version 51, switched on now, starts honest at 0 dB makeup
+      if(e.k==='comp' && on.checked && !fx.comp.honest){ fx.comp.honest=true; fx.comp.makeup=0; wireFx(t,p); toast('Compressor on. Makeup gain starts at 0 dB, so it won\u2019t make the track louder unless you raise it.'); restartIfPlaying(); return; }
+      box.classList.toggle('on',on.checked); pr.hidden=!on.checked; count();
       if(e.k==='gate' && on.checked && actx){ const ok=await loadGate(actx); if(!ok){ toast('The noise gate isn’t supported in this browser view. Try the installed app.'); } }
       restartIfPlaying(); };
     list.appendChild(box);
@@ -2469,8 +2486,7 @@ const CLEAN=[
   {k:'shimmer', name:'Shimmer tamer', hint:'Smooths swirly, metallic high end (about 8–16 kHz) when it flares up.', f:11500, q:0.7, pct:70, att:5, rel:120, max:8},
   {k:'harsh', name:'Harsh tamer', hint:'Eases piercing upper mids (about 2.5–5 kHz) in vocals and guitars when they get sharp.', f:3500, q:1.0, pct:80, att:5, rel:100, max:6},
   {k:'mud', name:'Mud tamer', hint:'Eases boomy low mids (about 200–500 Hz) only when they build up.', f:320, q:1.0, pct:80, att:20, rel:200, max:6},
-  {k:'declick', name:'Mouth-click remover', hint:'Finds tiny clicks and lip smacks in close, quiet vocals and smooths each one over. Best on a vocal track. Start with Gentle; Strong can soften crisp T and K sounds.'},
-  {k:'pops', name:'Pop softener', hint:'Softens the low thump of P and B sounds right on the mic. Use it on a vocal track only, since it would thin out bass and kick drums.'}
+  {k:'declick', name:'Mouth-click remover', hint:'Finds tiny clicks and lip smacks in close, quiet vocals and smooths each one over. Best on a vocal track. Start with Gentle; Strong can soften crisp T and K sounds.'}
 ];
 const CL_AMT={gentle:0.35, medium:0.6, strong:0.9};
 let cleans={}, secs=[], clTarget='mix', lastStems=null;
@@ -2522,20 +2538,6 @@ function deClick(chs,sr,amt){
     i=j; }
   for(let i=0;i<n;i++){ const v=w[i]; if(v>0) for(let c=0;c<chs.length;c++) chs[c][i]+=v*(lo[c][i]-chs[c][i]); }
 }
-// plosive pops: a sudden low thump that jumps well above the low end just before it and outweighs the voice's mids.
-// While it lasts, blend toward a copy with the lows rolled off; the rest of the voice is left alone.
-function popSoft(chs,sr,amt){
-  const lpC=bqc('lp',150,0.707,sr), lowB=chs.map(x=>bqRun(bqRun(x,lpC),lpC));
-  const midC=bqc('bp',1000,0.5,sr), midB=chs.map(x=>bqRun(x,midC));
-  const hpC=bqc('hp',140,0.707,sr), thin=chs.map(x=>bqRun(bqRun(x,hpC),hpC));
-  const e=follow(lowB,sr,2,40), eSlow=follow(lowB,sr,30,150), em=follow(midB,sr,2,40), n=chs[0].length;
-  const LA=Math.round(sr*0.004), back=Math.round(sr*0.03), jump=12-amt*6, floor=pctDb(e,96)-4-amt*4;
-  const gA=Math.exp(-1/(sr*0.003)), gR=Math.exp(-1/(sr*0.06)); let gs=0; const top=Math.min(1,0.6+amt*0.45);
-  for(let i=0;i<n;i++){ const j=Math.min(n-1,i+LA), ed=20*Math.log10(e[j]+1e-12), prior=20*Math.log10(eSlow[Math.max(0,j-back)]+1e-12), md=20*Math.log10(em[j]+1e-12);
-    const surge=ed-prior-jump, tg = (ed>floor && ed-md>3-amt*4) ? Math.max(0,Math.min(1,surge/6))*top : 0;
-    gs = tg>gs ? gA*gs+(1-gA)*tg : gR*gs+(1-gR)*tg;
-    if(gs>0.003) for(let c=0;c<chs.length;c++) chs[c][i]+=gs*(thin[c][i]-chs[c][i]); }
-}
 // Ring tamer: find the notes that stand out (same listening as Find it for me), then for each one follow how far it
 // sticks up above its neighbors moment by moment. Only when it rises clearly above its own usual amount does a
 // narrow dip come in (easing in over ~15 ms, out over ~200 ms), capped by the amount. Gentle about −3, Medium −5, Strong −8 dB.
@@ -2559,18 +2561,32 @@ async function ringTame(chs,sr,amt,key){
 }
 async function applyClean(chs,sr,set,key){
   for(const m of CLEAN){ const st=set[m.k]; if(!st||!st.on) continue; const amt=CL_AMT[st.amt]||0.6;
-    if(m.k==='ring') await ringTame(chs,sr,amt,key); else if(m.k==='hiss') hissQuiet(chs,sr,amt); else if(m.k==='declick') deClick(chs,sr,amt); else if(m.k==='pops') popSoft(chs,sr,amt); else dynCut(chs,sr,m,amt); await sleep(); }
+    if(m.k==='ring') await ringTame(chs,sr,amt,key); else if(m.k==='hiss') hissQuiet(chs,sr,amt); else if(m.k==='declick') deClick(chs,sr,amt); else dynCut(chs,sr,m,amt); await sleep(); }
 }
 // a few milliseconds of fade at the very start and end, so a file never begins or stops on a click
 function edgeFade(chs,sr){ const n=chs[0].length, fi=Math.min(n>>1,Math.round(sr*0.003)), fo=Math.min(n>>1,Math.round(sr*0.012));
   for(const x of chs){ for(let i=0;i<fi;i++) x[i]*=i/fi; for(let i=0;i<fo;i++) x[n-1-i]*=i/fo; } }
-function sectionFix(chs,sr){
-  const list=secs.filter(x=>x.b>x.a && (x.vol||x.treb)); if(!list.length) return;
-  const n=chs[0].length, vol=new Float32Array(n), tr=new Float32Array(n);
+// Section fixes. Each one works on the whole mix or on one track (x.on is 'mix' or a track id), only between its start and
+// end, with smooth ramps in and out. Volume and treble as before; the pop softener is a low shelf at 200 Hz cut by exactly
+// its dB amount (full depth below about 100 Hz, almost nothing above 500 Hz), faded in and out with the section.
+const secKey=x=>(x.on==null||x.on==='mix')?'mix':String(x.on);
+const secsFor=key=>secs.filter(x=>secKey(x)===String(key) && x.b>x.a && (x.vol||x.treb||x.pop));
+function lowShelf(f,db,sr){ const A=Math.pow(10,db/40), w=2*Math.PI*f/sr, cs=Math.cos(w), al=Math.sin(w)/2*Math.SQRT2, sA=2*Math.sqrt(A)*al;
+  const b0=A*((A+1)-(A-1)*cs+sA), b1=2*A*((A-1)-(A+1)*cs), b2=A*((A+1)-(A-1)*cs-sA), a0=(A+1)+(A-1)*cs+sA, a1=-2*((A-1)+(A+1)*cs), a2=(A+1)+(A-1)*cs-sA;
+  return [b0/a0,b1/a0,b2/a0,a1/a0,a2/a0]; }
+function sectionFix(chs,sr,key='mix'){
+  const list=secsFor(key); if(!list.length) return;
+  const n=chs[0].length, vol=new Float32Array(n), tr=new Float32Array(n), pops=new Map();
   list.forEach(x=>{ const r=Math.min(0.5,(x.b-x.a)/4), i0=Math.max(0,Math.floor(x.a*sr)), i1=Math.min(n,Math.ceil(x.b*sr));
-    for(let i=i0;i<i1;i++){ const t=i/sr, w=Math.min(1,(t-x.a)/r,(x.b-t)/r); if(w<=0) continue; vol[i]+=w*(x.vol||0); tr[i]+=w*(x.treb||0); } });
+    let pw=null; if(x.pop){ if(!pops.has(x.pop)) pops.set(x.pop,new Float32Array(n)); pw=pops.get(x.pop); }
+    for(let i=i0;i<i1;i++){ const t=i/sr, w=Math.min(1,(t-x.a)/r,(x.b-t)/r); if(w<=0) continue; vol[i]+=w*(x.vol||0); tr[i]+=w*(x.treb||0); if(pw) pw[i]=Math.max(pw[i],w); } });
   const c=bqc('hp',4000,0.707,sr);
-  for(const x of chs){ const h=bqRun(x,c); for(let i=0;i<n;i++){ if(!vol[i] && !tr[i]) continue; const kt=Math.pow(10,tr[i]/20)-1, kv=Math.pow(10,vol[i]/20); x[i]=(x[i]+kt*h[i])*kv; } }
+  for(const x of chs){ const h=bqRun(x,c), shelves=[...pops].map(([db,w])=>[bqRun(x,lowShelf(200,db,sr)),w]);
+    for(let i=0;i<n;i++){ let v=x[i], touched=false;
+      for(const [sh,w] of shelves){ if(w[i]){ v+=w[i]*(sh[i]-x[i]); touched=true; } }
+      if(!touched && !vol[i] && !tr[i]) continue;
+      const kt=Math.pow(10,tr[i]/20)-1, kv=Math.pow(10,vol[i]/20);
+      x[i]=(v+kt*h[i])*kv; } }
 }
 let masterBuf=null, masterSig='', listenMaster=false;
 // once the mix changes, the old master no longer matches what's on screen: switch Play back to the live mix and say so
@@ -2582,7 +2598,7 @@ const renderLen = () => { const a=tracks.filter(t=>hasAudio(t)&&audible(t)); ret
 async function renderMix(sr, opts={}){
   const live=tracks.filter(hasAudio), tail=Math.max(0,...live.filter(audible).map(fxTail));
   const L=renderLen()+tail, len=Math.max(1,Math.ceil(L*sr));
-  const perTrack=opts.stems || live.some(t=>cleanActive(t.id));
+  const perTrack=opts.stems || live.some(t=>cleanActive(t.id) || secsFor(t.id).length);
   let out;
   if(!perTrack){
     const oc=new OfflineAudioContext(2, len, sr);
@@ -2599,6 +2615,7 @@ async function renderMix(sr, opts={}){
       scheduleTrack(oc,t,oc.destination,0,0);
       const b=await oc.startRendering(), chs=[b.getChannelData(0), b.getChannelData(1)];
       if(cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id],t.id);
+      sectionFix(chs,sr,t.id);
       for(let c=0;c<2;c++){ const s0=sum[c], x=chs[c]; for(let i=0;i<len;i++) s0[i]+=x[i]; }
       if(opts.stems){ const m=new Float32Array(len>>1); for(let i=0;i<m.length;i++) m[i]=(chs[0][2*i]+chs[1][2*i]+chs[0][2*i+1]+chs[1][2*i+1])*0.25; stems.push({mono:m, color:css(t.colorVar)}); }
       await sleep();
@@ -2611,7 +2628,7 @@ async function renderMix(sr, opts={}){
   }
   const chs=[out.getChannelData(0), out.getChannelData(1)];
   if(cleanActive('mix')) await applyClean(chs,sr,cleans.mix,'mix');
-  sectionFix(chs,sr);
+  sectionFix(chs,sr,'mix');
   edgeFade(chs,sr);
   return out;
 }
@@ -2681,6 +2698,7 @@ $('mRun').onclick=async()=>{
 };
 $('mListen').onchange=e=>{ listenMaster=e.target.checked; restartIfPlaying(); };
 function renderClean(){
+  try{ syncSecTargets(); }catch(e){}
   const sel=$('clTarget'), keep=clTarget;
   sel.innerHTML='<option value="mix">Whole mix</option>'+tracks.filter(hasAudio).map(t=>`<option value="${t.id}"></option>`).join('');
   [...sel.options].forEach(o=>{ if(o.value!=='mix') o.textContent=targetName(o.value); });
@@ -2702,7 +2720,7 @@ function syncClSum(){ const el=$('clSum'); if(!el) return;
   tracks.filter(hasAudio).forEach(t=>{ const l=cleanOnList(t.id); if(l.length) rows.push([t.name,l]); });
   el.innerHTML=''; const h=document.createElement('div'); h.style.fontWeight='600'; h.textContent=rows.length?'Cleanup that’s on now:':'Cleanup that’s on now: nothing.'; el.appendChild(h);
   rows.forEach(([n,l])=>{ const d=document.createElement('div'); const b=document.createElement('b'); b.textContent=n+': '; d.appendChild(b); d.appendChild(document.createTextNode(l.join(', '))); el.appendChild(d); });
-  if(secs.length){ const d=document.createElement('div'); const b=document.createElement('b'); b.textContent='Section fixes: '; d.appendChild(b); d.appendChild(document.createTextNode(secs.length+' (whole mix)')); el.appendChild(d); } }
+  if(secs.length){ const d=document.createElement('div'); const b=document.createElement('b'); b.textContent='Section fixes: '; d.appendChild(b); const by={}; secs.forEach(x=>{ const n=secName(x); by[n]=(by[n]||0)+1; }); d.appendChild(document.createTextNode(Object.entries(by).map(([n,c])=>`${c} on ${n}`).join(', '))); el.appendChild(d); } }
 // ---------- clean slate: every EQ band and every Cleanup tool off, on every track (volumes, fades, edits stay) ----------
 let slateBackup=null;
 function syncSlate(){ document.querySelectorAll('.slateBtn').forEach(b=>b.textContent=slateBackup?'Undo clean slate':'Clean slate'); }
@@ -2725,23 +2743,35 @@ $('clHear').onclick=()=>{ if(!tracks.some(hasAudio)){ status('Choose an audio fi
 
 const mmss=x=>{ x=Math.max(0,+x||0); const m=Math.floor(x/60), s=x-m*60; return m+':'+(s<10?'0':'')+s.toFixed(1); };
 const parseT=v=>{ v=String(v).trim(); if(!v) return 0; if(v.includes(':')){ const [m,s]=v.split(':'); return (+m||0)*60+(+s||0); } return +v||0; };
+const secEsc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const secName=x=>{ const k=secKey(x); if(k==='mix') return 'Whole mix'; const t=tracks.find(t=>String(t.id)===k); return t?t.name:'a removed track'; };
+function secOptions(x){ const k=secKey(x); let h='<option value="mix">Whole mix</option>'; const ts=tracks.filter(hasAudio);
+  ts.forEach(t=>{ h+=`<option value="${t.id}">${secEsc(t.name)}</option>`; });
+  if(k!=='mix' && !ts.some(t=>String(t.id)===k)) h+=`<option value="${secEsc(k)}">A removed track (does nothing)</option>`; return h; }
+// keep each section's track list current (names, added tracks) without rebuilding the boxes you may be typing in
+function syncSecTargets(){ document.querySelectorAll('#secList select.secOn').forEach(sel=>{ if(document.activeElement===sel) return; const x=secs[+sel.dataset.i]; if(!x) return; sel.innerHTML=secOptions(x); sel.value=secKey(x); }); }
 function renderSecs(){
   const box=$('secList'); box.innerHTML='';
   if(!secs.length){ box.innerHTML='<p class="hint" style="margin:0 0 8px">No sections yet.</p>'; return; }
   secs.forEach((x,i)=>{ const d=document.createElement('div'); d.className='secrow';
-    d.innerHTML=`<div class="row"><div class="field"><label>Start</label><input type="text" inputmode="decimal" data-f="a" value="${mmss(x.a)}"></div><div class="field"><label>End</label><input type="text" inputmode="decimal" data-f="b" value="${mmss(x.b)}"></div></div>
+    d.innerHTML=`<div class="field"><label>Fix it on</label><select class="secOn" data-i="${i}">${secOptions(x)}</select></div>
+      <div class="row"><div class="field"><label>Start</label><input type="text" inputmode="decimal" data-f="a" value="${mmss(x.a)}"></div><div class="field"><label>End</label><input type="text" inputmode="decimal" data-f="b" value="${mmss(x.b)}"></div></div>
       <div class="row"><div class="field"><label>Volume (dB)</label><input type="number" step="0.5" min="-60" max="12" inputmode="decimal" data-f="vol" value="${x.vol||0}"></div><div class="field"><label>Treble (dB)</label><input type="number" step="0.5" min="-12" max="6" inputmode="decimal" data-f="treb" value="${x.treb||0}"></div></div>
+      <div class="field"><label>Pop softener (dB)</label><input type="number" step="0.5" min="-24" max="0" inputmode="decimal" data-f="pop" value="${x.pop||0}"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small" data-act="go">Go to start</button><button class="small" data-act="del">Remove</button></div>`;
+    const so=d.querySelector('select.secOn'); so.value=secKey(x);
+    so.onchange=()=>{ x.on = so.value==='mix' ? 'mix' : (isNaN(+so.value)?so.value:+so.value); renderSecs(); cleanChanged(); toast(`This section now changes ${secName(x)==='Whole mix'?'the whole mix':secName(x)+' only'}.`); };
     d.querySelectorAll('input[data-f]').forEach(inp=>inp.onchange=()=>{ const f=inp.dataset.f; let v = (f==='a'||f==='b') ? parseT(inp.value) : (+inp.value||0);
-      if(f==='vol') v=Math.max(-60,Math.min(12,v)); if(f==='treb') v=Math.max(-12,Math.min(6,v)); x[f]=v; if(x.b<x.a){ const t=x.a; x.a=x.b; x.b=t; } renderSecs(); cleanChanged(); });
+      if(f==='vol') v=Math.max(-60,Math.min(12,v)); if(f==='treb') v=Math.max(-12,Math.min(6,v)); if(f==='pop') v=Math.max(-24,-Math.abs(v)); x[f]=v; if(x.b<x.a){ const t=x.a; x.a=x.b; x.b=t; } renderSecs(); cleanChanged(); });
     d.querySelector('[data-act=go]').onclick=()=>seek(x.a);
     d.querySelector('[data-act=del]').onclick=()=>{ secs.splice(i,1); renderSecs(); cleanChanged(); };
     box.appendChild(d); });
 }
-$('secAdd').onclick=()=>{ let a, b;
-  if(sel && Math.abs(sel.b-sel.a)>=0.5){ a=Math.min(sel.a,sel.b); b=Math.max(sel.a,sel.b); }
+$('secAdd').onclick=()=>{ let a, b, on='mix';
+  if(sel && Math.abs(sel.b-sel.a)>=0.05){ a=Math.min(sel.a,sel.b); b=Math.max(sel.a,sel.b); if(tracks.some(t=>t.id===sel.id && hasAudio(t))) on=sel.id; }
   else { a=playhead; b=Math.min(projectLen()||a+10, a+10); if(b<=a) b=a+10; }
-  secs.push({a,b,vol:-2,treb:0}); renderSecs(); cleanChanged(); toast(sel?'Added the selected part. Adjust its volume or treble.':'Added 10 seconds from the playhead. Adjust the times, volume, or treble.'); };
+  const x={a,b,vol:0,treb:0,pop:0,on}; secs.push(x); renderSecs(); cleanChanged();
+  toast(on!=='mix' ? `Added the selected part of ${secName(x)}. It changes only that track. Set its volume, treble, or pop softener.` : 'Added 10 seconds from the playhead on the whole mix. Set the times, track, volume, treble, or pop softener.'); };
 
 // ---------- tags ----------
 const TAG_IDS=['tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
@@ -2787,6 +2817,18 @@ function infoList(v){
 const LOOP_BLEND_DEF={style:'dip', out:2, in:2, gap:0.5, curve:0.7};
 let loopBlend=loadBlend('mixdown-blend-loop',LOOP_BLEND_DEF);
 renderBlend($('loopBlend'),loopBlend,()=>{ saveBlend('mixdown-blend-loop',loopBlend); syncLoop(); autosaveSoon(); });
+// Ending: cut the file 0.1 s after the last moment louder than -72 dB (with a 50 ms fade), then add the chosen seconds of silence.
+function applyEnding(buf){
+  const trim=$('endTrim').checked, add=Math.max(0,Math.min(10,+$('endAdd').value||0));
+  if(!trim && !add) return buf;
+  const sr=buf.sampleRate, ch=buf.numberOfChannels, n=buf.length, thr=Math.pow(10,-72/20); let keep=n;
+  if(trim){ let last=-1; for(let c=0;c<ch;c++){ const d=buf.getChannelData(c); for(let i=n-1;i>last;i--){ if(Math.abs(d[i])>thr){ last=i; break; } } }
+    keep = last<0 ? n : Math.min(n, last+1+Math.round(sr*0.1)); }
+  const extra=Math.round(add*sr), out=new AudioBuffer({length:Math.max(1,keep+extra), numberOfChannels:ch, sampleRate:sr});
+  const fl=keep<n ? Math.min(keep,Math.round(sr*0.05)) : 0;
+  for(let c=0;c<ch;c++){ const d=buf.getChannelData(c).subarray(0,keep), o=out.getChannelData(c); o.set(d); for(let i=0;i<fl;i++) o[keep-1-i]*=i/fl; }
+  return out;
+}
 function loopSettings(){
   const r=$('rep').value, seam=$('seam').checked;
   return {on: r!=='1' || seam, reps: r==='fill'?0:+r, fill: r==='fill'?+$('repLen').value:0, seam, b: seam?{...loopBlend}:null};
@@ -3200,6 +3242,7 @@ $('exportWav').onclick=async()=>{
       note=peak>1?` Peak ${(20*Math.log10(peak)).toFixed(1)} dB: the mix clips. Turn on mastering or lower the master volume.`:` Peak ${(20*Math.log10(peak||1e-9)).toFixed(1)} dB.`;
     }
     const lp=loopSettings();
+    if(!lp.on) out=applyEnding(out);
     if(lp.on){ prog(0.85,'Building the loop…'); await sleep(); try{ out=loopify(out,lp,$('mOn').checked?Math.pow(10,mSettings().ceil/20):1); }catch(err){ throw new Error('toolong'); } }
     const v=tagValues(), fmt=$('fmt').value; let blob;
     if(fmt==='wav'){ prog(0.95,'Writing the file…'); await sleep(); blob=encodeWav(out,bits,v); }
@@ -3229,6 +3272,7 @@ $('toLyric').onclick=async()=>{
     let out;
     if($('mOn').checked){ if(masterBuf && masterSig===mixSignature(sr)){ out=masterBuf; prog(0.6,'Using your master…'); } else { const r=await masterMix(sr,prog); masterBuf=r.buf; masterSig=mixSignature(sr); showStats(r); out=r.buf; $('mListenRow').hidden=false; } }
     else { prog(0.3,'Rendering your mix…'); out=await renderMix(sr); }
+    out=applyEnding(out);
     prog(0.9,'Handing it to Lyric Scroll…'); await sleep();
     const v=tagValues(), title=($('tgTitle').value||$('projName').value||'').trim();
     await handoffPut('lyricscroll',{v:1, at:Date.now(), from:'Mixdown', title, artist:($('tgArtist').value||'').trim(), lyrics:$('tgLyrics').value||'',
@@ -3276,7 +3320,7 @@ function setSaveLink(btn, name, blob){
 })();
 
 // ---------- projects ----------
-const PROJ_FIELDS=['projName','fileName','fmt','vShape','vText','vWave','vSlow','vBars','vBarStyle','vSong','vColor','rep','repLen','seam','bits','rate','bpm','countIn','playAlong','mOn','mTarget','mCeil','mType','mTP','mLook','mRel','tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
+const PROJ_FIELDS=['projName','fileName','fmt','endTrim','endAdd','vShape','vText','vWave','vSlow','vBars','vBarStyle','vSong','vColor','rep','repLen','seam','bits','rate','bpm','countIn','playAlong','mOn','mTarget','mCeil','mType','mTP','mLook','mRel','tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
 function fieldVals(){ const o={}; PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el) o[id]= el.type==='checkbox'?el.checked:el.value; }); return o; }
 function setFields(o){ PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el && id in o){ if(el.type==='checkbox') el.checked=!!o[id]; else el.value=o[id]; } }); }
 const b64=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode(...u8.subarray(i,i+0x8000)); return btoa(s); };
@@ -3359,7 +3403,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 50)`);
+  L.push(`${title}: Mixdown settings (Version 51)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
@@ -3371,7 +3415,7 @@ function settingsSummary(view){
     let any=false; [['mix','Whole mix']].concat(sumTracks().map(t=>[t.id,t.name])).forEach(([k,n])=>{ const f=findFreqs(k); if(f.length){ any=true; L.push(`  ${n}: found ${f.join(', ')} here`); } });
     if(!any) L.push('  Nothing.');
     L.push(''); L.push('3. CHECK BY HAND'); L.push('(These depend on this song’s timing, so look at the other song and decide.)');
-    let hand=false; secs.forEach(x=>{ hand=true; L.push(`  Section fix ${mmss(x.a)} to ${mmss(x.b)}: volume ${x.vol>0?'+':''}${x.vol||0} dB, treble ${x.treb>0?'+':''}${x.treb||0} dB`); });
+    let hand=false; secs.forEach(x=>{ hand=true; L.push('  '+`Section fix on ${secName(x)}, ${mmss(x.a)} to ${mmss(x.b)}: volume ${x.vol>0?'+':''}${x.vol||0} dB, treble ${x.treb>0?'+':''}${x.treb||0} dB${x.pop?`, pop softener ${x.pop} dB`:''}`); });
     sumTracks().forEach(t=>{ const a=[]; if(t.solo) a.push('Solo is on'); if(t.fadeIn) a.push('Track fade in '+fmtFade(t.fadeIn)); if(t.fadeOut) a.push('Track fade out '+fmtFade(t.fadeOut));
       t.clips.forEach(cl=>{ if(cl.fi||cl.fo) a.push(`Clip at ${fmt3(cl.offset)}: fade in ${(cl.fi||0).toFixed(2)} s, fade out ${(cl.fo||0).toFixed(2)} s (if the end swipes, use Swipe at the end)`); });
       if(a.length){ hand=true; L.push(`  ${t.name}: `+a.join('; ')); } });
@@ -3382,7 +3426,7 @@ function settingsSummary(view){
   L.push(''); L.push('MASTERING'); L.push(masterLine()+` Master when exporting: ${$('mOn').checked?'on':'off'}.`);
   L.push(''); L.push('WHOLE MIX');
   const me=eqLines('mix'), mc=cleanOnList('mix'); me.forEach(x=>L.push(x)); if(mc.length) L.push('Cleanup: '+mc.join(', '));
-  secs.forEach(x=>L.push(`Section fix ${mmss(x.a)} to ${mmss(x.b)}: volume ${x.vol>0?'+':''}${x.vol||0} dB, treble ${x.treb>0?'+':''}${x.treb||0} dB`));
+  secs.forEach(x=>L.push(`Section fix on ${secName(x)}, ${mmss(x.a)} to ${mmss(x.b)}: volume ${x.vol>0?'+':''}${x.vol||0} dB, treble ${x.treb>0?'+':''}${x.treb||0} dB${x.pop?`, pop softener ${x.pop} dB`:''}`));
   if(!me.length && !mc.length && !secs.length) L.push('No changes');
   sumTracks().forEach(t=>{
     L.push(''); L.push(`${(t.name||'Track').toUpperCase()}`); const n=L.length;
