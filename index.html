@@ -330,7 +330,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 51</p>
+  <p class="ver">Version 52</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -412,6 +412,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 52:</b> Fixed: when <b>Choose tracks</b> hid the active track, edits and the exact-times <b>Select</b> still went to that hidden track. Now the active track is always one you can see, and the exact-times box names the track it will select on.</li>
       <li><b>Version 51:</b> <b>Section fixes</b> can work on one track instead of the whole mix (<b>Fix it on</b>), and adding one from a selection on a track fixes just that track. The <b>Pop softener</b> moved out of Cleanup into section fixes, with a dB amount you type, since on instruments it was thinning the bass. Zoom, View, and Wave size each get a full-width slider. <b>Trim the silent end</b> and <b>Then add silence</b> in Export. A newly switched-on <b>Compressor</b> starts at 0 dB makeup and no longer makes the track louder on its own.</li>
       <li><b>Version 50:</b> Target loudness now goes down to −30 LUFS (it quietly stopped at −20 before), for soft, quiet songs.</li>
       <li><b>Version 49:</b> Fixed: echo kept ringing far longer than its Repeats setting, and above about 80% it never died out at all. Echoes now fade the way the settings say.</li>
@@ -567,7 +568,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <label class="inl">End <input type="text" class="tmask" id="selB" inputmode="numeric" autocomplete="off" placeholder="0:00.000"></label>
       <button class="small" id="selBph" type="button">From playhead</button>
       <button class="small primary" id="selGo" type="button">Select</button>
-      <span class="hint" style="margin:0;width:100%">Type only the numbers: 31425 becomes 3:14.250. Selects that stretch on the active track.</span>
+      <span class="hint" style="margin:0;width:100%">Type only the numbers: 31425 becomes 3:14.250. Selects that stretch on <b id="selOn">the active track</b>. Tap a lane to change it.</span>
     </div>
     <p class="hint selinfo" id="selInfo"></p>
     <canvas class="ruler" id="ruler" aria-label="Timeline ruler. Tap to move the playhead."></canvas>
@@ -1168,7 +1169,7 @@ function drawLaneBody(g,w,h,t){
 function drawAll(){ drawRuler(); tracks.forEach(drawLane); updateClock(); updateSelInfo(); if(micStream && !recording) updateRecTarget(); }
 function updateClock(){ $('clock').innerHTML = fmt3(playhead)+' <small>/ '+fmt3(recording?Math.max(projectLen(),playhead):projectLen())+'</small>'; $('clock').classList.toggle('recording',!!recording); }
 function updateSelInfo(){
-  const t=activeTrack(); const has = sel && t && sel.id===t.id && Math.abs(sel.b-sel.a)>0.01;
+  const t=activeTrack(); if($('selOn')) $('selOn').textContent = t ? t.name : 'the active track'; const has = sel && t && sel.id===t.id && Math.abs(sel.b-sel.a)>0.01;
   ['trimSel','delSel','silSel','clearSel','cutBtn','copyBtn'].forEach(id=>$(id).disabled=!has);
   $('splitBtn').disabled = !(t && clipAt(t,playhead));
   $('dupBtn').disabled = !(has || (activeClipId && findClip(activeClipId)) || (t && clipAt(t,playhead)));
@@ -1188,6 +1189,10 @@ function updateSelInfo(){
 function renderLanes(){
   const L=$('lanes'); L.innerHTML='';
   const vis=tracks.filter(t=>!t.hidden);
+  // the active track is the one every edit and the exact-times Select act on, so it must be one you can see:
+  // when Choose tracks hides it, the first shown track (with audio, if any) becomes active, and a selection on a hidden track is cleared
+  if(vis.length && !vis.some(t=>t.id===activeId)){ const v=vis.find(hasAudio)||vis[0]; activeId=v.id; activeClipId=null; }
+  if(sel && !vis.some(t=>t.id===sel.id)) sel=null;
   L.classList.toggle('compact', vis.length>4 && vis.length<=8); L.classList.toggle('tiny', vis.length>8);
   renderLaneShow();
   vis.forEach(t=>{
@@ -1197,6 +1202,7 @@ function renderLanes(){
     L.appendChild(d); attachLane(d,t);
   });
   $('emptyMsg').hidden = tracks.some(hasAudio);
+  document.querySelectorAll('.track').forEach(p=>p.classList.toggle('active',+p.dataset.id===activeId)); updateSelInfo();
   drawAll();
 }
 let laneMenuOpen=false;
@@ -3403,7 +3409,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 51)`);
+  L.push(`${title}: Mixdown settings (Version 52)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
