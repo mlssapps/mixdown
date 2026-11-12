@@ -330,7 +330,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 52</p>
+  <p class="ver">Version 54</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -412,6 +412,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 54:</b> Fixed: after Clean slate, a recipe, Undo, or opening a project while you were looking at a track’s EQ, the whole-mix EQ could keep playing old settings live (for example a bass boost you had turned off), and the EQ picture showed that old curve. Live playback and the picture now always match your settings. Mastering and Export were never affected.</li>
+      <li><b>Version 53:</b> The player checks where it actually landed on screen after every scroll and moves itself back to the bottom of what you can see, so it can’t slip away when the address bar slides in or out.</li>
       <li><b>Version 52:</b> Fixed: when <b>Choose tracks</b> hid the active track, edits and the exact-times <b>Select</b> still went to that hidden track. Now the active track is always one you can see, and the exact-times box names the track it will select on.</li>
       <li><b>Version 51:</b> <b>Section fixes</b> can work on one track instead of the whole mix (<b>Fix it on</b>), and adding one from a selection on a track fixes just that track. The <b>Pop softener</b> moved out of Cleanup into section fixes, with a dB amount you type, since on instruments it was thinning the bass. Zoom, View, and Wave size each get a full-width slider. <b>Trim the silent end</b> and <b>Then add silence</b> in Export. A newly switched-on <b>Compressor</b> starts at 0 dB makeup and no longer makes the track louder on its own.</li>
       <li><b>Version 50:</b> Target loudness now goes down to −30 LUFS (it quietly stopped at −20 before), for soft, quiet songs.</li>
@@ -1919,7 +1921,8 @@ function syncBand(){
   $('eqBypass').checked=set.bypass;
   $('master').value=masterDb; $('masterV').textContent=(masterDb>0?'+':'')+masterDb.toFixed(1)+' dB'; $('masterV').classList.toggle('changed',Math.abs(masterDb)>0.05);
 }
-function applyAll(){ const set=curEq(); liveNodes(eqTarget).forEach((n,i)=>applyBand(n,set.bands[i],set.bypass)); }
+// push the saved EQ into every live filter (whole mix and each playing track), not just the one on screen, so what plays always matches the settings
+function applyAll(){ const keys=['mix',...(session||[]).filter(s=>s.t).map(s=>s.t.id)]; keys.forEach(k=>{ const set=eqFor(k); (liveNodes(k)||[]).forEach((n,i)=>{ if(set.bands[i]) applyBand(n,set.bands[i],set.bypass); }); }); }
 function bandChanged(){ if(slateBackup){ slateBackup=null; syncSlate(); } { const b0=curEq().bands[curBand]; if(b0 && b0.src && b0.src!=='sting:manual') delete b0.src; } const set=curEq(), n=liveNodes(eqTarget)[curBand]; if(n) applyBand(n,set.bands[curBand],set.bypass); if(eqTarget==='mix') saveEq(); syncBand(); renderBands(); drawSpec(); }
 const cb=()=>curEq().bands[curBand];
 $('bOn').onchange=e=>{ cb().on=e.target.checked; bandChanged(); };
@@ -2169,16 +2172,21 @@ let selInfoAt=0;
   // clientHeight, stays at the size with the address bar showing, so using it pushed the bar off the bottom of the
   // screen whenever Chrome hid its address bar while scrolling down.)
   let raf=0; const place=()=>{ raf=0; const de=document.documentElement, lw=de.clientWidth, lh=window.innerHeight||de.clientHeight;
-    // the keyboard is really up only when it has taken a big bite out of the visible height
-    const kbUp = vv.scale<1.01 && (window.innerHeight - vv.height) > 140;
+    // the keyboard is really up only when it has taken a big bite out of the visible height (an address bar showing or
+    // hiding never does: it is about 56 px, the keyboard is a third of the screen or more)
+    const kbUp = vv.scale<1.01 && (window.innerHeight - vv.height) > Math.max(140, window.innerHeight*0.25);
     const kb=typing() && kbUp, inBar=typing() && bar.contains(document.activeElement);
     bar.style.visibility = kb && !inBar ? 'hidden' : '';
     const zoomed = vv.scale>1.01 || Math.abs(vv.width-lw)>=2 || Math.abs(vv.offsetLeft)>=1;
-    if(!zoomed && !inBar){ bar.style.transform=''; return; }
-    if(!zoomed && inBar && !kbUp){ bar.style.transform=''; return; }
-    // shrink the full-width bar to exactly the visible width, and pin it to the visible bottom
-    // never below the visible bottom: the bar can only move up into view, not down out of it
-    const k=Math.min(1,vv.width/lw), dy=Math.min(0, vv.offsetTop+vv.height-lh); bar.style.transform=`translate(${vv.offsetLeft}px, ${dy}px) scale(${k})`; };
+    let x=0, k=1, dy=0;
+    if(zoomed || (inBar && kbUp)){ k=Math.min(1,vv.width/lw); x=vv.offsetLeft; dy=Math.min(0, vv.offsetTop+vv.height-lh); }
+    bar.style.transform = (x||dy||k!==1) ? `translate(${x}px, ${dy}px) scale(${k})` : '';
+    // Then check where the bar really landed and correct it. Phones disagree about which height a fixed bar is measured
+    // from while the address bar slides in and out, so the math above can be off; measuring can't be. The bar's bottom
+    // goes to the bottom of what you can see, never lower and never higher.
+    if(bar.style.visibility!=='hidden'){ const r=bar.getBoundingClientRect(), want=vv.offsetTop+vv.height, off=want-r.bottom;
+      if(Math.abs(off)>1.5){ dy+=off; bar.style.transform=`translate(${x}px, ${dy}px) scale(${k})`; } }
+  };
   const q=()=>{ if(!raf) raf=requestAnimationFrame(place); };
   const settle=()=>{ q(); [80,250,500,900].forEach(ms=>setTimeout(q,ms)); };
   vv.addEventListener('resize',settle); vv.addEventListener('scroll',q); window.addEventListener('scroll',q,{passive:true});
@@ -3409,7 +3417,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 52)`);
+  L.push(`${title}: Mixdown settings (Version 54)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
