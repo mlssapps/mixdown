@@ -27,13 +27,13 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#141821; --panel:#1C212C; --ink:#E7EBF2; --muted:#949DB0; --line:#2C3342;
+    --bg:#141821; --panel:#1C212C; --ink:#E7EBF2; --muted:#CDC096; --line:#2C3342;
     --accent:#F2A541; --accent-ink:#141821; --lane:#171B24; --sel:rgba(242,165,65,.40);
     --t1:#43C6BF; --t2:#F2A541; --t3:#E26A9C; --t4:#6FA2F2; --t5:#A88BF5; --t6:#8FCB55;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#141821; --panel:#1C212C; --ink:#E7EBF2; --muted:#949DB0; --line:#2C3342;
+  --bg:#141821; --panel:#1C212C; --ink:#E7EBF2; --muted:#CDC096; --line:#2C3342;
   --accent:#F2A541; --accent-ink:#141821; --lane:#171B24; --sel:rgba(242,165,65,.40);
   --t1:#43C6BF; --t2:#F2A541; --t3:#E26A9C; --t4:#6FA2F2; --t5:#A88BF5; --t6:#8FCB55;
 }
@@ -330,7 +330,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 54</p>
+  <p class="ver">Version 55</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -412,6 +412,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 55:</b> High-pass and low-pass EQ bands are now truly flat above (or below) their cutoff at Q 0.71. Before, they added a hidden boost of about 1.7 dB right at the cutoff, in the sound and the picture. Higher Q now means what it says: Q 1.4 adds a peak of about +3 dB at the cutoff, Q 2 about +6 dB. If you ever set a high-pass or low-pass above Q 0.71, check it, because it will ring more than before. Masters use less memory (the old master is let go before a new one is made, and the master is written in place), which helps long songs with many tracks. Description text in dark mode is brighter and a soft warm yellow, easier to read with less glare.</li>
       <li><b>Version 54:</b> Fixed: after Clean slate, a recipe, Undo, or opening a project while you were looking at a track’s EQ, the whole-mix EQ could keep playing old settings live (for example a bass boost you had turned off), and the EQ picture showed that old curve. Live playback and the picture now always match your settings. Mastering and Export were never affected.</li>
       <li><b>Version 53:</b> The player checks where it actually landed on screen after every scroll and moves itself back to the bottom of what you can see, so it can’t slip away when the address bar slides in or out.</li>
       <li><b>Version 52:</b> Fixed: when <b>Choose tracks</b> hid the active track, edits and the exact-times <b>Select</b> still went to that hidden track. Now the active track is always one you can see, and the exact-times box names the track it will select on.</li>
@@ -1873,7 +1874,9 @@ const noGain=t=>['highpass','lowpass','notch'].includes(t);
 function applyBand(node,b,bypass){
   const on=b.on && !bypass;
   node.type = on ? b.type : 'peaking';
-  node.frequency.value=b.f; node.Q.value=b.q; node.gain.value = on ? b.g : 0;
+  node.frequency.value=b.f;
+  // the browser reads Q on high-pass and low-pass in dB (resonance), not as a width; convert, so Q 0.71 is truly flat instead of adding a bump at the cutoff
+  node.Q.value = (on && (b.type==='highpass'||b.type==='lowpass')) ? 20*Math.log10(Math.max(0.01,b.q)) : b.q; node.gain.value = on ? b.g : 0;
 }
 function makeEqChain(c, set){ const nodes=set.bands.map(b=>{ const n=c.createBiquadFilter(); applyBand(n,b,set.bypass); return n; }); for(let i=1;i<nodes.length;i++) nodes[i-1].connect(nodes[i]); return {first:nodes[0], last:nodes[nodes.length-1], nodes}; }
 let masterGain=null, eqNodes=[], analyser=null;
@@ -2605,7 +2608,7 @@ function sectionFix(chs,sr,key='mix'){
 let masterBuf=null, masterSig='', listenMaster=false;
 // once the mix changes, the old master no longer matches what's on screen: switch Play back to the live mix and say so
 const masterStale=()=>masterSig!==mixSignature(+$('rate').value);
-function masterOff(){ listenMaster=false; const c=$('mListen'); if(c) c.checked=false; toast('You changed the mix, so Play now uses your live mix. Tap Master now (or Hear cleanup) to hear the processed version again.'); }
+function masterOff(){ listenMaster=false; masterBuf=null; masterSig=''; const lr=$('mListenRow'); if(lr) lr.hidden=true; const c=$('mListen'); if(c) c.checked=false; toast('You changed the mix, so Play now uses your live mix. Tap Master now (or Hear cleanup) to hear the processed version again.'); }
 function mixSignature(sr){ return JSON.stringify({cl:cleans, sc:secs, bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0,c.fc||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
 // the song ends where the last track you can hear ends (muted tracks don't add silence)
 const renderLen = () => { const a=tracks.filter(t=>hasAudio(t)&&audible(t)); return a.length ? Math.max(...a.map(trackEnd)) : projectLen(); };
@@ -2635,7 +2638,7 @@ async function renderMix(sr, opts={}){
       await sleep();
     }
     const oc=new OfflineAudioContext(2, len, sr), ab=new AudioBuffer({length:len, numberOfChannels:2, sampleRate:sr});
-    ab.copyToChannel(sum[0],0); ab.copyToChannel(sum[1],1);
+    ab.copyToChannel(sum[0],0); ab.copyToChannel(sum[1],1); sum[0]=sum[1]=null; // the copy is all that's needed now
     const src=oc.createBufferSource(); src.buffer=ab; const chain=makeChain(oc, oc.destination); src.connect(chain.input); src.start();
     out=await oc.startRendering();
     if(opts.stems) lastStems={sig:mixSignature(sr), sr:sr/2, list:stems};
@@ -2656,9 +2659,9 @@ async function masterMix(sr, prog){
   const before=lufs(chs,sr,1,null);
   if(!isFinite(before)) throw new Error('silent');
   prog(0.3, set.tp?'Finding true peaks…':'Finding peaks…'); await sleep();
-  const p=peakEnvelope(chs,set.tp);
+  let p=peakEnvelope(chs,set.tp);
   let inPk=0; for(let i=0;i<n;i++) if(p[i]>inPk) inPk=p[i];
-  const G=new Float32Array(n), work=new Float32Array(n);
+  const G=new Float32Array(n); let work=new Float32Array(n);
   // Raise or lower the gain until the loudness lands on the target. If more gain stops buying loudness
   // (each extra dB adds less than half a dB, because the limiter just squashes it back), stop there:
   // pushing further only adds limiting and crunch.
@@ -2673,9 +2676,11 @@ async function masterMix(sr, prog){
     prevG=gdb; prevGot=got; gdb+=err;
   }
   prog(0.9,'Writing the master…'); await sleep();
-  const g=Math.pow(10,gdb/20), out=new AudioBuffer({length:n, numberOfChannels:2, sampleRate:sr});
+  p=null; work=null; // done with these; free them before the final pass
+  // write the master straight into the mix buffer instead of a second copy (saves memory on long, many-track songs)
+  const g=Math.pow(10,gdb/20), out=mix;
   let minG=1;
-  for(let c=0;c<2;c++){ const src=chs[c], dst=out.getChannelData(c); for(let i=0;i<n;i++){ const gi=G[i]; if(gi<minG) minG=gi; dst[i]=src[i]*g*gi; } }
+  for(let c=0;c<2;c++){ const d=chs[c]; for(let i=0;i<n;i++){ const gi=G[i]; if(gi<minG) minG=gi; d[i]=d[i]*g*gi; } }
   const pk=peakEnvelope([out.getChannelData(0),out.getChannelData(1)],set.tp); let mx=0; for(let i=0;i<n;i++) if(pk[i]>mx) mx=pk[i];
   return {buf:out, before, after:got, gainDb:gdb, capped, maxGR:-20*Math.log10(minG), peakDb:20*Math.log10(mx||1e-9), inPeakDb:20*Math.log10(inPk||1e-9), tp:set.tp, target:set.target};
 }
@@ -2700,6 +2705,7 @@ function showStats(r){
 $('mRun').onclick=async()=>{
   if(!tracks.some(hasAudio)){ status('Choose an audio file for a track first.'); return; }
   pause(); $('mRun').disabled=true; keepAwake(true);
+  masterBuf=null; masterSig=''; listenMaster=false; // let go of the old master first, so two full copies are never held at once
   const sr=+$('rate').value;
   try{
     const r=await masterMix(sr,(f,m)=>setProg($('mProgress'),f,m));
@@ -3248,7 +3254,7 @@ $('exportWav').onclick=async()=>{
     let out, note='';
     if($('mOn').checked){
       if(masterBuf && masterSig===mixSignature(sr)){ out=masterBuf; prog(0.6,'Using your master…'); }
-      else { const r=await masterMix(sr,prog); masterBuf=r.buf; masterSig=mixSignature(sr); showStats(r); out=r.buf; $('mListenRow').hidden=false; }
+      else { masterBuf=null; const r=await masterMix(sr,prog); masterBuf=r.buf; masterSig=mixSignature(sr); showStats(r); out=r.buf; $('mListenRow').hidden=false; }
       note=' Mastered.';
     } else {
       prog(0.3,'Rendering your mix…'); out=await renderMix(sr);
@@ -3284,7 +3290,7 @@ $('toLyric').onclick=async()=>{
   pause(); $('toLyric').disabled=true; $('toLyricOpen').hidden=true; keepAwake(true); const sr=+$('rate').value, prog=(f,m)=>setProg($('progress'),f,m);
   try{
     let out;
-    if($('mOn').checked){ if(masterBuf && masterSig===mixSignature(sr)){ out=masterBuf; prog(0.6,'Using your master…'); } else { const r=await masterMix(sr,prog); masterBuf=r.buf; masterSig=mixSignature(sr); showStats(r); out=r.buf; $('mListenRow').hidden=false; } }
+    if($('mOn').checked){ if(masterBuf && masterSig===mixSignature(sr)){ out=masterBuf; prog(0.6,'Using your master…'); } else { masterBuf=null; const r=await masterMix(sr,prog); masterBuf=r.buf; masterSig=mixSignature(sr); showStats(r); out=r.buf; $('mListenRow').hidden=false; } }
     else { prog(0.3,'Rendering your mix…'); out=await renderMix(sr); }
     out=applyEnding(out);
     prog(0.9,'Handing it to Lyric Scroll…'); await sleep();
@@ -3417,7 +3423,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 54)`);
+  L.push(`${title}: Mixdown settings (Version 55)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
