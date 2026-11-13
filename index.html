@@ -85,7 +85,7 @@ span.val:not(#meterV){cursor:pointer;text-decoration:underline dotted;text-under
 .helpbox .hshow .check{margin:0;font-size:14px}
 .helpbox .hring{padding:6px 0;border-bottom:1px solid var(--line)}
 .helpbox .hring:last-of-type{border-bottom:0}
-.helpbox .hring:not(.on) .hrname{opacity:.6;text-decoration:line-through}
+.helpbox .hring:not(.on) .hrname{color:var(--muted);text-decoration:line-through}
 .helpbox .hrtimes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
 .helpbox .hrtimes button{padding:5px 9px;font-variant-numeric:tabular-nums}
 .clsum{font-size:14px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
@@ -129,6 +129,9 @@ button{font:inherit;font-weight:600;border-radius:10px;padding:10px 14px;border:
 button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 button:disabled{opacity:.45;cursor:not-allowed}
+/* info and not-available-right-now text is warm yellow, never grey; white means you can use it */
+button:disabled:not(.primary):not(.rec){opacity:1;color:var(--muted)}
+::placeholder{color:var(--muted);opacity:.85}
 button.small{padding:6px 10px;font-size:13px;font-weight:500}
 button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .pick{position:relative;display:inline-block}
@@ -161,10 +164,10 @@ body{padding-bottom:calc(140px + env(safe-area-inset-bottom,0px))}
 .spacer{flex:1}
 button.icon{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;min-width:44px}
 button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.selinfo{margin:8px 0 6px;min-height:1.5em;font-size:14px;color:var(--ink)}
+.selinfo{margin:8px 0 6px;min-height:1.5em;font-size:14px;color:var(--muted)}
 .showrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center;font-size:13px;color:var(--muted)}
 .showrow button{padding:5px 10px;font-size:13px;font-weight:600;border-width:2px}
-.showrow button.off{opacity:.45}
+.showrow button.off{color:var(--muted)!important;border-color:var(--line)!important}
 
 /* timeline */
 .timeline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 26px 8px 8px;margin-top:4px}
@@ -187,7 +190,7 @@ body.tracklock .lane .grip{display:flex}
 .laneswatch{width:12px;height:12px;border-radius:3px;flex:none}
 body.tracklock .lane canvas{touch-action:none}
 .lane .tag{position:absolute;left:8px;top:4px;font-size:12px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--panel);pointer-events:none;max-width:70%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.lane .tag.muted{opacity:.5;text-decoration:line-through}
+.lane .tag.muted{color:var(--muted);text-decoration:line-through}
 .viewrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px 10px;align-items:center;margin-top:8px;font-size:14px;color:var(--muted)}
 .viewrow #zoom,.viewrow #view{grid-column:2 / 4}
 .viewrow input[type=range]{width:100%;min-width:0}
@@ -215,10 +218,10 @@ body.tracklock .lane canvas{touch-action:none}
 .tsum{display:block;font-size:12px;color:var(--accent);margin:0 0 2px 22px;line-height:1.35}
 .tsum{min-height:1.35em}
 .tsum.none{color:var(--muted)}
-.track.hiddenlane .ttoggle .tnm{opacity:.55}
+.track.hiddenlane .ttoggle .tnm{color:var(--muted)}
 .tbody{margin-top:8px}
 .tbody[hidden]{display:none}
-.tshow.off{opacity:.55;text-decoration:line-through}
+.tshow.off{color:var(--muted);text-decoration:line-through}
 .val.changed{color:var(--accent);font-weight:600}
 input[type=range]{touch-action:pan-y}
 /* volume-style sliders: drag the circle itself, so scrolling past can't bump them */
@@ -256,7 +259,7 @@ input[type=range].thumbonly:disabled::-webkit-slider-thumb{background:var(--mute
 #spec{display:block;width:100%;height:300px;touch-action:none}
 .bands{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
 .bands button{min-width:44px;padding:8px 10px}
-.bands button.off{opacity:.55}
+.bands button.off{color:var(--muted)}
 button.rec{color:#E5484D}
 .micchip{padding:6px 10px;font-size:12px;font-weight:700;border-radius:99px;background:#E5484D;color:#fff;border:0;white-space:nowrap}
 button.rec.on{background:#E5484D;color:#fff;border-color:#E5484D}
@@ -412,7 +415,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
-      <li><b>Version 55:</b> High-pass and low-pass EQ bands are now truly flat above (or below) their cutoff at Q 0.71. Before, they added a hidden boost of about 1.7 dB right at the cutoff, in the sound and the picture. Higher Q now means what it says: Q 1.4 adds a peak of about +3 dB at the cutoff, Q 2 about +6 dB. If you ever set a high-pass or low-pass above Q 0.71, check it, because it will ring more than before. Masters use less memory (the old master is let go before a new one is made, and the master is written in place), which helps long songs with many tracks. Description text in dark mode is brighter and a soft warm yellow, easier to read with less glare.</li>
+      <li><b>Version 55:</b> High-pass and low-pass EQ bands are now truly flat above (or below) their cutoff at Q 0.71. Before, they added a hidden boost of about 1.7 dB right at the cutoff, in the sound and the picture. Higher Q now means what it says: Q 1.4 adds a peak of about +3 dB at the cutoff, Q 2 about +6 dB. If you ever set a high-pass or low-pass above Q 0.71, check it, because it will ring more than before. Masters use less memory (the old master is let go before a new one is made, and the master is written in place), which helps long songs with many tracks. Description text in dark mode is brighter and a soft warm yellow, easier to read with less glare. Info text, buttons you can’t use right now, and switched-off items are warm yellow too instead of grey; anything you can tap right now is white.</li>
       <li><b>Version 54:</b> Fixed: after Clean slate, a recipe, Undo, or opening a project while you were looking at a track’s EQ, the whole-mix EQ could keep playing old settings live (for example a bass boost you had turned off), and the EQ picture showed that old curve. Live playback and the picture now always match your settings. Mastering and Export were never affected.</li>
       <li><b>Version 53:</b> The player checks where it actually landed on screen after every scroll and moves itself back to the bottom of what you can see, so it can’t slip away when the address bar slides in or out.</li>
       <li><b>Version 52:</b> Fixed: when <b>Choose tracks</b> hid the active track, edits and the exact-times <b>Select</b> still went to that hidden track. Now the active track is always one you can see, and the exact-times box names the track it will select on.</li>
