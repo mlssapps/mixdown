@@ -333,7 +333,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 55</p>
+  <p class="ver">Version 56</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -415,6 +415,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 56:</b> Fixed: section fix Start and End boxes now type like the player clock. Just type the digits and the box fills in the time (259 becomes 2:59, 25950 becomes 2:59.50), with the number keypad. A time past the end of the song is pulled back to the end instead of becoming hundreds of minutes.</li>
       <li><b>Version 55:</b> High-pass and low-pass EQ bands are now truly flat above (or below) their cutoff at Q 0.71. Before, they added a hidden boost of about 1.7 dB right at the cutoff, in the sound and the picture. Higher Q now means what it says: Q 1.4 adds a peak of about +3 dB at the cutoff, Q 2 about +6 dB. If you ever set a high-pass or low-pass above Q 0.71, check it, because it will ring more than before. Masters use less memory (the old master is let go before a new one is made, and the master is written in place), which helps long songs with many tracks. Description text in dark mode is brighter and a soft warm yellow, easier to read with less glare. Info text, buttons you can’t use right now, and switched-off items are warm yellow too instead of grey; anything you can tap right now is white.</li>
       <li><b>Version 54:</b> Fixed: after Clean slate, a recipe, Undo, or opening a project while you were looking at a track’s EQ, the whole-mix EQ could keep playing old settings live (for example a bass boost you had turned off), and the EQ picture showed that old curve. Live playback and the picture now always match your settings. Mastering and Export were never affected.</li>
       <li><b>Version 53:</b> The player checks where it actually landed on screen after every scroll and moves itself back to the bottom of what you can see, so it can’t slip away when the address bar slides in or out.</li>
@@ -2778,13 +2779,17 @@ function renderSecs(){
   if(!secs.length){ box.innerHTML='<p class="hint" style="margin:0 0 8px">No sections yet.</p>'; return; }
   secs.forEach((x,i)=>{ const d=document.createElement('div'); d.className='secrow';
     d.innerHTML=`<div class="field"><label>Fix it on</label><select class="secOn" data-i="${i}">${secOptions(x)}</select></div>
-      <div class="row"><div class="field"><label>Start</label><input type="text" inputmode="decimal" data-f="a" value="${mmss(x.a)}"></div><div class="field"><label>End</label><input type="text" inputmode="decimal" data-f="b" value="${mmss(x.b)}"></div></div>
+      <div class="row"><div class="field"><label>Start</label><input type="text" inputmode="numeric" data-f="a" value="${fmt3(x.a)}"></div><div class="field"><label>End</label><input type="text" inputmode="numeric" data-f="b" value="${fmt3(x.b)}"></div></div>
       <div class="row"><div class="field"><label>Volume (dB)</label><input type="number" step="0.5" min="-60" max="12" inputmode="decimal" data-f="vol" value="${x.vol||0}"></div><div class="field"><label>Treble (dB)</label><input type="number" step="0.5" min="-12" max="6" inputmode="decimal" data-f="treb" value="${x.treb||0}"></div></div>
       <div class="field"><label>Pop softener (dB)</label><input type="number" step="0.5" min="-24" max="0" inputmode="decimal" data-f="pop" value="${x.pop||0}"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small" data-act="go">Go to start</button><button class="small" data-act="del">Remove</button></div>`;
     const so=d.querySelector('select.secOn'); so.value=secKey(x);
     so.onchange=()=>{ x.on = so.value==='mix' ? 'mix' : (isNaN(+so.value)?so.value:+so.value); renderSecs(); cleanChanged(); toast(`This section now changes ${secName(x)==='Whole mix'?'the whole mix':secName(x)+' only'}.`); };
-    d.querySelectorAll('input[data-f]').forEach(inp=>inp.onchange=()=>{ const f=inp.dataset.f; let v = (f==='a'||f==='b') ? parseT(inp.value) : (+inp.value||0);
+    // Start/End type like the player clock: digits fill m:ss.mmm from the left (259 -> 2:59), and times stay inside the song
+    d.querySelectorAll('input[data-f=a],input[data-f=b]').forEach(inp=>attachTimeMask(inp,longTimes));
+    d.querySelectorAll('input[data-f]').forEach(inp=>inp.onchange=()=>{ const f=inp.dataset.f; let v;
+      if(f==='a'||f==='b'){ v=parseMasked(inp.value,longTimes()); if(!isFinite(v)){ renderSecs(); return; } const L=projectLen(); if(L>0 && v>L){ v=L; toast(`The song ends at ${fmt3(L)}, so the section ${f==='a'?'starts':'ends'} there.`); } v=Math.max(0,v); }
+      else v=(+inp.value||0);
       if(f==='vol') v=Math.max(-60,Math.min(12,v)); if(f==='treb') v=Math.max(-12,Math.min(6,v)); if(f==='pop') v=Math.max(-24,-Math.abs(v)); x[f]=v; if(x.b<x.a){ const t=x.a; x.a=x.b; x.b=t; } renderSecs(); cleanChanged(); });
     d.querySelector('[data-act=go]').onclick=()=>seek(x.a);
     d.querySelector('[data-act=del]').onclick=()=>{ secs.splice(i,1); renderSecs(); cleanChanged(); };
@@ -3426,7 +3431,7 @@ function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 55)`);
+  L.push(`${title}: Mixdown settings (Version 56)`);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
