@@ -39,6 +39,8 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 - **Gentle by design:** if a song can't reach its loudness target, mastering stops before extra gain turns into extra limiting
 - **Recipes:** save one song's settings (no audio) and apply them to another song, matched by track name, with an undo
 - **Settings summary:** everything you changed, track by track, ready to copy as a recipe for another song, or **by time**, newest changes first, so you can see what changed between versions
+- **Cover art videos with your look:** layouts (art above, smaller art, art behind, or no art with a double-height EQ), backgrounds (website indigo with glows, midnight blue, black), and an EQ view with electric track lines, a silver whole-mix line, and a dB and frequency grid
+- **Paused EQ picture:** pause and the EQ keeps every track's line; move the playhead while paused to see that exact moment
 - **Live preview:** after mastering, changes play right away with Cleanup and mastering still on (tracks are cleaned around where you're listening and keep rolling ahead), so you can flip a setting and hear the difference instantly
 - **Track colors by instrument:** voices in purples, the low end in warm colors, matched to Suno's stem names
 - **Clear processing order:** each track goes Cleanup → noise gate → EQ → compressor → effects → volume → pan, so turning a track up or down only changes its loudness. Songs made before Version 57 keep their original order (and their sound) until you choose to upgrade

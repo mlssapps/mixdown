@@ -346,7 +346,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 58</p>
+  <p class="ver">Version 59</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -443,6 +443,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 59:</b> <b>Paused EQ picture:</b> pausing keeps every colored line on screen, and moving the playhead while paused shows that exact moment (Mixdown plays a fifth of a second silently to read it). Study it or screenshot it without the glitching. <b>Video look:</b> new <b>Layout</b> (art above, smaller art with a bigger EQ, art behind and faded, or no art with the EQ at double height) and <b>Background</b> (your website's midnight indigo with soft glows, midnight blue, or black), remembered on your phone. The EQ in videos now has electric track lines (thin, full color, double glow), the whole mix as a thicker silver-white line underneath, dB numbers on both sides every 12 dB, and halfway grid lines. The whole-song waveform's played part glows like the other rows, and the part still to come shows at half strength.</li>
       <li><b>Version 58:</b> <b>Live preview</b> (new-order songs): after you master, any change you make plays right away with Cleanup and mastering still on, instead of dropping to the raw mix. Tracks with Cleanup or section fixes are cleaned 10 seconds before to 20 seconds after where you're listening and keep rolling ahead as you play; jumping somewhere new shows “Getting ready…” for a moment. EQ (including Find it notes) and effects change instantly; a Cleanup change re-cleans just that track. The preview uses your last master's level and a live limiter, so it lands within a fraction of a dB of the real master; it leaves out whole-mix Cleanup and whole-mix section fixes, so tap Master now for the exact version. <b>Play starts cleanly:</b> it now gets every track ready before the first sound (it used to start after 0.05 s, which could stutter on phones). <b>Track colors</b> now follow what each track is: Lead Vocals purple, Backing Vocals violet, Drums red, Percussion gold, Bass fiery orange, Brass copper, Guitar aqua, Keyboard green, Strings blue, Woodwinds golden brown, Synth pink, FX lemon, Other silvery blue, your own tracks kiwi, sky blue, then yellow-green, tone tracks ultraviolet, noise soft yellow, and the whole mix silver-white. While the master plays, the EQ picture still draws each track's colored line.</li>
       <li><b>Version 57.1:</b> Fixed: undoing a change now also takes its time back off Settings summary → By time, so the list always matches the settings you have.</li>
       <li><b>Version 57:</b> New processing order for new songs: Cleanup first, then noise gate, EQ, compressor, effects, and volume last (see <b>Processing order</b> above). Older songs keep their original order until you tap <b>Upgrade to the new order</b> under Project. Undo now covers everything you set (EQ, Cleanup, section fixes, mastering, effects, master volume) with a name for each step, and <b>Redo</b> sits next to Undo in the bottom bar (just arrows when the Mic chip shows). <b>History</b> (next to Undo under Tracks) lists every step with its time; tap one to go back to it. <b>Settings summary → By time</b> lists your settings newest first with when each was last changed (times start with this version).</li>
@@ -830,6 +831,16 @@ body.force2 .cols > .panel{margin-top:14px}
         </div>
       </div>
       <label class="check" id="vTextRow" style="margin-bottom:12px" hidden><input type="checkbox" id="vText" checked> Show the title and artist with the art</label>
+      <div class="row" id="vLookRow" hidden>
+        <div class="field">
+          <label for="vLayout">Layout</label>
+          <select id="vLayout"><option value="above">Art above the visuals</option><option value="small">Smaller art, bigger EQ</option><option value="behind">Art behind, faded</option><option value="big">No art, EQ double height</option></select>
+        </div>
+        <div class="field">
+          <label for="vBg">Background</label>
+          <select id="vBg"><option value="site">Website indigo (with glows)</option><option value="midnight">Midnight blue</option><option value="black">Black</option></select>
+        </div>
+      </div>
       <div id="vVisRow" hidden>
         <label style="margin-bottom:4px">Visuals (stacked in rows under the art; check any)</label>
         <label class="check"><input type="checkbox" id="vWave"> Live waveform: the sound right now</label>
@@ -1298,7 +1309,31 @@ function drawLaneBody(g,w,h,t){
     }
   }
 }
-function drawAll(){ drawRuler(); tracks.forEach(drawLane); updateClock(); updateSelInfo(); if(micStream && !recording) updateRecTarget(); }
+function drawAll(){ drawRuler(); tracks.forEach(drawLane); updateClock(); updateSelInfo(); if(micStream && !recording) updateRecTarget();
+  if(!playing && !recording && SPEC.at!==playhead) specSnapSoon(); }
+// ---------- paused EQ picture (Version 59) ----------
+// Pausing keeps the last picture. Moving the playhead while paused plays a fifth of a second silently at that spot,
+// so every track's line (after its EQ and effects) shows that exact moment, ready to study or screenshot.
+let outGain=null;
+const SPEC={last:null, snap:false, timer:0, busy:false, at:null};
+function specSnapSoon(){ clearTimeout(SPEC.timer); SPEC.timer=setTimeout(specSnap,250); }
+async function specSnap(){
+  if(playing || recording || SPEC.busy || !tracks.some(hasAudio) || !actx || !analyser || !outGain) return;
+  const cv=$('spec'); if(!cv || !cv.offsetParent) return;          // only when the EQ picture is on screen
+  SPEC.busy=true; const c=actx, at=playhead;
+  try{ await c.resume(); await prepareFx(c); }catch(e){}
+  if(playing){ SPEC.busy=false; return; }
+  outGain.gain.cancelScheduledValues(0); outGain.gain.setValueAtTime(0,c.currentTime);
+  const t0=c.currentTime+0.05, from=Math.max(0,at-0.12), old=session;
+  const ses=tracks.filter(hasAudio).map(t=>scheduleTrack(c,t,masterGain,from,t0));
+  analyser.smoothingTimeConstant=0; ses.forEach(x=>{ if(x.an) x.an.smoothingTimeConstant=0; });
+  session=ses;
+  await new Promise(r=>setTimeout(r,250));
+  if(!playing && session===ses){ SPEC.snap=true; SPEC.at=at; drawSpec(); SPEC.snap=false; }
+  ses.forEach(x=>x.srcs.forEach(n=>{ try{n.stop();}catch(e){} try{n.disconnect();}catch(e){} }));
+  if(session===ses) session=old;
+  analyser.smoothingTimeConstant=0.75; if(!playing) outGain.gain.setValueAtTime(1,c.currentTime+0.03);
+  SPEC.busy=false; }
 function updateClock(){ $('clock').innerHTML = fmt3(playhead)+' <small>/ '+fmt3(recording?Math.max(projectLen(),playhead):projectLen())+'</small>'; $('clock').classList.toggle('recording',!!recording); }
 function updateSelInfo(){
   const t=activeTrack(); if($('selOn')) $('selOn').textContent = t ? t.name : 'the active track'; const has = sel && t && sel.id===t.id && Math.abs(sel.b-sel.a)>0.01;
@@ -2019,7 +2054,7 @@ function makeChain(c, dest){
 }
 function buildMaster(){
   analyser=actx.createAnalyser(); analyser.fftSize=8192; analyser.smoothingTimeConstant=0.75;
-  analyser.connect(actx.destination);
+  outGain=actx.createGain(); analyser.connect(outGain); outGain.connect(actx.destination);   // outGain lets a paused snapshot run silently
   const ch=makeChain(actx,analyser); masterGain=ch.input; eqNodes=ch.nodes; mixOut=ch.last; pvStage=null;
 }
 // the live filter nodes for whatever target is being edited
@@ -2107,17 +2142,19 @@ function drawSpec(){
     }
     return pts;
   };
-  if(playing){
-    if(analyser && show.mix){
-      const pts=specPath(analyser,1); g.beginPath(); g.moveTo(0,h); pts.forEach(([x,y])=>g.lineTo(x,y)); g.lineTo(w,h); g.closePath();
-      g.fillStyle=isLightTheme()?'#5B6476':MIX_COLOR; g.globalAlpha=.18; g.fill(); g.globalAlpha=1;
-    }
-    (session||[]).forEach(se=>{
-      if(!se.an || !se.t || show[se.t.id]===false || !audible(se.t)) return;
-      const pts=specPath(se.an,2); g.beginPath(); pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
-      g.strokeStyle=trackColor(se.t); g.lineWidth=1.2; g.globalAlpha=.95; g.stroke(); g.globalAlpha=1; g.lineWidth=1;
-    });
+  // while playing (or taking a paused snapshot) read the analysers; when paused, keep showing the last picture
+  if((playing || SPEC.snap) && actx){
+    const series=[]; if(analyser) series.push({mix:true, pts:specPath(analyser,1)});
+    (session||[]).forEach(se=>{ if(!se.an || !se.t || !audible(se.t)) return; series.push({id:se.t.id, t:se.t, pts:specPath(se.an,2)}); });
+    SPEC.last={w,h,series};
   }
+  if(SPEC.last && SPEC.last.w===w && SPEC.last.h===h) SPEC.last.series.forEach(sr=>{
+    if(sr.mix){ if(!show.mix) return; g.beginPath(); g.moveTo(0,h); sr.pts.forEach(([x,y])=>g.lineTo(x,y)); g.lineTo(w,h); g.closePath();
+      g.fillStyle=isLightTheme()?'#5B6476':MIX_COLOR; g.globalAlpha=.18; g.fill(); g.globalAlpha=1; return; }
+    if(show[sr.id]===false || !tracks.includes(sr.t)) return;
+    g.beginPath(); sr.pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
+    g.strokeStyle=trackColor(sr.t); g.lineWidth=1.2; g.globalAlpha=.95; g.stroke(); g.globalAlpha=1; g.lineWidth=1; });
+  if(!playing && SPEC.last){ g.fillStyle=css('--muted'); g.font='11px Figtree, sans-serif'; g.textAlign='center'; g.fillText('Paused at '+fmt3(SPEC.at!=null?SPEC.at:playhead), w/2, 14); g.textAlign='left'; }
   // eq curve
   const N=Math.max(64,Math.floor(w/2)), freqs=new Float32Array(N);
   for(let i=0;i<N;i++) freqs[i]=FMIN*Math.pow(FMAX/FMIN,i/(N-1));
@@ -2269,7 +2306,7 @@ async function play(opts={}){
   if(!opts.recording && listenMaster && masterBuf && masterStale()) goStale();
   const pv = !opts.recording && listenMaster && !masterBuf && canPreview();
   if(pv){ const ok=await pvPrepare(playhead, my); if(!ok || my!==playTicket) return; }
-  stopSources(); setPreviewStage(pv);
+  stopSources(); setPreviewStage(pv); if(outGain){ outGain.gain.cancelScheduledValues(0); outGain.gain.value=1; }
   // a small head start so every track is set up before the first sound (starting too soon made phones stutter)
   const nT=tracks.filter(hasAudio).length;
   startAt=playhead; startCtxTime=c.currentTime+(opts.delay|| (opts.recording?0.05:Math.min(0.35,0.12+0.02*nT)));
@@ -3210,14 +3247,22 @@ async function pickAvc(W,H,fps){
 }
 async function drawCoverFrame(W,H,v,vis){
   const c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
-  g.fillStyle='#000'; g.fillRect(0,0,W,H);
+  const bgc=paintVideoBg(g,W,H), lay=($('vLayout')||{}).value||'above';
   const showText=$('vText').checked && (v.tgTitle||v.tgArtist);
   const textH0 = showText ? (H>W ? 260 : 170) : 0;
   const nRows = Array.isArray(vis) ? vis.reduce((a,k)=>a+visWeight(k),0) : (vis?1:0);
-  const rowH = Math.round(H*(H>W?0.1:(nRows>2?0.11:0.14)));
+  let rowH = Math.round(H*(H>W?0.1:(nRows>2?0.11:0.14)));
+  if(nRows*rowH > (H-textH0)*0.94) rowH=Math.floor((H-textH0)*0.94/nRows);      // keep everything on screen
   const bandH = nRows*rowH;
   const textH = textH0 + bandH; c.band={y:H-textH0-bandH, h:bandH};
-  if(cover){
+  if(cover && lay==='behind'){
+    // the art fills the width from the top, then fades into the background before the visuals
+    const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime})), sc=Math.max(W/bmp.width, (c.band.y+bandH*0.35)/bmp.height), dw=bmp.width*sc, dh=bmp.height*sc;
+    g.drawImage(bmp,(W-dw)/2,0,dw,dh);
+    const hex=h=>{ const n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255].join(','); }, f=g.createLinearGradient(0,0,0,H);
+    f.addColorStop(0,`rgba(${hex(bgc[0])},0.3)`); f.addColorStop(Math.max(0.05,(c.band.y)/H*0.75),`rgba(${hex(bgc[1])},0.5)`); f.addColorStop(Math.min(0.95,(c.band.y+bandH*0.4)/H),`rgba(${hex(bgc[1])},1)`); f.addColorStop(1,`rgba(${hex(bgc[2])},1)`);
+    g.fillStyle=f; g.fillRect(0,0,W,H);
+  } else if(cover && lay!=='big'){
     const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime}));
     // fit the whole picture into the space above the text, using the frame's real shape
     const availW=W, availH=H-textH, sc=Math.min(availW/bmp.width, availH/bmp.height), dw=bmp.width*sc, dh=bmp.height*sc;
@@ -3239,7 +3284,16 @@ function fft(re,im){ const n=re.length;
     for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let k=0;k<len/2;k++){ const a=i+k, b=a+len/2, xr=re[b]*cr-im[b]*ci, xi=re[b]*ci+im[b]*cr;
       re[b]=re[a]-xr; im[b]=im[a]-xi; re[a]+=xr; im[a]+=xi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
 // Stacked visual rows for the cover art video. kinds: 'wave' | 'slow' | 'bars' | 'mirror' | 'song'
-const visWeight=k=>k==='eqview'?2.2:1;
+// the EQ row grows with the layout: bigger when the art is smaller, behind, or gone
+const visWeight=k=>k==='eqview'?({above:2.2, small:3.4, behind:4.4, big:4.4}[($('vLayout')||{}).value]||2.2):1;
+// video backgrounds: your website's midnight indigo (with soft violet and gold glows), midnight blue, or black
+const VBG={site:['#11111F','#1B1A2E','#29294A'], midnight:['#0E1430','#141B3D','#1B2350'], black:['#000000','#000000','#000000']};
+function paintVideoBg(g,W,H){ const m=($('vBg')||{}).value||'site', c=VBG[m]||VBG.site, gr=g.createLinearGradient(0,0,0,H);
+  gr.addColorStop(0,c[0]); gr.addColorStop(0.55,c[1]); gr.addColorStop(1,c[2]); g.fillStyle=gr; g.fillRect(0,0,W,H);
+  if(m==='site'){ let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; }, sc=Math.max(W,H)/1920;
+    for(let i=0;i<26;i++){ const x=rnd()*W, y=rnd()*H, r=(8+rnd()*38)*sc*1.4, col=rnd()<0.7?'170,130,230':'230,200,140', a=0.10+rnd()*0.14;
+      const rg=g.createRadialGradient(x,y,0,x,y,r); rg.addColorStop(0,`rgba(${col},${a})`); rg.addColorStop(1,`rgba(${col},0)`); g.fillStyle=rg; g.beginPath(); g.arc(x,y,r,0,7); g.fill(); } }
+  return c; }
 function makeVisualizer(kinds, mono, sr, W, band, color, stems){
   const unit=band.h/kinds.reduce((a,k)=>a+visWeight(k),0), pad=W*0.06, x0=pad, w=W-2*pad;
   const rowY=[]; let acc=band.y; kinds.forEach(k=>{ rowY.push(acc); acc+=unit*visWeight(k); });
@@ -3308,8 +3362,19 @@ function makeVisualizer(kinds, mono, sr, W, band, color, stems){
         // like the EQ screen: the whole mix as a shaded area, each track as a glowing line in its color, on a frequency grid
         const labH=Math.round(W/30), top=y0+(rowH-h)/2, bot=top+h-labH-6, P=eqP, fLo=40, fHi=Math.min(16000, stems?stems.sr/2*0.98:16000, sr/2*0.98);
         const xs=f=>x0+w*Math.log(f/fLo)/Math.log(fHi/fLo);
-        g.shadowBlur=0; g.globalAlpha=0.28; g.strokeStyle='#ffffff'; g.fillStyle='#ffffff'; g.lineWidth=Math.max(1,W/1080);
-        [50,100,200,500,1000,2000,5000,10000].forEach(f=>{ if(f>fHi) return; const x=Math.round(xs(f))+.5; g.beginPath(); g.moveTo(x,top); g.lineTo(x,bot); g.stroke(); });
+        const FL=[50,100,200,500,1000,2000,5000,10000].filter(f=>f<=fHi), ydb=d=>bot-(1+d/66)*h, gy0=ydb(0), lw=Math.max(1,W/1080);
+        g.shadowBlur=0; g.strokeStyle='#ffffff'; g.fillStyle='#ffffff';
+        // grid: labeled lines, plus halfway lines (6 dB, and halfway between frequencies on the log scale)
+        g.globalAlpha=0.15; g.lineWidth=lw*1.5;
+        for(let d=-6; d>=-66; d-=12){ const y=ydb(d); if(y<=bot){ g.beginPath(); g.moveTo(x0,y); g.lineTo(x0+w,y); g.stroke(); } }
+        [...FL,Math.min(16000,fHi)].forEach((f,i,a)=>{ if(i===a.length-1) return; const x=xs(Math.sqrt(f*a[i+1])); g.beginPath(); g.moveTo(x,gy0); g.lineTo(x,bot); g.stroke(); });
+        g.globalAlpha=0.22; g.lineWidth=lw;
+        for(let d=0; d>=-60; d-=12){ const y=Math.round(ydb(d))+.5; g.beginPath(); g.moveTo(x0,y); g.lineTo(x0+w,y); g.stroke(); }
+        FL.forEach(f=>{ const x=Math.round(xs(f))+.5; g.beginPath(); g.moveTo(x,gy0); g.lineTo(x,bot); g.stroke(); });
+        // dB numbers on both sides, soft silver (0 dB = loudest)
+        g.globalAlpha=0.7; g.fillStyle='#C9CED8'; g.font=`600 ${Math.round(W/34)}px Figtree, sans-serif`; g.textBaseline='middle';
+        for(let d=0; d>=-60; d-=12){ const y=ydb(d); g.textAlign='right'; g.fillText(String(d), x0-W*0.008, y); g.textAlign='left'; g.fillText(String(d), x0+w+W*0.008, y); }
+        g.textBaseline='alphabetic'; g.fillStyle='#ffffff';
         g.globalAlpha=0.8; g.font=`600 ${labH}px Figtree, sans-serif`; g.textAlign='center'; g.textBaseline='top';
         [50,100,200,500,1000,2000,5000,10000].forEach((f,i)=>{ if(f>fHi) return; const x=xs(f), first=i===0; g.textAlign=first?'left':'center'; g.fillText((f>=1000?(f/1000)+'k':String(f))+(first?' Hz':''), first?Math.max(x0, x-labH*0.6):x, bot+6); });
         g.textAlign='start'; g.textBaseline='alphabetic'; g.globalAlpha=1;
@@ -3317,19 +3382,26 @@ function makeVisualizer(kinds, mono, sr, W, band, color, stems){
           for(let p=0;p<=P;p++){ const f1=fLo*Math.pow(fHi/fLo,p/P), f2=fLo*Math.pow(fHi/fLo,(p+1)/P); const i0=Math.max(1,Math.floor(f1/bin)), i1=Math.min(N/2,Math.max(i0+1,Math.ceil(f2/bin))); let m=0; for(let i=i0;i<i1;i++){ const q=re[i]*re[i]+im[i]*im[i]; if(q>m) m=q; }
             let val=Math.max(0,Math.min(1,(10*Math.log10(m/(N*N/16)+1e-12)+66)/66)); val=Math.max(val, store[p]-0.035); store[p]=val; out[p]=val; } return out; };
         const mix=curve(mono,sr,Math.round(t*sr)-N/2,eqPrev.mix);
+        const list=stems?stems.list:[], mixPath=()=>{ g.beginPath(); for(let p=0;p<=P;p++){ const x=x0+w*p/P, y=bot-mix[p]*h; p?g.lineTo(x,y):g.moveTo(x,y); } };
         g.beginPath(); g.moveTo(x0,bot); for(let p=0;p<=P;p++) g.lineTo(x0+w*p/P, bot-mix[p]*h); g.lineTo(x0+w,bot); g.closePath();
-        g.fillStyle=color; g.globalAlpha=0.3; g.fill(); g.globalAlpha=1;
-        const list=stems?stems.list:[];
-        if(!list.length){ g.strokeStyle=color; g.shadowColor=color; g.shadowBlur=14; g.lineWidth=Math.max(3,W/360); g.beginPath(); for(let p=0;p<=P;p++){ const x=x0+w*p/P, y=bot-mix[p]*h; p?g.lineTo(x,y):g.moveTo(x,y); } g.stroke(); }
+        if(!list.length){ g.fillStyle=color; g.globalAlpha=0.3; g.fill(); g.globalAlpha=1; g.strokeStyle=color; g.shadowColor=color; g.shadowBlur=14; g.lineWidth=Math.max(3,W/360); mixPath(); g.stroke(); }
+        else {
+          // the whole mix: a faint fill and a thicker silver-white glowing line, drawn first so the track lines sit on top
+          g.fillStyle=MIX_COLOR; g.globalAlpha=0.04; g.fill(); g.globalAlpha=0.85;
+          g.strokeStyle=MIX_COLOR; g.shadowColor=MIX_COLOR; g.shadowBlur=16; g.lineWidth=Math.max(3,W/216); mixPath(); g.stroke(); g.globalAlpha=1;
+        }
+        // each track: an electric line, full color, thin, with a wide glow and a tight glow
         list.forEach((st,si)=>{ if(!eqPrev.st[si]) eqPrev.st[si]=new Float32Array(P+1);
           const ssr=stems.sr, cv=curve(st.mono,ssr,Math.round(t*ssr)-N/2,eqPrev.st[si]);
-          g.strokeStyle=st.color; g.shadowColor=st.color; g.shadowBlur=14; g.lineWidth=Math.max(3,W/360); g.beginPath();
-          for(let p=0;p<=P;p++){ const x=x0+w*p/P, y=bot-cv[p]*h; p?g.lineTo(x,y):g.moveTo(x,y); } g.stroke(); });
+          const path=()=>{ g.beginPath(); for(let p=0;p<=P;p++){ const x=x0+w*p/P, y=bot-cv[p]*h; p?g.lineTo(x,y):g.moveTo(x,y); } };
+          g.strokeStyle=st.color; g.shadowColor=st.color; g.lineWidth=Math.max(2.4,W/320);
+          g.shadowBlur=30; path(); g.stroke(); g.shadowBlur=12; g.stroke(); });
         g.strokeStyle=color; g.fillStyle=color; g.shadowColor=color;
       } else if(k==='song' && overview){
         const cols=overview.mn.length, done=Math.round(cols*Math.min(1,t/dur)), cw=w/cols;
         g.shadowBlur=0;
-        for(let c=0;c<cols;c++){ const hi=overview.mx[c]*overview.norm, lo=overview.mn[c]*overview.norm; g.globalAlpha=c<done?1:0.3; g.fillRect(x0+c*cw, mid-hi*h*0.5, Math.max(1,cw*0.7), Math.max(2,(hi-lo)*h*0.5)); }
+        // played part glows like the other rows; the part still to come stays readable at half strength
+        for(let c=0;c<cols;c++){ const hi=overview.mx[c]*overview.norm, lo=overview.mn[c]*overview.norm, played=c<done; g.globalAlpha=played?1:0.5; g.shadowBlur=played?14:0; g.fillRect(x0+c*cw, mid-hi*h*0.5, Math.max(1,cw*0.7), Math.max(2,(hi-lo)*h*0.5)); }
         g.globalAlpha=1; g.shadowBlur=12; g.fillRect(x0+done*cw-1.5, y0+(rowH-h)/2, 3, h);
       }
     });
@@ -3371,7 +3443,7 @@ async function makeVideo(buf, v, prog, stems){
 function syncFmt(){
   const f=$('fmt').value;
   $('bitsBox').style.visibility = f==='wav'?'visible':'hidden';
-  $('shapeBox').hidden = f!=='mp4'; $('vTextRow').hidden = f!=='mp4'; $('vVisRow').hidden = f!=='mp4';
+  $('shapeBox').hidden = f!=='mp4'; $('vTextRow').hidden = f!=='mp4'; $('vLookRow').hidden = f!=='mp4'; $('vVisRow').hidden = f!=='mp4';
   $('exportWav').textContent = (f==='wav'?'Export WAV':f==='m4a'?'Export M4A':'Export video') + ($('mOn').checked?' (mastered)':' (not mastered)');
   syncMOn2();
   $('fmtHint').textContent = f==='wav' ? 'Lossless, full quality. Best for keeping and for distribution.' :
@@ -3379,6 +3451,9 @@ function syncFmt(){
     'Your cover art (or black if there is none) with the song, ready to post. Add cover art under Song details. Visuals stack in rows under the art. Moving visuals make a 30 fps video, so it takes a little longer to build.';
 }
 $('fmt').onchange=()=>{ syncFmt(); try{ localStorage.setItem('mixdown-fmt',$('fmt').value); }catch(e){} };
+// your video look (layout and background) is remembered on this phone for every song
+['vLayout','vBg'].forEach(id=>{ try{ const v=localStorage.getItem('mixdown-'+id); if(v) $(id).value=v; }catch(e){}
+  $(id).addEventListener('change',()=>{ try{ localStorage.setItem('mixdown-'+id,$(id).value); }catch(e){} }); });
 try{ const f=localStorage.getItem('mixdown-fmt'); if(f) $('fmt').value=f; }catch(e){}
 syncFmt();
 
@@ -3583,7 +3658,7 @@ function setSaveLink(btn, name, blob){
 })();
 
 // ---------- projects ----------
-const PROJ_FIELDS=['projName','fileName','fmt','endTrim','endAdd','vShape','vText','vWave','vSlow','vBars','vBarStyle','vSong','vColor','rep','repLen','seam','bits','rate','bpm','countIn','playAlong','mOn','mTarget','mCeil','mType','mTP','mLook','mRel','tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
+const PROJ_FIELDS=['projName','fileName','fmt','endTrim','endAdd','vShape','vText','vLayout','vBg','vWave','vSlow','vBars','vBarStyle','vSong','vColor','rep','repLen','seam','bits','rate','bpm','countIn','playAlong','mOn','mTarget','mCeil','mType','mTP','mLook','mRel','tgTitle','tgArtist','tgAlbum','tgYear','tgTrack','tgGenre','tgComment','tgLyrics'];
 function fieldVals(){ const o={}; PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el) o[id]= el.type==='checkbox'?el.checked:el.value; }); return o; }
 function setFields(o){ PROJ_FIELDS.forEach(id=>{ const el=$(id); if(el && id in o){ if(el.type==='checkbox') el.checked=!!o[id]; else el.value=o[id]; } }); }
 const b64=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode(...u8.subarray(i,i+0x8000)); return btoa(s); };
@@ -3689,7 +3764,7 @@ function timeSummary(L){
   return L.join('\n'); }
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 58)`);
+  L.push(`${title}: Mixdown settings (Version 59)`);
   if(view==='time') return timeSummary(L);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
@@ -3812,7 +3887,7 @@ $('recipeBtn').onclick=()=>{ const b=$('recipeBox'); if(!b.hidden){ b.hidden=tru
 function hideProjSave(){ const b=$('projSaveBtn'); if(!b) return; b.hidden=true; if(b._url){ URL.revokeObjectURL(b._url); b._url=null; } }
 function clearProject(){
   hideProjSave();
-  pause(); tracks=[]; undoStack=[]; redoStack=[]; stamps={}; HS.base=null; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
+  pause(); tracks=[]; undoStack=[]; redoStack=[]; stamps={}; HS.base=null; SPEC.last=null; SPEC.at=null; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
   eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); marksHidden=false; syncMarksBtn(); }catch(e){} syncSlate(); renderClean(); renderSecs();
   try{ applyAll(); syncBand(); renderBands(); }catch(e){}
 }
