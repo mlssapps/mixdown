@@ -443,7 +443,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
-      <li><b>Version 59:</b> <b>Paused EQ picture:</b> pausing keeps every colored line on screen, and moving the playhead while paused shows that exact moment (Mixdown plays a fifth of a second silently to read it). Study it or screenshot it without the glitching. <b>Video look:</b> new <b>Layout</b> (art above, smaller art with a bigger EQ, art behind and faded, or no art with the EQ at double height) and <b>Background</b> (your website's midnight indigo with soft glows, midnight blue, or black), remembered on your phone. The EQ in videos now has electric track lines (thin, full color, double glow), the whole mix as a thicker silver-white line underneath, dB numbers on both sides every 12 dB, and halfway grid lines. The whole-song waveform's played part glows like the other rows, and the part still to come shows at half strength.</li>
+      <li><b>Version 59:</b> <b>Paused EQ picture:</b> pausing keeps every colored line on screen, and moving the playhead while paused shows that exact moment (Mixdown plays a fifth of a second silently to read it). Study it or screenshot it without the glitching. <b>Video look:</b> new <b>Layout</b> (art above, smaller art with a bigger EQ, the whole art behind the visuals, dimmed with soft edges, or no art with the EQ at double height) and <b>Background</b> (your website's midnight indigo with soft glows, midnight blue, or black), remembered on your phone. The EQ in videos now has electric track lines (thin, full color, double glow), the whole mix as a thicker silver-white line underneath, dB numbers on both sides every 12 dB, and halfway grid lines. The whole-song waveform's played part glows like the other rows, and the part still to come shows at half strength.</li>
       <li><b>Version 58:</b> <b>Live preview</b> (new-order songs): after you master, any change you make plays right away with Cleanup and mastering still on, instead of dropping to the raw mix. Tracks with Cleanup or section fixes are cleaned 10 seconds before to 20 seconds after where you're listening and keep rolling ahead as you play; jumping somewhere new shows “Getting ready…” for a moment. EQ (including Find it notes) and effects change instantly; a Cleanup change re-cleans just that track. The preview uses your last master's level and a live limiter, so it lands within a fraction of a dB of the real master; it leaves out whole-mix Cleanup and whole-mix section fixes, so tap Master now for the exact version. <b>Play starts cleanly:</b> it now gets every track ready before the first sound (it used to start after 0.05 s, which could stutter on phones). <b>Track colors</b> now follow what each track is: Lead Vocals purple, Backing Vocals violet, Drums red, Percussion gold, Bass fiery orange, Brass copper, Guitar aqua, Keyboard green, Strings blue, Woodwinds golden brown, Synth pink, FX lemon, Other silvery blue, your own tracks kiwi, sky blue, then yellow-green, tone tracks ultraviolet, noise soft yellow, and the whole mix silver-white. While the master plays, the EQ picture still draws each track's colored line.</li>
       <li><b>Version 57.1:</b> Fixed: undoing a change now also takes its time back off Settings summary → By time, so the list always matches the settings you have.</li>
       <li><b>Version 57:</b> New processing order for new songs: Cleanup first, then noise gate, EQ, compressor, effects, and volume last (see <b>Processing order</b> above). Older songs keep their original order until you tap <b>Upgrade to the new order</b> under Project. Undo now covers everything you set (EQ, Cleanup, section fixes, mastering, effects, master volume) with a name for each step, and <b>Redo</b> sits next to Undo in the bottom bar (just arrows when the Mic chip shows). <b>History</b> (next to Undo under Tracks) lists every step with its time; tap one to go back to it. <b>Settings summary → By time</b> lists your settings newest first with when each was last changed (times start with this version).</li>
@@ -834,7 +834,7 @@ body.force2 .cols > .panel{margin-top:14px}
       <div class="row" id="vLookRow" hidden>
         <div class="field">
           <label for="vLayout">Layout</label>
-          <select id="vLayout"><option value="above">Art above the visuals</option><option value="small">Smaller art, bigger EQ</option><option value="behind">Art behind, faded</option><option value="big">No art, EQ double height</option></select>
+          <select id="vLayout"><option value="above">Art above the visuals</option><option value="small">Smaller art, bigger EQ</option><option value="behind">Art behind the visuals, dimmed</option><option value="big">No art, EQ double height</option></select>
         </div>
         <div class="field">
           <label for="vBg">Background</label>
@@ -3256,12 +3256,17 @@ async function drawCoverFrame(W,H,v,vis){
   const bandH = nRows*rowH;
   const textH = textH0 + bandH; c.band={y:H-textH0-bandH, h:bandH};
   if(cover && lay==='behind'){
-    // the art fills the width from the top, then fades into the background before the visuals
-    const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime})), sc=Math.max(W/bmp.width, (c.band.y+bandH*0.35)/bmp.height), dw=bmp.width*sc, dh=bmp.height*sc;
-    g.drawImage(bmp,(W-dw)/2,0,dw,dh);
-    const hex=h=>{ const n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255].join(','); }, f=g.createLinearGradient(0,0,0,H);
-    f.addColorStop(0,`rgba(${hex(bgc[0])},0.3)`); f.addColorStop(Math.max(0.05,(c.band.y)/H*0.75),`rgba(${hex(bgc[1])},0.5)`); f.addColorStop(Math.min(0.95,(c.band.y+bandH*0.4)/H),`rgba(${hex(bgc[1])},1)`); f.addColorStop(1,`rgba(${hex(bgc[2])},1)`);
-    g.fillStyle=f; g.fillRect(0,0,W,H);
+    // the whole square art sits behind the visuals, centered on them and dimmed evenly, with its top and bottom edges
+    // bleeding softly into the background; the grid and every line are drawn on top of it
+    const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime})), S=Math.min(W, Math.max(bandH, H*0.5)), sc=Math.max(S/bmp.width, S/bmp.height);
+    const tc=document.createElement('canvas'); tc.width=Math.round(S); tc.height=Math.round(S); const tg=tc.getContext('2d');
+    tg.drawImage(bmp,(S-bmp.width*sc)/2,(S-bmp.height*sc)/2,bmp.width*sc,bmp.height*sc);
+    tg.globalCompositeOperation='destination-in';
+    const fy=tg.createLinearGradient(0,0,0,S); fy.addColorStop(0,'rgba(0,0,0,0)'); fy.addColorStop(0.16,'rgba(0,0,0,1)'); fy.addColorStop(0.84,'rgba(0,0,0,1)'); fy.addColorStop(1,'rgba(0,0,0,0)');
+    tg.fillStyle=fy; tg.fillRect(0,0,S,S);
+    if(S<W-1){ const fx=tg.createLinearGradient(0,0,S,0); fx.addColorStop(0,'rgba(0,0,0,0)'); fx.addColorStop(0.12,'rgba(0,0,0,1)'); fx.addColorStop(0.88,'rgba(0,0,0,1)'); fx.addColorStop(1,'rgba(0,0,0,0)'); tg.fillStyle=fx; tg.fillRect(0,0,S,S); }
+    const cy=c.band.y+bandH/2, ty=Math.max(0, Math.min(H-textH0-S, cy-S/2));
+    g.globalAlpha=0.5; g.drawImage(tc,(W-S)/2,ty); g.globalAlpha=1;
   } else if(cover && lay!=='big'){
     const bmp=await createImageBitmap(new Blob([cover.bytes],{type:cover.mime}));
     // fit the whole picture into the space above the text, using the frame's real shape
