@@ -121,6 +121,17 @@ input.tmask{font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .blend .blegend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
 .transport .undobig{height:42px;padding:0 12px;font-size:15px;font-weight:700;border-radius:12px;white-space:nowrap;margin-left:auto}
 .transport .undobig + .recbtn{margin-left:0;min-width:104px}
+.transport .undobig{padding:0 9px}
+.transport .redobig{margin-left:0}
+/* with the Mic on chip showing (or on a very narrow screen), Undo and Redo shrink to just their arrows */
+.transport .trow2:has(#micChip:not([hidden])) .ulab{display:none}
+@media (max-width:385px){ .transport .ulab{display:none} }
+.histlist{list-style:none;margin:0;padding:0}
+.histlist li{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.histlist li .hw{color:var(--muted);font-size:13px;white-space:nowrap;min-width:96px}
+.histlist li .hl{flex:1;font-size:14px}
+.histlist li.undone .hl{color:var(--muted);text-decoration:line-through}
+.histlist li button{flex:0 0 auto}
 .transport .clock{cursor:pointer;border-radius:8px;padding:2px 4px;border:1px dashed transparent}
 .transport .clock:hover{border-color:var(--line)}
 .transport .clockin{width:120px;font-size:16px;font-weight:600;padding:6px 8px}
@@ -166,6 +177,8 @@ button.icon{display:inline-flex;align-items:center;justify-content:center;paddin
 button.icon.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .selinfo{margin:8px 0 6px;min-height:1.5em;font-size:14px;color:var(--muted)}
 .showrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center;font-size:13px;color:var(--muted)}
+.orderbox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 8px}
+.orderbox .hint{flex:1 1 220px}
 .showrow button{padding:5px 10px;font-size:13px;font-weight:600;border-width:2px}
 .showrow button.off{color:var(--muted)!important;border-color:var(--line)!important}
 
@@ -333,7 +346,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 56</p>
+  <p class="ver">Version 57</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -388,6 +401,19 @@ body.force2 .cols > .panel{margin-top:14px}
     <h3>Cleanup</h3>
     <p>Suno and other AI music often has harsh S sounds, hiss, a swirly metallic shimmer, piercing upper mids, or boomy low mids, and close, quiet vocals can have mouth clicks and P or B pops. <b>Cleanup</b> quiets each one only at the moments it happens, so the rest of the song stays as it was. Use the <b>Mouth-click remover</b> on a vocal track, not the whole mix. For a P or B pop, add a <b>Section fix</b> on that track right around it and set <b>Pop softener (dB)</b>. <b>Remove end glitches</b> (on by default) trims the split-second click or swipe that Suno stems and some other files have at the very end, after the song has faded out. Tracks that had one show a note with <b>Put it back</b>. Choose <b>Clean up</b>: the whole mix or one track (a vocal stem is the best place for the de-esser). Turn on what you hear and pick <b>Gentle</b>, <b>Medium</b>, or <b>Strong</b>. Cleanup works on the finished sound, so tap <b>Hear cleanup</b>: it renders the master, then press Play. Uncheck <b>Listen to the master</b> under Mastering to hear the original again.</p>
     <p><b>Section fix</b> changes one stretch of time, with smooth ramps in and out (up to half a second, shorter for short sections). <b>Fix it on</b> picks the <b>whole mix</b> or <b>one track</b>: select a part on a track's lane and tap <b>Add section</b> and it fixes only that track; with nothing selected it adds 10 seconds on the whole mix. Set <b>Volume</b>, <b>Treble</b>, and <b>Pop softener (dB)</b>, which lowers everything below about 150 Hz by that much, for a P or B thump on a vocal. Sections made before Version 51 stay on the whole mix until you change them.</p>
+    <h3>Processing order</h3>
+    <p>Every track goes through the same steps, in this order. New songs (Version 57 and later):</p>
+    <ol>
+      <li><b>Clips and fades</b>: the audio as you edited it.</li>
+      <li><b>Cleanup</b>: repairs (de-esser, hiss, clicks, ring tamer) work on the clean, unshaped track.</li>
+      <li><b>Noise gate</b>: closes between notes before anything is boosted.</li>
+      <li><b>EQ</b>.</li>
+      <li><b>Compressor</b>, then the other <b>effects</b> (saturation, chorus, phaser, tremolo, echo, reverb).</li>
+      <li><b>Volume</b>, then <b>pan</b>. Volume is last, so turning a track up or down only changes how loud it is. It no longer changes how hard its gate or compressor works.</li>
+      <li><b>Section fixes</b> for that track.</li>
+    </ol>
+    <p>Then the whole song: all tracks together → <b>Master volume</b> → <b>whole-mix EQ</b> → <b>whole-mix Cleanup</b> → <b>whole-mix section fixes</b> → <b>Mastering</b> (level to your target, then the limiter) → ending trim → export.</p>
+    <p><b>Songs made before Version 57</b> keep the order they were made with, so a finished song sounds exactly as you left it. In that original order, volume came first (so it changed how the gate and compressor behaved) and Cleanup came after the effects (so it also worked on echo tails). Under <b>Project</b> you'll see which order a song uses; <b>Upgrade to the new order</b> switches it, and Undo switches it back.</p>
     <h3>What do you hear?</h3>
     <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. Try the <b>Ring tamer</b> first: it's a Cleanup tool that dips a ringing note only at the moments it sticks out, so the note is left alone the rest of the time (good for melody notes that only sting sometimes). If a note stings every time it plays, use <b>Find it for me</b>, which listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pins on the timeline show where each note rings hardest, and the track it was found on is shaded over each stretch where it rings: red while it's not fixed, green once its cut is on. <b>Show pins</b> and <b>Show on the track</b> switch them on and off for each search, and <b>Hide all marks</b> by the timeline buttons clears them all, so your waveforms look clean when you're done (the fixes stay on). <b>Listen at</b> buttons and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
     <h3>Keep it smooth</h3>
@@ -415,6 +441,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 57:</b> New processing order for new songs: Cleanup first, then noise gate, EQ, compressor, effects, and volume last (see <b>Processing order</b> above). Older songs keep their original order until you tap <b>Upgrade to the new order</b> under Project. Undo now covers everything you set (EQ, Cleanup, section fixes, mastering, effects, master volume) with a name for each step, and <b>Redo</b> sits next to Undo in the bottom bar (just arrows when the Mic chip shows). <b>History</b> (next to Undo under Tracks) lists every step with its time; tap one to go back to it. <b>Settings summary → By time</b> lists your settings newest first with when each was last changed (times start with this version).</li>
       <li><b>Version 56:</b> Fixed: section fix Start and End boxes now type like the player clock. Just type the digits and the box fills in the time (259 becomes 2:59, 25950 becomes 2:59.50), with the number keypad. A time past the end of the song is pulled back to the end instead of becoming hundreds of minutes.</li>
       <li><b>Version 55:</b> High-pass and low-pass EQ bands are now truly flat above (or below) their cutoff at Q 0.71. Before, they added a hidden boost of about 1.7 dB right at the cutoff, in the sound and the picture. Higher Q now means what it says: Q 1.4 adds a peak of about +3 dB at the cutoff, Q 2 about +6 dB. If you ever set a high-pass or low-pass above Q 0.71, check it, because it will ring more than before. Masters use less memory (the old master is let go before a new one is made, and the master is written in place), which helps long songs with many tracks. Description text in dark mode is brighter and a soft warm yellow, easier to read with less glare. Info text, buttons you can’t use right now, and switched-off items are warm yellow too instead of grey; anything you can tap right now is white.</li>
       <li><b>Version 54:</b> Fixed: after Clean slate, a recipe, Undo, or opening a project while you were looking at a track’s EQ, the whole-mix EQ could keep playing old settings live (for example a bass boost you had turned off), and the EQ picture showed that old curve. Live playback and the picture now always match your settings. Mastering and Export were never affected.</li>
@@ -488,10 +515,11 @@ body.force2 .cols > .panel{margin-top:14px}
     <div class="status" id="projStatus" role="status"></div>
     <a class="savebtn" id="projSaveBtn" href="#" hidden>Save</a>
     <p class="hint">A project file keeps everything in one place: every track, clip, edit, recording, tone, EQ, effect, mastering setting, and song detail, plus the audio itself. Open it later on any device to pick up where you left off.</p>
+    <div class="orderbox" id="orderBox"><p class="hint" id="orderInfo" style="margin:0"></p><button class="small" id="orderUp" hidden>Upgrade to the new order</button></div>
     <button id="sumBtn" style="width:100%;margin-top:4px" aria-expanded="false">Settings summary</button>
     <div class="sumbox" id="sumBox" hidden>
       <p class="hint" style="margin:0 0 8px">Everything changed from the defaults, track by track. Use it as a recipe for another song.</p>
-      <div class="sortseg" id="sumView" role="group" aria-label="Sort the summary" style="margin:0 0 10px"><span>Sort</span><button type="button" data-v="track">By track</button><button type="button" data-v="todo">By what to do</button></div>
+      <div class="sortseg" id="sumView" role="group" aria-label="Sort the summary" style="margin:0 0 10px"><span>Sort</span><button type="button" data-v="track">By track</button><button type="button" data-v="todo">By what to do</button><button type="button" data-v="time">By time</button></div>
       <pre id="sumText"></pre>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small primary" id="sumCopy">Copy</button><button class="small" id="sumRecipe">Save as recipe</button><button class="small" id="sumRefresh">Refresh</button><button class="small" id="sumClose">Close</button></div>
       <a class="savebtn" id="sumRecipeBtn" href="#" hidden>Save</a>
@@ -503,7 +531,8 @@ body.force2 .cols > .panel{margin-top:14px}
   <div class="panel" data-sec="tracks">
     <h2>Tracks</h2>
     <p class="hint" style="margin:0 0 8px">Tap a track's name to open or close its settings. Closed tracks can't be bumped by accident. Amber underlined numbers were changed from their defaults. Tap any number to type an exact value or reset it. Volume and pan click into place at 0 and Center.</p>
-    <div class="undobar"><button class="small undoBtn" type="button">Undo</button><button class="small redoBtn" type="button">Redo</button></div>
+    <div class="undobar"><button class="small undoBtn" type="button">Undo</button><button class="small redoBtn" type="button">Redo</button><button class="small" type="button" id="histBtn" aria-expanded="false" style="flex:0 0 auto">History</button></div>
+    <div class="sumbox" id="histBox" hidden></div>
     <div class="tracks" id="tracks"></div>
     <div class="row" style="margin-top:12px">
       <button id="addTrack">Add track</button>
@@ -639,7 +668,8 @@ body.force2 .cols > .panel{margin-top:14px}
       <span class="clock" id="clock" role="button" tabindex="0" title="Tap to type a time">0:00.000 <small>/ 0:00.000</small></span>
       <input type="text" class="clockin tmask" id="clockIn" inputmode="numeric" autocomplete="off" aria-label="Go to time" hidden>
       <button class="micchip" id="micChip" hidden title="Microphone is on. Tap to turn it off.">Mic on ✕</button>
-      <button class="undobig" id="undoBig" type="button" disabled>&#8630; Undo</button>
+      <button class="undobig" id="undoBig" type="button" disabled>&#8630;<span class="ulab"> Undo</span></button>
+      <button class="undobig redobig" id="redoBig" type="button" disabled>&#8631;<span class="ulab"> Redo</span></button>
       <button class="rec recbtn" id="recBtn" title="Record onto the active track">● Record</button>
     </div>
   </div>
@@ -1037,21 +1067,92 @@ function cutSegs(segs,u0,u1,mode){ // mode: 'delete' | 'keep' | 'silence'
   }
   return out.filter(g=>segLen(g)>1e-6);
 }
-// Undo covers clip edits AND each track's volume, pan, fades, mute, solo, and effects. Every step has a name.
+// Undo covers everything you set: clip edits, each track's volume, pan, fades, mute, solo and effects, and (from Version 57)
+// EQ, Cleanup, section fixes, mastering, master volume and the processing order. Every step has a name and the time it happened.
 const TSET=['gainDb','pan','fadeIn','fadeOut','mute','solo'];
-function snapshot(){ return tracks.map(t=>{ const o={id:t.id, clips:t.clips.map(c=>({...c, segs:JSON.parse(JSON.stringify(c.segs))})), fx:t.fx?JSON.parse(JSON.stringify(t.fx)):null}; TSET.forEach(k=>o[k]=t[k]); return o; }); }
+function snapshot(){ return {tr:tracks.map(t=>{ const o={id:t.id, clips:t.clips.map(c=>({...c, segs:JSON.parse(JSON.stringify(c.segs))})), fx:t.fx?JSON.parse(JSON.stringify(t.fx)):null}; TSET.forEach(k=>o[k]=t[k]); return o; }),
+  g:{eqs:clone(eqs), cleans:clone(cleans), secs:clone(secs), m:mSettings(), mdb:masterDb, ord:procOrder}}; }
 let redoStack=[];
-function pushUndo(label){ undoStack.push({snap:snapshot(), label:label||'Clip edit'}); if(undoStack.length>60) undoStack.shift(); redoStack=[]; updateUndoUI(); }
-function restore(snap){ snap.forEach(st=>{ const t=tracks.find(x=>x.id===st.id); if(!t) return; t.clips=st.clips; if('gainDb' in st){ TSET.forEach(k=>t[k]=st[k]); t.fx=st.fx?JSON.parse(JSON.stringify(st.fx)):t.fx; } }); }
+function pushUndo(label){ histCommit(); undoStack.push({snap:snapshot(), label:label||'Clip edit', at:Date.now()}); if(undoStack.length>60) undoStack.shift(); redoStack=[]; HS.explicit=Date.now(); updateUndoUI(); }
+function restore(snap){ const list=Array.isArray(snap)?snap:snap.tr;
+  list.forEach(st=>{ const t=tracks.find(x=>x.id===st.id); if(!t) return; t.clips=st.clips; if('gainDb' in st){ TSET.forEach(k=>t[k]=st[k]); t.fx=st.fx?JSON.parse(JSON.stringify(st.fx)):t.fx; } });
+  const g=!Array.isArray(snap)&&snap.g; if(!g) return;
+  eqs=clone(g.eqs); cleans=clone(g.cleans); secs=clone(g.secs); applyMDefs(g.m,true); masterDb=g.mdb||0; if(masterGain) masterGain.gain.value=dbToGain(masterDb);
+  if(g.ord) procOrder=g.ord; }
+const whenTxt=ms=>{ const d=new Date(ms), now=new Date(), t=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?([AP])M/i,(m,a)=>' '+a.toLowerCase()+'m');
+  return d.toLocaleDateString([],{month:'short',day:'numeric'})+(d.getFullYear()!==now.getFullYear()?', '+d.getFullYear():'')+', '+t; };   // always date and time
 function updateUndoUI(){
   const u=undoStack[undoStack.length-1], r=redoStack[redoStack.length-1];
   document.querySelectorAll('.undoBtn').forEach(b=>{ b.disabled=!u; b.textContent=u?'Undo: '+u.label:'Undo'; b.title=b.textContent; });
   document.querySelectorAll('.redoBtn').forEach(b=>{ b.disabled=!r; b.textContent=r?'Redo: '+r.label:'Redo'; b.title=b.textContent; });
   const ub=$('undoBig'); if(ub){ ub.disabled=!u; ub.title=u?'Undo: '+u.label:'Nothing to undo'; ub.setAttribute('aria-label',ub.title); }
+  const rb=$('redoBig'); if(rb){ rb.disabled=!r; rb.title=r?'Redo: '+r.label:'Nothing to redo'; rb.setAttribute('aria-label',rb.title); }
+  if(typeof renderHistory==='function') renderHistory();
 }
-function doUndo(){ const u=undoStack.pop(); if(!u) return; redoStack.push({snap:snapshot(), label:u.label}); restore(u.snap); afterHistory(); toast('Undid: '+u.label); }
-function doRedo(){ const r=redoStack.pop(); if(!r) return; undoStack.push({snap:snapshot(), label:r.label}); restore(r.snap); afterHistory(); toast('Redid: '+r.label); }
-function afterHistory(){ if(activeClipId && !findClip(activeClipId)) activeClipId=null; liveUpdateAll(); restartIfPlaying(); renderAll(); updateUndoUI(); }
+function doUndo(){ histCommit(); const u=undoStack.pop(); if(!u) return; redoStack.push({snap:snapshot(), label:u.label, at:u.at}); restore(u.snap); afterHistory(); toast('Undid: '+u.label); }
+function doRedo(){ histCommit(); const r=redoStack.pop(); if(!r) return; undoStack.push({snap:snapshot(), label:r.label, at:r.at}); restore(r.snap); afterHistory(); toast('Redid: '+r.label); }
+function afterHistory(){ if(activeClipId && !findClip(activeClipId)) activeClipId=null; liveUpdateAll(); restartIfPlaying(); renderAll();
+  try{ renderBands(); syncBand(); applyAll(); renderClean(); syncClSum(); renderSecs(); syncM(); syncOrder(); drawSpec(); if(listenMaster && masterBuf && masterSig!==mixSignature(masterBuf.sampleRate)) masterOff(); }catch(e){}
+  HS.base=null; histCommit(); updateUndoUI(); autosaveSoon(); }
+
+// ---------- settings history: notices any setting you change, makes it one undo step, and stamps the time ----------
+// Works for every control (EQ, Cleanup, section fixes, mastering, effects, master volume) without each one having to ask.
+let stamps={};                                        // setting key -> time it last changed (saved with the project)
+const HS={base:null, explicit:0, timer:0, down:false};
+function histState(){ return {eqs:clone(eqs), cleans:clone(cleans), secs:clone(secs), m:mSettings(), mdb:masterDb, ord:procOrder,
+  tr:tracks.map(t=>{ const o={id:t.id, name:t.name, fx:t.fx||null, cl:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0,c.fc||0])}; TSET.forEach(k=>o[k]=t[k]); return o; })}; }
+const tgName=k=>k==='mix'?'Whole mix':((tracks.find(t=>String(t.id)===String(k))||{}).name||'Track');
+const AMTN={gentle:'Gentle',medium:'Medium',strong:'Strong'};
+const fmtDb=v=>(v>0?'+':'')+(+v).toFixed(1)+' dB';
+function secId(x){ if(!x.sid) x.sid='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); return x.sid; }
+// what changed between two states, as setting keys with a plain-words label
+function histDiff(A,B){ const out=[], same=(a,b)=>JSON.stringify(a)===JSON.stringify(b), add=(key,label)=>out.push({key,label});
+  new Set([...Object.keys(A.eqs||{}),...Object.keys(B.eqs||{})]).forEach(k=>{ const a=A.eqs[k]||{bands:[],bypass:false}, b=B.eqs[k]||{bands:[],bypass:false};
+    for(let i=0;i<Math.max(a.bands.length,b.bands.length);i++) if(!same(a.bands[i],b.bands[i])){ const nb=b.bands[i];
+      add(`eq|${k}|${i}`, `${tgName(k)}: `+(nb&&nb.on ? bandText(nb,i) : `EQ band ${i+1} off`)); }
+    if(!!a.bypass!==!!b.bypass) add(`eq|${k}|bypass`, `${tgName(k)}: EQ bypass ${b.bypass?'on':'off'}`); });
+  new Set([...Object.keys(A.cleans||{}),...Object.keys(B.cleans||{})]).forEach(k=>{ const a=A.cleans[k]||{}, b=B.cleans[k]||{};
+    CLEAN.forEach(m=>{ if(!same(a[m.k],b[m.k])){ const o=b[m.k]; add(`cl|${k}|${m.k}`, `${tgName(k)}: ${m.name} `+(o&&o.on?`(${AMTN[o.amt]||o.amt})`:'off')); } }); });
+  const sa={}, sb={}; (A.secs||[]).forEach(x=>sa[x.sid||'']=x); (B.secs||[]).forEach(x=>sb[x.sid||'']=x);
+  new Set([...Object.keys(sa),...Object.keys(sb)]).forEach(id=>{ const a=sa[id], b=sb[id]; if(same(a,b)) return; const x=b||a;
+    add(`sec|${id}`, `Section fix on ${secName(x)}, ${mmss(x.a)} to ${mmss(x.b)}`+(!b?' removed':!a?' added':`: volume ${fmtDb(x.vol||0)}, treble ${fmtDb(x.treb||0)}`+(x.pop?`, pop softener ${x.pop} dB`:''))); });
+  const MN={target:'target',ceil:'ceiling',type:'limiter',tp:'true peak',look:'look-ahead',rel:'release'}, mf=Object.keys(MN).filter(f=>!same(A.m[f],B.m[f]));
+  if(mf.length) add('m', 'Mastering: '+mf.map(f=>f==='type'?`${B.m.type==='soft'?'Soft':'Hard'} limiter`:f==='tp'?`true peak ${B.m.tp?'on':'off'}`:f==='target'?`target ${B.m.target} LUFS`:f==='ceil'?`ceiling ${B.m.ceil} dB`:f==='look'?`look-ahead ${(+B.m.look).toFixed(1)} ms`:`release ${Math.round(B.m.rel)} ms`).join(', '));
+  if(Math.abs((A.mdb||0)-(B.mdb||0))>1e-9) add('mdb', 'Master volume '+fmtDb(B.mdb||0));
+  if(A.ord!==B.ord) add('ord', 'Processing order: '+(B.ord==='classic'?'original':'new'));
+  const ta={}; (A.tr||[]).forEach(t=>ta[t.id]=t);
+  (B.tr||[]).forEach(t=>{ const a=ta[t.id]; if(!a) return; const nm=t.name||'Track';
+    if(a.gainDb!==t.gainDb) add(`t|${t.id}|gainDb`, `${nm}: volume ${fmtDb(t.gainDb)}`);
+    if(a.pan!==t.pan) add(`t|${t.id}|pan`, `${nm}: pan ${fmtPan(t.pan)}`);
+    if(a.fadeIn!==t.fadeIn) add(`t|${t.id}|fadeIn`, `${nm}: track fade in ${fmtFade(t.fadeIn)}`);
+    if(a.fadeOut!==t.fadeOut) add(`t|${t.id}|fadeOut`, `${nm}: track fade out ${fmtFade(t.fadeOut)}`);
+    if(a.mute!==t.mute) add(`t|${t.id}|mute`, `${nm}: ${t.mute?'muted':'unmuted'}`);
+    if(a.solo!==t.solo) add(`t|${t.id}|solo`, `${nm}: solo ${t.solo?'on':'off'}`);
+    FX.forEach(e=>{ const x=a.fx&&a.fx[e.k], y=t.fx&&t.fx[e.k]; if(!same(x,y)) add(`fx|${t.id}|${e.k}`, `${nm}: ${e.name} `+(y&&y.on?((x&&x.on)?'changed':'on'):'off')); });
+    if(!same(a.cl,t.cl)) add(`clip|${t.id}`, `${nm}: clip edit`); });
+  return out; }
+// called after you touch anything; if settings changed since last time, record one step
+function histCommit(){
+  if(typeof tracks==='undefined') return;
+  (secs||[]).forEach(secId);
+  const sig=JSON.stringify(histState()), st=JSON.parse(sig);   // a deep copy, so later edits can't change what was recorded
+  if(!HS.base){ HS.base={st, sig, snap:snapshot()}; return; }
+  if(sig===HS.base.sig) return;
+  const ch=histDiff(HS.base.st, st), now=Date.now();
+  ch.forEach(c=>{ if(!c.key.startsWith('clip|')) stamps[c.key]=now; });
+  const explicit = HS.explicit && now-HS.explicit<4000; HS.explicit=0;
+  if(!explicit && ch.length){
+    undoStack.push({snap:HS.base.snap, label:ch[0].label+(ch.length>1?` (+${ch.length-1} more)`:''), at:now}); if(undoStack.length>60) undoStack.shift(); redoStack=[]; autosaveSoon(); }
+  HS.base={st, sig, snap:snapshot()}; updateUndoUI();
+}
+function histSoon(ms){ clearTimeout(HS.timer); HS.timer=setTimeout(()=>{ if(!HS.down) histCommit(); else histSoon(400); }, ms); }
+document.addEventListener('change',()=>histSoon(30));
+document.addEventListener('input',()=>histSoon(900));
+document.addEventListener('click',()=>histSoon(60));
+document.addEventListener('pointerdown',()=>{ HS.down=true; },true);
+document.addEventListener('pointerup',()=>{ HS.down=false; },true);
+document.addEventListener('pointercancel',()=>{ HS.down=false; },true);
+setInterval(()=>{ if(!HS.down && !playing && !recording) histCommit(); }, 2000);
 
 // ---------- view ----------
 let pps=50, viewStart=0, playhead=0, sel=null, mode='select';
@@ -1525,12 +1626,15 @@ const satCurves={};
 function satCurve(drive){ const k=1+drive/100*24, key=Math.round(k*10); if(satCurves[key]) return satCurves[key];
   const n=2048, cv=new Float32Array(n), norm=Math.tanh(k); for(let i=0;i<n;i++){ const x=i/(n-1)*2-1; cv[i]=Math.tanh(k*x)/norm; } satCurves[key]=cv; return cv; }
 // Build the effect chain. Returns {out, lfos:[osc]} — LFOs must be started.
-function makeFx(c, fx, input, when0){
+function makeGate(c, fx, input){
+  if(fx.gate.on && gateOK.get(c)){ const g=new AudioWorkletNode(c,'mixdown-gate',{processorOptions:{thr:fx.gate.thr,rel:fx.gate.rel},outputChannelCount:[2]}); input.connect(g); return g; }
+  return input; }
+function makeFx(c, fx, input, when0, noGate){
   let node=input; const lfos=[];
   const wetDry=(build,mixPct)=>{ const dry=c.createGain(), wet=c.createGain(), sum=c.createGain(); dry.gain.value=1-mixPct/100*(mixPct>50?1:0.5); wet.gain.value=mixPct/100;
     node.connect(dry); dry.connect(sum); const w=build(node); w.connect(wet); wet.connect(sum); node=sum; };
   const lfo=(rate,amount,target)=>{ const o=c.createOscillator(), g=c.createGain(); o.frequency.value=rate; g.gain.value=amount; o.connect(g); g.connect(target); lfos.push(o); };
-  if(fx.gate.on && gateOK.get(c)){ const g=new AudioWorkletNode(c,'mixdown-gate',{processorOptions:{thr:fx.gate.thr,rel:fx.gate.rel},outputChannelCount:[2]}); node.connect(g); node=g; }
+  if(!noGate) node=makeGate(c, fx, node);
   if(fx.comp.on){ const cp=c.createDynamicsCompressor(); cp.threshold.value=fx.comp.thr; cp.ratio.value=fx.comp.ratio; cp.knee.value=6; cp.attack.value=fx.comp.att/1000; cp.release.value=fx.comp.rel/1000;
     // the browser's compressor quietly adds its own makeup gain (about +7 dB at the defaults); "honest" compressors take it back out,
     // so Makeup gain is the only gain added. Compressors switched on before Version 51 keep their old sound.
@@ -2061,15 +2165,28 @@ function clipFadeGain(c, cl, dest, at, when0){
   pts.sort((a,b)=>a-b).forEach(pt=>{ if(pt>at) gn.gain.linearRampToValueAtTime(clipFadeAt(cl,pt), when0+(pt-at)); });
   return gn;
 }
-function scheduleTrack(c, t, dest, at, when0){
-  const fade=c.createGain(), vol=c.createGain(), pan=c.createStereoPanner ? c.createStereoPanner() : null;
+// ---------- processing order ----------
+// 'v2' (Version 57 and later): Cleanup → noise gate → EQ → compressor → other effects → volume → pan → section fixes.
+// 'classic' (songs made before Version 57): volume → EQ → noise gate → compressor → other effects → pan → Cleanup → section fixes.
+// Each project remembers its order, so a finished song keeps sounding exactly as it did; Upgrade switches it.
+let procOrder='v2';
+function wireTrack(c, t, input, dest, when0){
+  const vol=c.createGain(), pan=c.createStereoPanner ? c.createStereoPanner() : null;
   vol.gain.value = audible(t) ? dbToGain(t.gainDb) : 0;
-  const teq=makeEqChain(c, eqFor(t.id));
-  fade.connect(vol); vol.connect(teq.first);
-  const fxOut=makeFx(c, fxFor(t), teq.last, when0);
-  if(pan){ pan.pan.value=t.pan; fxOut.connect(pan); pan.connect(dest); } else fxOut.connect(dest);
+  const teq=makeEqChain(c, eqFor(t.id)), fx=fxFor(t); let out;
+  if(procOrder==='classic'){ input.connect(vol); vol.connect(teq.first); out=makeFx(c, fx, teq.last, when0); }
+  else { makeGate(c, fx, input).connect(teq.first); makeFx(c, fx, teq.last, when0, true).connect(vol); out=vol; }
+  if(pan){ pan.pan.value=t.pan; out.connect(pan); pan.connect(dest); } else out.connect(dest);
   let an=null;
-  if(c===actx){ an=c.createAnalyser(); an.fftSize=4096; an.smoothingTimeConstant=0.75; (pan||fxOut).connect(an); const z=c.createGain(); z.gain.value=0; an.connect(z); z.connect(c.destination); }
+  if(c===actx){ an=c.createAnalyser(); an.fftSize=4096; an.smoothingTimeConstant=0.75; (pan||out).connect(an); const z=c.createGain(); z.gain.value=0; an.connect(z); z.connect(c.destination); }
+  return {vol, pan, an, eqNodes:teq.nodes};
+}
+// raw=true: only the clips and their fades (for Cleanup to work on first, in the new order)
+function scheduleTrack(c, t, dest, at, when0, raw){
+  const fade=c.createGain();
+  let w={vol:null, pan:null, an:null, eqNodes:[]};
+  if(raw) fade.connect(dest); else w=wireTrack(c, t, fade, dest, when0);
+  const {vol, pan, an}=w, teq={nodes:w.eqNodes};
   const pts=fadePoints(t); fade.gain.setValueAtTime(valueAt(pts,at), when0);
   pts.forEach(([pt,v])=>{ if(pt>at) fade.gain.linearRampToValueAtTime(v, when0+(pt-at)); });
   const srcs=[];
@@ -2207,7 +2324,21 @@ function closeClockIn(go){ const ci=$('clockIn'); if(ci.hidden) return; const v=
 $('clock').onclick=openClockIn; $('clock').onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openClockIn(); } };
 $('clockIn').onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); closeClockIn(true); } if(e.key==='Escape') closeClockIn(false); };
 $('clockIn').onblur=()=>closeClockIn(true);
-$('undoBig').onclick=doUndo;
+$('undoBig').onclick=doUndo; $('redoBig').onclick=doRedo;
+// ---------- history list: every step with its time; tap one to go back (or forward) to that point ----------
+function renderHistory(){ const box=$('histBox'); if(!box || box.hidden) return;
+  if(!undoStack.length && !redoStack.length){ box.innerHTML='<p class="hint" style="margin:0">Nothing yet. Every change you make shows up here with its time.</p>'; return; }
+  const rows=[];
+  redoStack.forEach((r,i)=>rows.push({e:r, kind:'redo', i}));          // redo stack: last item is the next redo, so oldest-undone first
+  for(let i=undoStack.length-1;i>=0;i--) rows.push({e:undoStack[i], kind:'undo', i});
+  box.innerHTML='<p class="hint" style="margin:0 0 6px">Newest first. Times are when each change was made. “Back to before” undoes that change and everything after it. Crossed-out steps were undone; “Redo to here” brings them back.</p><ul class="histlist"></ul>';
+  const ul=box.querySelector('ul');
+  rows.forEach(({e,kind,i})=>{ const li=document.createElement('li'); if(kind==='redo') li.className='undone';
+    li.innerHTML=`<span class="hw">${e.at?whenTxt(e.at):'earlier'}</span><span class="hl"></span><button class="small" type="button">${kind==='redo'?'Redo to here':'Back to before'}</button>`;
+    li.querySelector('.hl').textContent=e.label;
+    li.querySelector('button').onclick=()=>{ if(kind==='undo'){ let n=undoStack.length-i; while(n-->0) doUndo(); } else { let n=redoStack.length-i; while(n-->0) doRedo(); } };
+    ul.appendChild(li); }); }
+$('histBtn').onclick=()=>{ const b=$('histBox'), open=b.hidden; histCommit(); b.hidden=!open; $('histBtn').setAttribute('aria-expanded',String(open)); renderHistory(); };
 // ---------- exact selection times ----------
 attachTimeMask($('selA'),longTimes); attachTimeMask($('selB'),longTimes);
 $('selTimes').onclick=()=>{ const r=$('selRow'), open=r.hidden; r.hidden=!open; $('selTimes').classList.toggle('on',open); $('selTimes').setAttribute('aria-expanded',String(open));
@@ -2613,7 +2744,7 @@ let masterBuf=null, masterSig='', listenMaster=false;
 // once the mix changes, the old master no longer matches what's on screen: switch Play back to the live mix and say so
 const masterStale=()=>masterSig!==mixSignature(+$('rate').value);
 function masterOff(){ listenMaster=false; masterBuf=null; masterSig=''; const lr=$('mListenRow'); if(lr) lr.hidden=true; const c=$('mListen'); if(c) c.checked=false; toast('You changed the mix, so Play now uses your live mix. Tap Master now (or Hear cleanup) to hear the processed version again.'); }
-function mixSignature(sr){ return JSON.stringify({cl:cleans, sc:secs, bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0,c.fc||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
+function mixSignature(sr){ return JSON.stringify({po:procOrder, cl:cleans, sc:secs, bpm:$('bpm').value, t:tracks.map(t=>({c:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0,c.fc||0]),g:t.gainDb,p:t.pan,m:t.mute,s:t.solo,fi:t.fadeIn,fo:t.fadeOut,fx:t.fx||null})),e:eqs,m:masterDb,set:mSettings(),sr}); }
 // the song ends where the last track you can hear ends (muted tracks don't add silence)
 const renderLen = () => { const a=tracks.filter(t=>hasAudio(t)&&audible(t)); return a.length ? Math.max(...a.map(trackEnd)) : projectLen(); };
 async function renderMix(sr, opts={}){
@@ -2632,10 +2763,21 @@ async function renderMix(sr, opts={}){
     const sum=[new Float32Array(len), new Float32Array(len)], stems=[];
     for(const t of live){
       if(!audible(t)) continue;
-      const oc=new OfflineAudioContext(2, len, sr); await prepareFx(oc);
-      scheduleTrack(oc,t,oc.destination,0,0);
-      const b=await oc.startRendering(), chs=[b.getChannelData(0), b.getChannelData(1)];
-      if(cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id],t.id);
+      let b;
+      if(procOrder!=='classic' && cleanActive(t.id)){
+        // new order: clean the raw track first, then run it through gate, EQ, effects, volume and pan
+        const o1=new OfflineAudioContext(2, len, sr); scheduleTrack(o1,t,o1.destination,0,0,true);
+        const raw=await o1.startRendering(); await applyClean([raw.getChannelData(0), raw.getChannelData(1)],sr,cleans[t.id],t.id); await sleep();
+        const o2=new OfflineAudioContext(2, len, sr); await prepareFx(o2);
+        const src=o2.createBufferSource(); src.buffer=raw; wireTrack(o2,t,src,o2.destination,0); src.start(0);
+        b=await o2.startRendering();
+      } else {
+        const oc=new OfflineAudioContext(2, len, sr); await prepareFx(oc);
+        scheduleTrack(oc,t,oc.destination,0,0);
+        b=await oc.startRendering();
+      }
+      const chs=[b.getChannelData(0), b.getChannelData(1)];
+      if(procOrder==='classic' && cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id],t.id);
       sectionFix(chs,sr,t.id);
       for(let c=0;c<2;c++){ const s0=sum[c], x=chs[c]; for(let i=0;i<len;i++) s0[i]+=x[i]; }
       if(opts.stems){ const m=new Float32Array(len>>1); for(let i=0;i<m.length;i++) m[i]=(chs[0][2*i]+chs[1][2*i]+chs[0][2*i+1]+chs[1][2*i+1])*0.25; stems.push({mono:m, color:css(t.colorVar)}); }
@@ -3400,7 +3542,7 @@ $('projSave').onclick=async()=>{
   setProg($('projProg'),null); $('projSave').disabled=false;
 };
 function projectData(){ const used=new Set();
-  const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), fields:fieldVals(), masterDb, eqs, latencyMs, cleans, secs, loop:{...loopBlend},
+  const data={app:'mixdown', version:1, savedAt:new Date().toISOString(), order:procOrder, stamps, fields:fieldVals(), masterDb, eqs, latencyMs, cleans, secs, loop:{...loopBlend},
     tracks:tracks.map(t=>({id:t.id,hidden:!!t.hidden,name:t.name,gainDb:t.gainDb,pan:t.pan,mute:t.mute,solo:t.solo,fadeIn:t.fadeIn,fadeOut:t.fadeOut,colorVar:t.colorVar,tone:t.tone||null,fx:t.fx||null,
       clips:t.clips.map(c=>{ const sid=t.tone?null:bufSrc.get(c.buf); if(sid) used.add(sid); return {id:c.id,name:c.name,offset:c.offset,segs:c.segs,src:sid||null,fi:c.fi||0,fo:c.fo||0,fc:c.fc||0,gl:c.glitch||0}; })})),
     sources:[], cover: cover ? {mime:cover.mime, data:b64(cover.bytes)} : null};
@@ -3429,9 +3571,33 @@ function findFreqs(key){ const s=eqs[key]; if(!s||s.bypass) return []; return s.
 let sumView='track'; try{ sumView=localStorage.getItem('mixdown-sumview')||'track'; }catch(e){}
 function masterLine(){ const s=mSettings(); return `Mastering: target ${s.target} LUFS, ceiling ${s.ceil} dB, ${s.type==='soft'?'Soft':'Hard'} limiter, true peak ${s.tp?'on':'off'}, look-ahead ${s.look.toFixed(1)} ms, release ${Math.round(s.rel)} ms.`+(Math.abs(masterDb)>0.05?` Master volume ${masterDb>0?'+':''}${masterDb.toFixed(1)} dB.`:''); }
 const sumTracks=()=>tracks.filter(t=>hasAudio(t)||t.tone);
+// every setting that differs from the default, with the key its change-time is stored under
+function settingItems(){ const it=[], push=(key,who,text)=>it.push({key,who,text});
+  const m=mSettings(); push('m','Mastering',`target ${m.target} LUFS, ceiling ${m.ceil} dB, ${m.type==='soft'?'Soft':'Hard'} limiter, true peak ${m.tp?'on':'off'}, look-ahead ${(+m.look).toFixed(1)} ms, release ${Math.round(m.rel)} ms`);
+  if(Math.abs(masterDb)>0.05) push('mdb','Mastering','Master volume '+fmtDb(masterDb));
+  push('ord','Processing order', procOrder==='classic'?'original (made before Version 57)':'new (Cleanup first, volume last)');
+  const target=(k,who)=>{ const e=eqs[k]; if(e){ e.bands.forEach((b,i)=>{ if(bandMatters(b)) push(`eq|${k}|${i}`,who,bandText(b,i)); }); if(e.bypass) push(`eq|${k}|bypass`,who,'EQ bypassed'); }
+    const c=cleans[k]; if(c) CLEAN.forEach(md=>{ const o=c[md.k]; if(o&&o.on) push(`cl|${k}|${md.k}`,who,`Cleanup: ${md.name} (${AMTN[o.amt]||o.amt})`); }); };
+  target('mix','Whole mix');
+  (secs||[]).forEach(x=>push(`sec|${secId(x)}`,secName(x),`Section fix ${mmss(x.a)} to ${mmss(x.b)}: volume ${fmtDb(x.vol||0)}, treble ${fmtDb(x.treb||0)}`+(x.pop?`, pop softener ${x.pop} dB`:'')));
+  sumTracks().forEach(t=>{ const who=t.name||'Track';
+    if(t.mute) push(`t|${t.id}|mute`,who,'Muted'); if(t.solo) push(`t|${t.id}|solo`,who,'Solo');
+    if(Math.abs(t.gainDb)>0.05) push(`t|${t.id}|gainDb`,who,'Volume '+fmtGain(t.gainDb)); if(Math.abs(t.pan)>=0.01) push(`t|${t.id}|pan`,who,'Pan '+fmtPan(t.pan));
+    if(t.fadeIn) push(`t|${t.id}|fadeIn`,who,'Track fade in '+fmtFade(t.fadeIn)); if(t.fadeOut) push(`t|${t.id}|fadeOut`,who,'Track fade out '+fmtFade(t.fadeOut));
+    target(t.id,who);
+    if(t.fx) FX.forEach(e=>{ if(t.fx[e.k]&&t.fx[e.k].on){ const line=fxLines({fx:{[e.k]:t.fx[e.k]}})[0]; push(`fx|${t.id}|${e.k}`,who,line); } }); });
+  return it; }
+function timeSummary(L){
+  const items=settingItems().map(x=>({...x, at:stamps[x.key]||0})), dated=items.filter(x=>x.at).sort((a,b)=>b.at-a.at), old=items.filter(x=>!x.at);
+  L.push(''); L.push('NEWEST CHANGES FIRST');
+  if(!dated.length) L.push('No times recorded yet. Times start with Version 57: change a setting and it shows up here.');
+  let last=''; dated.forEach(x=>{ const w=whenTxt(x.at); if(w!==last){ L.push(''); L.push(w); last=w; } L.push(`  ${x.who}: ${x.text}`); });
+  if(old.length){ L.push(''); L.push('SET BEFORE TIMES WERE RECORDED'); old.forEach(x=>L.push(`  ${x.who}: ${x.text}`)); }
+  return L.join('\n'); }
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 56)`);
+  L.push(`${title}: Mixdown settings (Version 57)`);
+  if(view==='time') return timeSummary(L);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
     L.push(masterLine());
@@ -3452,6 +3618,7 @@ function settingsSummary(view){
     return L.join('\n');
   }
   L.push(''); L.push('MASTERING'); L.push(masterLine()+` Master when exporting: ${$('mOn').checked?'on':'off'}.`);
+  L.push('Processing order: '+(procOrder==='classic'?'original (made before Version 57)':'new (Cleanup first, volume last)')+'.');
   L.push(''); L.push('WHOLE MIX');
   const me=eqLines('mix'), mc=cleanOnList('mix'); me.forEach(x=>L.push(x)); if(mc.length) L.push('Cleanup: '+mc.join(', '));
   secs.forEach(x=>L.push(`Section fix on ${secName(x)}, ${mmss(x.a)} to ${mmss(x.b)}: volume ${x.vol>0?'+':''}${x.vol||0} dB, treble ${x.treb>0?'+':''}${x.treb||0} dB${x.pop?`, pop softener ${x.pop} dB`:''}`));
@@ -3552,13 +3719,22 @@ $('recipeBtn').onclick=()=>{ const b=$('recipeBox'); if(!b.hidden){ b.hidden=tru
 function hideProjSave(){ const b=$('projSaveBtn'); if(!b) return; b.hidden=true; if(b._url){ URL.revokeObjectURL(b._url); b._url=null; } }
 function clearProject(){
   hideProjSave();
-  pause(); tracks=[]; undoStack=[]; redoStack=[]; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
+  pause(); tracks=[]; undoStack=[]; redoStack=[]; stamps={}; HS.base=null; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
   eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); marksHidden=false; syncMarksBtn(); }catch(e){} syncSlate(); renderClean(); renderSecs();
   try{ applyAll(); syncBand(); renderBands(); }catch(e){}
 }
+function syncOrder(){ const i=$('orderInfo'); if(!i) return;
+  i.innerHTML = procOrder==='classic'
+    ? '<b>Processing order: original.</b> This song was made before Version 57, so it keeps the order it was made with and sounds exactly as you left it.'
+    : '<b>Processing order: new.</b> Cleanup first, then noise gate, EQ, compressor, effects, and volume last. See the guide for what that means.';
+  $('orderUp').hidden = procOrder!=='classic'; }
+$('orderUp').onclick=()=>{ if(!confirm('Switch this song to the new processing order? It will sound a little different the next time you master it (mostly tracks with a volume change plus a gate or compressor, or Cleanup plus echo). Undo switches it back.')) return;
+  pushUndo('Processing order: new'); procOrder='v2'; syncOrder(); autosaveSoon(); restartIfPlaying(); if(listenMaster && masterBuf) masterOff();
+  toast('Switched to the new order. Master again to hear it; Undo switches back.'); };
+syncOrder();
 $('projNew').onclick=()=>{
   if(tracks.some(hasAudio) && !confirm('Start a new project? Save this one first if you want to keep it.')) return;
-  moveOnFromRestore(); clearProject(); applyMDefs(myMDefs(), true); nextId=1; tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
+  moveOnFromRestore(); clearProject(); procOrder='v2'; syncOrder(); applyMDefs(myMDefs(), true); nextId=1; tracks.push(newTrack()); tracks.push(newTrack()); activeId=tracks[0].id;
   ['projName','tgTitle','fileName','tgTrack','tgComment','tgLyrics'].forEach(id=>$(id).value=''); showCover(null); lastTitle=''; syncFileMatch(); hideSave();
   renderAll(); setZoomFromSlider(); projStatus('New project started. Artist, album, year, and genre stay filled in.'); autosaveNow();
 };
@@ -3611,10 +3787,12 @@ async function applyProject(data, getBytes){
     }
     nextId=maxT+1; nextClip=maxC+1; activeId=tracks[0]?.id||null;
     eqs={mix:(data.eqs&&data.eqs.mix)||eqs.mix}; if(data.eqs) Object.keys(data.eqs).forEach(key=>{ if(key!=='mix') eqs[key]=data.eqs[key]; });
+    procOrder = data.order==='v2' ? 'v2' : 'classic'; syncOrder(); stamps = (data.stamps && typeof data.stamps==='object') ? data.stamps : {};
     cleans=data.cleans||{}; secs=Array.isArray(data.secs)?data.secs:[]; clTarget='mix'; renderSecs(); syncClSum(); syncLoop();
     showCover(data.cover ? {mime:data.cover.mime, bytes:unb64(data.cover.data)} : null);
     if(masterGain) masterGain.gain.value=dbToGain(masterDb);
     syncM(); syncFmt(); syncLoop(); syncLatency(); renderAll(); renderBands(); syncBand(); applyAll(); setZoomFromSlider(); drawSpec();
+    HS.base=null; undoStack=[]; redoStack=[]; histCommit();
 }
 
 // ---------- auto-saved session: kept on this device, restored after a refresh or an accidental close ----------
