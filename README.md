@@ -17,9 +17,10 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 
 ## Editing and recording
 
-- **Up to 12 tracks** with waveforms scaled to fit each track: split, cut, copy, paste, duplicate, trim, delete, silence, insert silence, and undo
+- **Up to 12 tracks** with waveforms scaled to fit each track: split, cut, copy, paste, duplicate, trim, delete, silence, and insert silence
+- **Undo and Redo for everything you set:** clip edits, volume, EQ, Cleanup, section fixes, effects, and mastering, each step named, plus a **History** list with the date and time of every change (tap one to go back to it)
 - **Fold away any section,** including the timeline, so you only scroll through what you're working on
-- **Player at the bottom of the screen,** with a big Undo button and a clock you can tap to type an exact time (numbers only: 31425 becomes 3:14.250)
+- **Player at the bottom of the screen,** with Undo and Redo buttons and a clock you can tap to type an exact time (numbers only: 31425 becomes 3:14.250)
 - **Exact selections:** type a selection's start and end to the millisecond, and exact clip start and end times
 - **Blends** between clips: both, fade out, fade in, or dip, with separate fade lengths, a sharp-to-wave curve, and a live picture of the curves
 - **Tap any slider's number to type a value,** with the number shown above your finger while you drag
@@ -37,7 +38,8 @@ Mixdown runs in your browser on phones, tablets, Chromebooks, and computers. No 
 - **What do you hear?** Tap a problem in plain words (harsh, muddy, boomy, hissy, a note that stings, buried vocals, crushed, and more) and turn suggested fixes on or off. **Find it for me** finds up to three ringing notes, cuts each with its own switch, and marks where they ring on the timeline
 - **Gentle by design:** if a song can't reach its loudness target, mastering stops before extra gain turns into extra limiting
 - **Recipes:** save one song's settings (no audio) and apply them to another song, matched by track name, with an undo
-- **Settings summary:** everything you changed, track by track, ready to copy as a recipe for another song
+- **Settings summary:** everything you changed, track by track, ready to copy as a recipe for another song, or **by time**, newest changes first, so you can see what changed between versions
+- **Clear processing order:** each track goes Cleanup → noise gate → EQ → compressor → effects → volume → pan, so turning a track up or down only changes its loudness. Songs made before Version 57 keep their original order (and their sound) until you choose to upgrade
 
 ## Export
 
