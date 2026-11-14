@@ -346,7 +346,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 57.1</p>
+  <p class="ver">Version 58</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -414,6 +414,8 @@ body.force2 .cols > .panel{margin-top:14px}
     </ol>
     <p>Then the whole song: all tracks together → <b>Master volume</b> → <b>whole-mix EQ</b> → <b>whole-mix Cleanup</b> → <b>whole-mix section fixes</b> → <b>Mastering</b> (level to your target, then the limiter) → ending trim → export.</p>
     <p><b>Songs made before Version 57</b> keep the order they were made with, so a finished song sounds exactly as you left it. In that original order, volume came first (so it changed how the gate and compressor behaved) and Cleanup came after the effects (so it also worked on echo tails). Under <b>Project</b> you'll see which order a song uses; <b>Upgrade to the new order</b> switches it, and Undo switches it back.</p>
+    <h3>Live preview</h3>
+    <p>In a new-order song, once you've mastered and <b>Listen to the master</b> is on, changing anything no longer drops you to the raw mix. Play keeps Cleanup and mastering on: tracks with Cleanup or section fixes are cleaned around where you're listening (10 seconds back, 20 ahead, rolling forward as you play), EQ and effects run live on top, and the whole mix goes through your last master's level and a live limiter. Flip an EQ band or a Find it note while it plays and you hear the difference immediately. A Cleanup change re-cleans that one track. Jumping somewhere new may show “Getting ready…” for a moment. The preview is within a fraction of a dB of the real master but leaves out whole-mix Cleanup and whole-mix section fixes; tap <b>Master now</b> before you export or judge the final.</p>
     <h3>What do you hear?</h3>
     <p>Tap <b>? What do you hear?</b> in EQ or Cleanup. Choose where to fix it in <b>Fix it on</b> (the whole mix or one track), then tap what you hear: harsh, muddy, boomy, hissy, sharp “s” sounds, one note that stings, vocals buried or too loud, crushed, thin, or a swipe at the end. Each problem shows two or three fixes, each a real setting with one line on what it does. Turn them on and off in any combination; turning one off puts back exactly what was there. Try the <b>Ring tamer</b> first: it's a Cleanup tool that dips a ringing note only at the moments it sticks out, so the note is left alone the rest of the time (good for melody notes that only sting sometimes). If a note stings every time it plays, use <b>Find it for me</b>, which listens for up to three notes that ring out, worst first, and cuts each one on its own EQ band, with its own switch. Numbered pins on the timeline show where each note rings hardest, and the track it was found on is shaded over each stretch where it rings: red while it's not fixed, green once its cut is on. <b>Show pins</b> and <b>Show on the track</b> switch them on and off for each search, and <b>Hide all marks</b> by the timeline buttons clears them all, so your waveforms look clean when you're done (the fixes stay on). <b>Listen at</b> buttons and <b>Listen at</b> buttons play from just before each spot, so you don't have to hunt through the whole song. Switch a note off and on while it plays to hear the difference, and keep only the cuts that clearly help. On a single track it listens to that track's own audio; on Whole mix it listens to everything together, as you hear it. EQ and volume fixes change the sound right away; Cleanup and mastering fixes are heard after <b>Master now</b>.</p>
     <h3>Keep it smooth</h3>
@@ -441,6 +443,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 58:</b> <b>Live preview</b> (new-order songs): after you master, any change you make plays right away with Cleanup and mastering still on, instead of dropping to the raw mix. Tracks with Cleanup or section fixes are cleaned 10 seconds before to 20 seconds after where you're listening and keep rolling ahead as you play; jumping somewhere new shows “Getting ready…” for a moment. EQ (including Find it notes) and effects change instantly; a Cleanup change re-cleans just that track. The preview uses your last master's level and a live limiter, so it lands within a fraction of a dB of the real master; it leaves out whole-mix Cleanup and whole-mix section fixes, so tap Master now for the exact version. <b>Play starts cleanly:</b> it now gets every track ready before the first sound (it used to start after 0.05 s, which could stutter on phones). <b>Track colors</b> now follow what each track is: Lead Vocals purple, Backing Vocals violet, Drums red, Percussion gold, Bass fiery orange, Brass copper, Guitar aqua, Keyboard green, Strings blue, Woodwinds golden brown, Synth pink, FX lemon, Other silvery blue, your own tracks kiwi, sky blue, then yellow-green, tone tracks ultraviolet, noise soft yellow, and the whole mix silver-white. While the master plays, the EQ picture still draws each track's colored line.</li>
       <li><b>Version 57.1:</b> Fixed: undoing a change now also takes its time back off Settings summary → By time, so the list always matches the settings you have.</li>
       <li><b>Version 57:</b> New processing order for new songs: Cleanup first, then noise gate, EQ, compressor, effects, and volume last (see <b>Processing order</b> above). Older songs keep their original order until you tap <b>Upgrade to the new order</b> under Project. Undo now covers everything you set (EQ, Cleanup, section fixes, mastering, effects, master volume) with a name for each step, and <b>Redo</b> sits next to Undo in the bottom bar (just arrows when the Mic chip shows). <b>History</b> (next to Undo under Tracks) lists every step with its time; tap one to go back to it. <b>Settings summary → By time</b> lists your settings newest first with when each was last changed (times start with this version).</li>
       <li><b>Version 56:</b> Fixed: section fix Start and End boxes now type like the player clock. Just type the digits and the box fills in the time (259 becomes 2:59, 25950 becomes 2:59.50), with the number keypad. A time past the end of the song is pulled back to the end instead of becoming hundreds of minutes.</li>
@@ -937,6 +940,25 @@ SOFTWARE.
 const $ = id => document.getElementById(id);
 const COLORS = ['--t1','--t2','--t3','--t4','--t5','--t6'];
 const MAXTRACKS = 12;
+// ---------- track colors (Version 58): chosen by what the track is, from Melissa's palette ----------
+// Voices in purples, low end in warm colors, matched to Suno's stem names. Your own tracks get kiwi, then sky blue, then yellow-green.
+const MIX_COLOR='#E8ECF2';
+const TCOL=[[/back(ing|up)?\s*vocal|bgv|backup|harmon|choir/i,'#8F8DFB'],[/vocal|vox|voice/i,'#A855F7'],[/percuss|\bperc\b/i,'#F5C842'],
+  [/drum/i,'#EF4444'],[/bass/i,'#FF7A1A'],[/brass|horn|trumpet|trombone|tuba/i,'#D9823B'],[/guitar/i,'#2DD4BF'],
+  [/key(board|s)|piano|organ/i,'#4CAF50'],[/string|violin|viola|cello/i,'#4F8DF5'],[/woodwind|flute|clarinet|oboe|bassoon|sax/i,'#C8963E'],
+  [/synth/i,'#F45DCB'],[/\bfx\b|effects?\b|sfx/i,'#E6F24A'],[/\bother\b/i,'#9DB4D6']];
+const OWN=['#7CC242','#5FB3E8','#B5D63A'];
+function baseColor(t){
+  if(t.tone){ const k=String(t.tone.kind||t.tone.type||'').toLowerCase(); return /noise|pink|brown|white|rain|ocean/.test(k)?'#F2E3A2':'#7A5CFF'; }
+  const nm=String(t.name||'').replace(/^\s*\d+\s*/,'');
+  for(const [re,c] of TCOL) if(re.test(nm)) return c;
+  const own=tracks.filter(x=>!x.tone && !TCOL.some(([re])=>re.test(String(x.name||'').replace(/^\s*\d+\s*/,''))));
+  const i=Math.max(0,own.indexOf(t)); return OWN[i%OWN.length]; }
+// the palette was chosen for dark mode; in light mode the same hues are deepened so they stay readable on white
+function trackColor(t){ const c=baseColor(t); if(!isLightTheme()) return c;
+  const n=parseInt(c.slice(1),16), f=0.62, r=Math.round((n>>16&255)*f), g=Math.round((n>>8&255)*f), b=Math.round((n&255)*f);
+  return '#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1); }
+function isLightTheme(){ const bg=css('--bg')||'#000'; const m=bg.match(/^#([0-9a-f]{6})$/i); if(!m) return false; const n=parseInt(m[1],16); return ((n>>16&255)+(n>>8&255)+(n&255))/3>150; }
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const fmt = s => { s=Math.max(0,s||0); const m=Math.floor(s/60); return m+':'+(s%60).toFixed(1).padStart(4,'0'); };
 const mmss2 = s => { s=Math.max(0,+s||0); let m=Math.floor(s/60), r=Math.round((s-m*60)*100)/100; if(r>=60){ m++; r-=60; } return m+':'+r.toFixed(2).padStart(5,'0'); };
@@ -1212,7 +1234,7 @@ function drawRuler(){
 function drawLane(t){
   const c=document.querySelector(`.lane[data-id="${t.id}"] canvas`); if(!c || !c.clientWidth || !c.clientHeight) return;   // hidden (section collapsed)
   const {g,w,h}=fitCanvas(c), live=!!(recording && recording.trackId===t.id);
-  const key=[c.width,c.height,viewStart,pps,vzoom,activeClipId,(sel&&sel.id===t.id)?[sel.a,sel.b].join(':'):'',t.gainDb,t.fadeIn,t.fadeOut,css(t.colorVar),css('--ink'),
+  const key=[c.width,c.height,viewStart,pps,vzoom,activeClipId,(sel&&sel.id===t.id)?[sel.a,sel.b].join(':'):'',t.gainDb,t.fadeIn,t.fadeOut,trackColor(t),css('--ink'),
     t.clips.map(cl=>[cl.id,cl.offset,cl.fi||0,cl.fo||0,JSON.stringify(cl.segs)].join(';')).join('|'), laneMarkSig(t)].join(',');
   if(live || !t._lc || t._lc.key!==key){
     if(!t._lc) t._lc={cv:document.createElement('canvas')};
@@ -1224,7 +1246,7 @@ function drawLane(t){
   const px=(playhead-viewStart)*pps; g.fillStyle=css('--accent'); g.fillRect(px-1,0,2,h);
 }
 function drawLaneBody(g,w,h,t){
-  const col=css(t.colorVar), mid=h/2, fit=trackFit(t)*vzoom;
+  const col=trackColor(t), mid=h/2, fit=trackFit(t)*vzoom;
   if(recording && recording.trackId===t.id && playhead>recording.p0){
     const x0=(recording.p0-viewStart)*pps, x1=(playhead-viewStart)*pps;
     g.fillStyle='rgba(229,72,77,.22)'; g.fillRect(x0,0,x1-x0,h); g.fillStyle='#E5484D'; g.fillRect(x0,0,2,h);
@@ -1307,7 +1329,7 @@ function renderLanes(){
   renderLaneShow();
   vis.forEach(t=>{
     const d=document.createElement('div'); d.className='lane'+(t.id===activeId?' active':''); d.dataset.id=t.id;
-    d.innerHTML=`<canvas></canvas><span class="tag${t.mute?' muted':''}" style="color:${css(t.colorVar)}"></span><div class="grip" aria-hidden="true">&#8597;</div>`;
+    d.innerHTML=`<canvas></canvas><span class="tag${t.mute?' muted':''}" style="color:${trackColor(t)}"></span><div class="grip" aria-hidden="true">&#8597;</div>`;
     d.querySelector('.tag').textContent=t.name+(hasAudio(t)?'':' (no audio)');
     L.appendChild(d); attachLane(d,t);
   });
@@ -1339,7 +1361,7 @@ function renderLaneShow(){
     const l=document.createElement('label'); l.className='check';
     const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!t.hidden;
     cb.onchange=()=>{ if(!cb.checked && tracks.filter(x=>!x.hidden).length<=1){ cb.checked=true; toast('Keep at least one track showing.'); return; } t.hidden=!cb.checked; renderAll(); };
-    const sw=document.createElement('span'); sw.className='laneswatch'; sw.style.background=css(t.colorVar);
+    const sw=document.createElement('span'); sw.className='laneswatch'; sw.style.background=trackColor(t);
     const nm=document.createElement('span'); nm.textContent=t.name+(t.solo?' (solo)':'')+(t.mute?' (muted)':'');
     l.append(cb,sw,nm); menu.appendChild(l);
   });
@@ -1455,7 +1477,7 @@ function renderTrackPanels(){
   const box=$('tracks'); box.innerHTML='';
   tracks.forEach(t=>{
     const p=document.createElement('div'); p.className='track'+(t.id===activeId?' active':''); p.dataset.id=t.id;
-    p.style.borderLeftColor=css(t.colorVar); p.innerHTML=trackPanelHTML(t); box.appendChild(p);
+    p.style.borderLeftColor=trackColor(t); p.innerHTML=trackPanelHTML(t); box.appendChild(p);
     const q=s=>p.querySelector(s);
     q('.tname').value=t.name;
     q('.tname').oninput=e=>{ t.name=e.target.value||('Track '+(tracks.indexOf(t)+1)); const tag=document.querySelector(`.lane[data-id="${t.id}"] .tag`); if(tag) tag.textContent=t.name; q('.tnm').textContent=t.name; updateSelInfo(); };
@@ -1612,7 +1634,7 @@ async function prepareFx(c){ if(tracks.some(t=>t.fx && t.fx.gate.on)) gateOK.set
 // how much gain the browser's compressor adds to a quiet signal (well below any threshold) at these settings
 const compCal=new Map(), compKey=cp=>cp.thr+'|'+cp.ratio;
 async function measureCompGain(cp){ try{ const sr=22050, oc=new OfflineAudioContext(1,Math.round(sr*0.4),sr), o=oc.createOscillator(), g=oc.createGain(), k=oc.createDynamicsCompressor();
-  o.frequency.value=1000; g.gain.value=Math.pow(10,-80/20); k.threshold.value=cp.thr; k.ratio.value=cp.ratio; k.knee.value=6; k.attack.value=cp.att/1000; k.release.value=cp.rel/1000;
+  o.frequency.value=1000; g.gain.value=Math.pow(10,-80/20); k.threshold.value=cp.thr; k.ratio.value=cp.ratio; k.knee.value=(cp.knee!=null?cp.knee:6); k.attack.value=cp.att/1000; k.release.value=cp.rel/1000;
   o.connect(g); g.connect(k); k.connect(oc.destination); o.start(); const d=(await oc.startRendering()).getChannelData(0); let m=0; for(let i=d.length>>1;i<d.length;i++) m=Math.max(m,Math.abs(d[i]));
   return m>0 ? 20*Math.log10(m)+80 : 0; }catch(e){ return 0; } }
 const irCache={};
@@ -1993,12 +2015,12 @@ let masterGain=null, eqNodes=[], analyser=null;
 function makeChain(c, dest){
   const mg=c.createGain(); mg.gain.value=dbToGain(masterDb);
   const ch=makeEqChain(c, eqs.mix); mg.connect(ch.first); ch.last.connect(dest);
-  return {input:mg, nodes:ch.nodes};
+  return {input:mg, nodes:ch.nodes, last:ch.last};
 }
 function buildMaster(){
   analyser=actx.createAnalyser(); analyser.fftSize=8192; analyser.smoothingTimeConstant=0.75;
   analyser.connect(actx.destination);
-  const ch=makeChain(actx,analyser); masterGain=ch.input; eqNodes=ch.nodes;
+  const ch=makeChain(actx,analyser); masterGain=ch.input; eqNodes=ch.nodes; mixOut=ch.last; pvStage=null;
 }
 // the live filter nodes for whatever target is being edited
 function liveNodes(key){ if(key==='mix') return eqNodes; const s=(session||[]).find(x=>x.t && String(x.t.id)===String(key)); return s?s.eqNodes:[]; }
@@ -2088,12 +2110,12 @@ function drawSpec(){
   if(playing){
     if(analyser && show.mix){
       const pts=specPath(analyser,1); g.beginPath(); g.moveTo(0,h); pts.forEach(([x,y])=>g.lineTo(x,y)); g.lineTo(w,h); g.closePath();
-      g.fillStyle=css('--muted'); g.globalAlpha=.22; g.fill(); g.globalAlpha=1;
+      g.fillStyle=isLightTheme()?'#5B6476':MIX_COLOR; g.globalAlpha=.18; g.fill(); g.globalAlpha=1;
     }
     (session||[]).forEach(se=>{
       if(!se.an || !se.t || show[se.t.id]===false || !audible(se.t)) return;
       const pts=specPath(se.an,2); g.beginPath(); pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
-      g.strokeStyle=css(se.t.colorVar); g.lineWidth=1.2; g.globalAlpha=.95; g.stroke(); g.globalAlpha=1; g.lineWidth=1;
+      g.strokeStyle=trackColor(se.t); g.lineWidth=1.2; g.globalAlpha=.95; g.stroke(); g.globalAlpha=1; g.lineWidth=1;
     });
   }
   // eq curve
@@ -2116,8 +2138,8 @@ function renderShowRow(){
   const mk=(key,label,color)=>{ const b=document.createElement('button'); b.textContent=label; b.style.borderColor=color; b.style.color=color;
     if(show[key]===false) b.classList.add('off'); b.setAttribute('aria-pressed',String(show[key]!==false));
     b.onclick=()=>{ show[key]=show[key]===false; renderShowRow(); drawSpec(); }; R.appendChild(b); };
-  mk('mix','Mix',css('--muted'));
-  tracks.filter(hasAudio).forEach(t=>mk(t.id,t.name.length>18?t.name.slice(0,17)+'…':t.name,css(t.colorVar)));
+  mk('mix','Mix',isLightTheme()?'#5B6476':MIX_COLOR);
+  tracks.filter(hasAudio).forEach(t=>mk(t.id,t.name.length>18?t.name.slice(0,17)+'…':t.name,trackColor(t)));
 }
 // drag a band's dot on the display (only while editing, and only starting on a dot)
 (function(){
@@ -2244,13 +2266,22 @@ async function play(opts={}){
   }
   await prepareFx(c);
   if(my!==playTicket) return;
-  stopSources();
-  startAt=playhead; startCtxTime=c.currentTime+(opts.delay||0.05);
-  if(!opts.recording && listenMaster && masterBuf && masterStale()) masterOff();
+  if(!opts.recording && listenMaster && masterBuf && masterStale()) goStale();
+  const pv = !opts.recording && listenMaster && !masterBuf && canPreview();
+  if(pv){ const ok=await pvPrepare(playhead, my); if(!ok || my!==playTicket) return; }
+  stopSources(); setPreviewStage(pv);
+  // a small head start so every track is set up before the first sound (starting too soon made phones stutter)
+  const nT=tracks.filter(hasAudio).length;
+  startAt=playhead; startCtxTime=c.currentTime+(opts.delay|| (opts.recording?0.05:Math.min(0.35,0.12+0.02*nT)));
   if(!opts.recording && listenMaster && masterBuf){
     const src=c.createBufferSource(); src.buffer=masterBuf; src.connect(analyser);
     if(startAt<masterBuf.duration) src.start(startCtxTime,startAt);
     session=[{srcs:[src], t:null, vol:null, pan:null, an:null, eqNodes:[]}];
+    // run the tracks silently too, only so the EQ picture can draw each track's colored line while the master plays
+    const quiet=c.createGain(); quiet.gain.value=0; quiet.connect(c.destination);
+    tracks.filter(hasAudio).filter(audible).forEach(t=>{ const se=scheduleTrack(c,t,quiet,startAt,startCtxTime); se.silent=true; session.push(se); });
+  } else if(pv){
+    session=tracks.filter(hasAudio).map(t=>pvTrack(c,t));
   } else
   session = (opts.recording && !opts.playAlong) ? [] : tracks.filter(hasAudio).map(t=>scheduleTrack(c,t,masterGain,startAt,startCtxTime));
   playing=true; $('play').textContent='Pause'; requestAnimationFrame(tick);
@@ -2276,7 +2307,8 @@ let staleCheckAt=0;
 function tick(){
   if(!playing) return;
   playhead=curTime();
-  if(!recording && listenMaster && masterBuf && performance.now()>staleCheckAt){ staleCheckAt=performance.now()+500; if(masterStale()){ masterOff(); playhead=curTime(); stopSources(); playing=false; play(); return; } }
+  if(!recording && listenMaster && masterBuf && performance.now()>staleCheckAt){ staleCheckAt=performance.now()+500; if(masterStale()){ goStale(); playhead=curTime(); stopSources(); playing=false; play(); return; } }
+  if(!recording && PV.on) pvRoll();
   if(!recording && loopOn && sel && Math.abs(sel.b-sel.a)>0.05){ const a=Math.min(sel.a,sel.b), b=Math.max(sel.a,sel.b); if(playhead>=b || playhead<a-0.25){ seek(a); return; } }
   if(!recording && playhead>=projectLen()){ pause(); playhead=projectLen(); drawAll(); return; }
   if(recording){ updateClock(); }
@@ -2728,12 +2760,12 @@ const secsFor=key=>secs.filter(x=>secKey(x)===String(key) && x.b>x.a && (x.vol||
 function lowShelf(f,db,sr){ const A=Math.pow(10,db/40), w=2*Math.PI*f/sr, cs=Math.cos(w), al=Math.sin(w)/2*Math.SQRT2, sA=2*Math.sqrt(A)*al;
   const b0=A*((A+1)-(A-1)*cs+sA), b1=2*A*((A-1)-(A+1)*cs), b2=A*((A+1)-(A-1)*cs-sA), a0=(A+1)+(A-1)*cs+sA, a1=-2*((A-1)+(A+1)*cs), a2=(A+1)+(A-1)*cs-sA;
   return [b0/a0,b1/a0,b2/a0,a1/a0,a2/a0]; }
-function sectionFix(chs,sr,key='mix'){
+function sectionFix(chs,sr,key='mix',t0=0){
   const list=secsFor(key); if(!list.length) return;
   const n=chs[0].length, vol=new Float32Array(n), tr=new Float32Array(n), pops=new Map();
-  list.forEach(x=>{ const r=Math.min(0.5,(x.b-x.a)/4), i0=Math.max(0,Math.floor(x.a*sr)), i1=Math.min(n,Math.ceil(x.b*sr));
+  list.forEach(x=>{ const r=Math.min(0.5,(x.b-x.a)/4), i0=Math.max(0,Math.floor((x.a-t0)*sr)), i1=Math.min(n,Math.ceil((x.b-t0)*sr));
     let pw=null; if(x.pop){ if(!pops.has(x.pop)) pops.set(x.pop,new Float32Array(n)); pw=pops.get(x.pop); }
-    for(let i=i0;i<i1;i++){ const t=i/sr, w=Math.min(1,(t-x.a)/r,(x.b-t)/r); if(w<=0) continue; vol[i]+=w*(x.vol||0); tr[i]+=w*(x.treb||0); if(pw) pw[i]=Math.max(pw[i],w); } });
+    for(let i=i0;i<i1;i++){ const t=t0+i/sr, w=Math.min(1,(t-x.a)/r,(x.b-t)/r); if(w<=0) continue; vol[i]+=w*(x.vol||0); tr[i]+=w*(x.treb||0); if(pw) pw[i]=Math.max(pw[i],w); } });
   const c=bqc('hp',4000,0.707,sr);
   for(const x of chs){ const h=bqRun(x,c), shelves=[...pops].map(([db,w])=>[bqRun(x,lowShelf(200,db,sr)),w]);
     for(let i=0;i<n;i++){ let v=x[i], touched=false;
@@ -2743,6 +2775,65 @@ function sectionFix(chs,sr,key='mix'){
       x[i]=(v+kt*h[i])*kv; } }
 }
 let masterBuf=null, masterSig='', listenMaster=false;
+// ---------- live preview (Version 58): hear a change right away with Cleanup and mastering still on ----------
+// New-order songs only. When the master no longer matches (you changed something), Play keeps everything processed:
+// tracks with Cleanup or section fixes are cleaned 10 s before to 20 s after the playhead (rolling ahead as you listen),
+// EQ and effects run live on top, and the whole mix goes through your last master's level and a live limiter.
+// Left out: whole-mix Cleanup and whole-mix section fixes (those need the whole song at once). Master now gives the exact version.
+let lastM=null, mixOut=null, pvStage=null;
+const PV={on:false, cache:new Map(), busy:false, wa:0, wb:0, rollFail:0};
+const canPreview=()=>procOrder!=='classic' && !!lastM && tracks.some(hasAudio);
+const pvNeeds=t=>cleanActive(t.id) || secsFor(t.id).length>0;
+const pvSig=t=>JSON.stringify({c:cleans[t.id]||null, s:secsFor(t.id), cl:t.clips.map(c=>[c.id,c.offset,c.segs,c.fi||0,c.fo||0,c.fc||0]), fi:t.fadeIn, fo:t.fadeOut, sr:actx?actx.sampleRate:0});
+function goStale(){ if(canPreview()){ masterBuf=null; masterSig='';   // let the old master go; the preview takes over
+    if(!PV.told){ PV.told=true; toast('Live preview: you’re hearing your change with Cleanup and mastering still on. It’s very close; Master now gives the exact version.'); } }
+  else masterOff(); }
+// clean one track's audio from wa to wb
+async function pvClean(t, wa, wb){ const sr=actx.sampleRate, len=Math.max(1,Math.ceil((wb-wa)*sr));
+  const o=new OfflineAudioContext(2,len,sr); scheduleTrack(o,t,o.destination,wa,0,true);
+  const b=await o.startRendering(), chs=[b.getChannelData(0), b.getChannelData(1)];
+  if(cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id],null);
+  sectionFix(chs,sr,t.id,wa); return {a:wa, b:wb, sig:pvSig(t), buf:b}; }
+async function pvPrepare(ph, ticket){
+  const end=projectLen(), wa=Math.max(0,ph-10), wb=Math.min(end,ph+20), list=tracks.filter(hasAudio).filter(audible).filter(pvNeeds);
+  const todo=list.filter(t=>{ const w=PV.cache.get(t.id); return !(w && w.sig===pvSig(t) && w.a<=Math.max(0,ph-0.5) && w.b>=Math.min(end,ph+6)); });
+  if(todo.length){ let shown=false; const tm=setTimeout(()=>{ shown=true; status('Getting ready…',true); },250); PV.busy=true;
+    try{ for(const t of todo){ PV.cache.set(t.id, await pvClean(t,wa,wb)); if(ticket!==playTicket){ PV.busy=false; clearTimeout(tm); return false; } await sleep(); } }
+    catch(e){ PV.busy=false; clearTimeout(tm); toast('The preview couldn’t get ready, so Play uses your live mix.'); return false; }
+    PV.busy=false; clearTimeout(tm); if(shown) status(''); }
+  for(const k of [...PV.cache.keys()]) if(!list.some(t=>t.id===k)) PV.cache.delete(k);   // free tracks that no longer need it
+  return true; }
+// one track in the preview: cleaned window (or the plain clips) → gate, EQ, effects, volume, pan → mix
+function pvTrack(c,t){
+  if(!pvNeeds(t) || !audible(t) || !PV.cache.get(t.id)) return scheduleTrack(c,t,masterGain,startAt,startCtxTime);
+  const w=PV.cache.get(t.id), inp=c.createGain(), wired=wireTrack(c,t,inp,masterGain,startCtxTime);
+  const se={...wired, t, srcs:[], inp, pv:true}; pvPlay(c,se,w,startAt,startCtxTime,false); return se; }
+function pvPlay(c,se,w,songT,ctxT,xfade){
+  const src=c.createBufferSource(), g=c.createGain(); src.buffer=w.buf; src.connect(g); g.connect(se.inp);
+  const off=Math.max(0,songT-w.a); if(off>=w.buf.duration) return;
+  if(xfade){ g.gain.setValueAtTime(0,ctxT); g.gain.linearRampToValueAtTime(1,ctxT+0.02); }
+  src.start(ctxT,off); se.srcs.push(src); if(se.cur && xfade){ const og=se.cur.g, os=se.cur.src; og.gain.setValueAtTime(1,ctxT); og.gain.linearRampToValueAtTime(0,ctxT+0.02); try{ os.stop(ctxT+0.03); }catch(e){} }
+  se.cur={src,g,w}; }
+// while playing, clean the next stretch before you reach it and hand over with a 20 ms crossfade
+async function pvRoll(){ if(PV.busy || !session || !actx) return;
+  const now=curTime(), end=projectLen(), act=session.filter(x=>x.pv && x.cur); if(!act.length) return;
+  const edge=Math.min(...act.map(x=>x.cur.w.b)); if(edge>=end-0.05 || now<edge-8) return;
+  PV.busy=true; const ticket=playTicket, wa=Math.max(0,edge-4), wb=Math.min(end,wa+30), next=new Map();
+  try{ for(const se of act){ next.set(se, await pvClean(se.t,wa,wb)); await sleep(); if(ticket!==playTicket || !playing){ PV.busy=false; return; } } }
+  catch(e){ PV.busy=false; return; }
+  let T=Math.max(curTime()+0.4, wa+1); if(T>edge-0.05){ PV.busy=false; restartIfPlaying(); return; }   // fell behind: restart cleanly here
+  const ctxT=startCtxTime+(T-startAt);
+  next.forEach((w,se)=>{ PV.cache.set(se.t.id,w); pvPlay(actx,se,w,T,ctxT,true); });
+  PV.busy=false; }
+// the mastering stage for the preview: your last master's level, then a live limiter at your ceiling
+function setPreviewStage(on){ if(!actx || !mixOut || !analyser) return; PV.on=on;
+  if(pvStage){ try{ mixOut.disconnect(); }catch(e){} try{ pvStage.out.disconnect(); }catch(e){} pvStage=null; mixOut.connect(analyser); }
+  if(!on || !lastM) return;
+  const c=actx, s=lastM.set, pre=c.createGain(), lim=c.createDynamicsCompressor(), mk=c.createGain();
+  pre.gain.value=dbToGain(lastM.gdb); lim.threshold.value=s.ceil-1; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=0.002; lim.release.value=Math.max(0.05,s.rel/1000);
+  mk.gain.value=dbToGain(-(compCal.get('lim|'+(s.ceil-1))||0));
+  try{ mixOut.disconnect(); }catch(e){} mixOut.connect(pre); pre.connect(lim); lim.connect(mk); mk.connect(analyser); pvStage={out:mk};
+  if(!compCal.has('lim|'+(s.ceil-1))) measureCompGain({thr:s.ceil-1, ratio:20, knee:0, att:2, rel:Math.max(50,s.rel)}).then(v=>{ compCal.set('lim|'+(s.ceil-1),v); if(pvStage && pvStage.out===mk) mk.gain.value=dbToGain(-v); }); }
 // once the mix changes, the old master no longer matches what's on screen: switch Play back to the live mix and say so
 const masterStale=()=>masterSig!==mixSignature(+$('rate').value);
 function masterOff(){ listenMaster=false; masterBuf=null; masterSig=''; const lr=$('mListenRow'); if(lr) lr.hidden=true; const c=$('mListen'); if(c) c.checked=false; toast('You changed the mix, so Play now uses your live mix. Tap Master now (or Hear cleanup) to hear the processed version again.'); }
@@ -2782,7 +2873,7 @@ async function renderMix(sr, opts={}){
       if(procOrder==='classic' && cleanActive(t.id)) await applyClean(chs,sr,cleans[t.id],t.id);
       sectionFix(chs,sr,t.id);
       for(let c=0;c<2;c++){ const s0=sum[c], x=chs[c]; for(let i=0;i<len;i++) s0[i]+=x[i]; }
-      if(opts.stems){ const m=new Float32Array(len>>1); for(let i=0;i<m.length;i++) m[i]=(chs[0][2*i]+chs[1][2*i]+chs[0][2*i+1]+chs[1][2*i+1])*0.25; stems.push({mono:m, color:css(t.colorVar)}); }
+      if(opts.stems){ const m=new Float32Array(len>>1); for(let i=0;i<m.length;i++) m[i]=(chs[0][2*i]+chs[1][2*i]+chs[0][2*i+1]+chs[1][2*i+1])*0.25; stems.push({mono:m, color:trackColor(t)}); }
       await sleep();
     }
     const oc=new OfflineAudioContext(2, len, sr), ab=new AudioBuffer({length:len, numberOfChannels:2, sampleRate:sr});
@@ -2841,7 +2932,7 @@ $('mMeasure').onclick=async()=>{
     status('Measured: '+(isFinite(L)?L.toFixed(1)+' LUFS':'silent')+'.',true);
   }catch(e){ toast('Measuring failed on this device.'); }
   setProg($('mProgress'),null); $('mMeasure').disabled=false; };
-function showStats(r){
+function showStats(r){ lastM={gdb:r.gainDb, set:mSettings()};
   const el=$('mStats'); el.hidden=false;
   const reached=Math.abs(r.after-r.target)<0.3;
   el.innerHTML=`<div><b>${r.after.toFixed(1)}</b><span>LUFS (was ${r.before.toFixed(1)})</span></div>
@@ -2879,7 +2970,7 @@ function renderClean(){
   $('clMods').querySelectorAll('input[data-k]').forEach(c=>c.onchange=()=>{ cleanFor(clTarget)[c.dataset.k].on=c.checked; cleanChanged(); });
   syncClSum();
 }
-function cleanChanged(){ if(slateBackup){ slateBackup=null; syncSlate(); } autosaveSoon(); syncClSum(); if(listenMaster && masterBuf) toast('Cleanup changed. Tap Hear cleanup to update what you hear.'); }
+function cleanChanged(){ if(PV.on && playing) setTimeout(restartIfPlaying,0); if(slateBackup){ slateBackup=null; syncSlate(); } autosaveSoon(); syncClSum(); if(listenMaster && masterBuf) toast('Cleanup changed. Tap Hear cleanup to update what you hear.'); }
 const AMT_NAME={gentle:'Gentle',medium:'Medium',strong:'Strong'};
 function cleanOnList(key){ const o=cleans[key]; if(!o) return []; return CLEAN.filter(m=>o[m.k]&&o[m.k].on).map(m=>`${m.name} (${AMT_NAME[o[m.k].amt]||o[m.k].amt})`); }
 // one line per place that has Cleanup on, so nothing hides inside a track you didn't open
@@ -3598,7 +3689,7 @@ function timeSummary(L){
   return L.join('\n'); }
 function settingsSummary(view){
   view=view||sumView; const L=[], title=$('projName').value.trim()||'Untitled song';
-  L.push(`${title}: Mixdown settings (Version 57)`);
+  L.push(`${title}: Mixdown settings (Version 58)`);
   if(view==='time') return timeSummary(L);
   if(view==='todo'){
     L.push(''); L.push('1. APPLIES AUTOMATICALLY WITH A RECIPE'); L.push('(Save as recipe here, then Apply a recipe in the other song.)');
