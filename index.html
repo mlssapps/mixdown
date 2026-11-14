@@ -346,7 +346,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 57</p>
+  <p class="ver">Version 57.1</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -441,6 +441,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 57.1:</b> Fixed: undoing a change now also takes its time back off Settings summary → By time, so the list always matches the settings you have.</li>
       <li><b>Version 57:</b> New processing order for new songs: Cleanup first, then noise gate, EQ, compressor, effects, and volume last (see <b>Processing order</b> above). Older songs keep their original order until you tap <b>Upgrade to the new order</b> under Project. Undo now covers everything you set (EQ, Cleanup, section fixes, mastering, effects, master volume) with a name for each step, and <b>Redo</b> sits next to Undo in the bottom bar (just arrows when the Mic chip shows). <b>History</b> (next to Undo under Tracks) lists every step with its time; tap one to go back to it. <b>Settings summary → By time</b> lists your settings newest first with when each was last changed (times start with this version).</li>
       <li><b>Version 56:</b> Fixed: section fix Start and End boxes now type like the player clock. Just type the digits and the box fills in the time (259 becomes 2:59, 25950 becomes 2:59.50), with the number keypad. A time past the end of the song is pulled back to the end instead of becoming hundreds of minutes.</li>
       <li><b>Version 55:</b> High-pass and low-pass EQ bands are now truly flat above (or below) their cutoff at Q 0.71. Before, they added a hidden boost of about 1.7 dB right at the cutoff, in the sound and the picture. Higher Q now means what it says: Q 1.4 adds a peak of about +3 dB at the cutoff, Q 2 about +6 dB. If you ever set a high-pass or low-pass above Q 0.71, check it, because it will ring more than before. Masters use less memory (the old master is let go before a new one is made, and the master is written in place), which helps long songs with many tracks. Description text in dark mode is brighter and a soft warm yellow, easier to read with less glare. Info text, buttons you can’t use right now, and switched-off items are warm yellow too instead of grey; anything you can tap right now is white.</li>
@@ -1071,14 +1072,15 @@ function cutSegs(segs,u0,u1,mode){ // mode: 'delete' | 'keep' | 'silence'
 // EQ, Cleanup, section fixes, mastering, master volume and the processing order. Every step has a name and the time it happened.
 const TSET=['gainDb','pan','fadeIn','fadeOut','mute','solo'];
 function snapshot(){ return {tr:tracks.map(t=>{ const o={id:t.id, clips:t.clips.map(c=>({...c, segs:JSON.parse(JSON.stringify(c.segs))})), fx:t.fx?JSON.parse(JSON.stringify(t.fx)):null}; TSET.forEach(k=>o[k]=t[k]); return o; }),
-  g:{eqs:clone(eqs), cleans:clone(cleans), secs:clone(secs), m:mSettings(), mdb:masterDb, ord:procOrder}}; }
+  g:{eqs:clone(eqs), cleans:clone(cleans), secs:clone(secs), m:mSettings(), mdb:masterDb, ord:procOrder, st:{...stamps}}}; }
 let redoStack=[];
 function pushUndo(label){ histCommit(); undoStack.push({snap:snapshot(), label:label||'Clip edit', at:Date.now()}); if(undoStack.length>60) undoStack.shift(); redoStack=[]; HS.explicit=Date.now(); updateUndoUI(); }
 function restore(snap){ const list=Array.isArray(snap)?snap:snap.tr;
   list.forEach(st=>{ const t=tracks.find(x=>x.id===st.id); if(!t) return; t.clips=st.clips; if('gainDb' in st){ TSET.forEach(k=>t[k]=st[k]); t.fx=st.fx?JSON.parse(JSON.stringify(st.fx)):t.fx; } });
   const g=!Array.isArray(snap)&&snap.g; if(!g) return;
   eqs=clone(g.eqs); cleans=clone(g.cleans); secs=clone(g.secs); applyMDefs(g.m,true); masterDb=g.mdb||0; if(masterGain) masterGain.gain.value=dbToGain(masterDb);
-  if(g.ord) procOrder=g.ord; }
+  if(g.ord) procOrder=g.ord;
+  if(g.st) stamps={...g.st}; }   // undoing a change also takes back its time stamp
 const whenTxt=ms=>{ const d=new Date(ms), now=new Date(), t=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?([AP])M/i,(m,a)=>' '+a.toLowerCase()+'m');
   return d.toLocaleDateString([],{month:'short',day:'numeric'})+(d.getFullYear()!==now.getFullYear()?', '+d.getFullYear():'')+', '+t; };   // always date and time
 function updateUndoUI(){
