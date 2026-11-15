@@ -346,7 +346,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 59</p>
+  <p class="ver">Version 59.2</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -443,6 +443,8 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 59.2:</b> Safety fix. Switching the processing order (or changing anything) while listening to the master could drop you onto the raw live mix, which on loud songs is far louder than the master and clips into a loud, garbled sound; the live preview could also reuse a different song's mastering level. Now: a safety limiter sits on everything Mixdown plays, so peaks are caught just under full scale instead of clipping; once a song is mastered, its live mix plays at the master's level, so nothing jumps up in volume when you switch away from the master; and the mastering level used by the preview belongs to the song it came from.</li>
+      <li><b>Version 59.1:</b> Fixed: no sound and stuttering. The paused EQ picture and the colored lines under the master now use a light version of each track (EQ, volume and pan only, and only tracks shown in the picture), wait until you stop moving the playhead, never run while mastering or exporting, and always turn the sound back on. Track colors are worked out once instead of every frame.</li>
       <li><b>Version 59:</b> <b>Paused EQ picture:</b> pausing keeps every colored line on screen, and moving the playhead while paused shows that exact moment (Mixdown plays a fifth of a second silently to read it). Study it or screenshot it without the glitching. <b>Video look:</b> new <b>Layout</b> (art above, smaller art with a bigger EQ, the whole art behind the visuals, dimmed with soft edges, or no art with the EQ at double height) and <b>Background</b> (your website's midnight indigo with soft glows, midnight blue, or black), remembered on your phone. The EQ in videos now has electric track lines (thin, full color, double glow), the whole mix as a thicker silver-white line underneath, dB numbers on both sides every 12 dB, and halfway grid lines. The whole-song waveform's played part glows like the other rows, and the part still to come shows at half strength.</li>
       <li><b>Version 58:</b> <b>Live preview</b> (new-order songs): after you master, any change you make plays right away with Cleanup and mastering still on, instead of dropping to the raw mix. Tracks with Cleanup or section fixes are cleaned 10 seconds before to 20 seconds after where you're listening and keep rolling ahead as you play; jumping somewhere new shows “Getting ready…” for a moment. EQ (including Find it notes) and effects change instantly; a Cleanup change re-cleans just that track. The preview uses your last master's level and a live limiter, so it lands within a fraction of a dB of the real master; it leaves out whole-mix Cleanup and whole-mix section fixes, so tap Master now for the exact version. <b>Play starts cleanly:</b> it now gets every track ready before the first sound (it used to start after 0.05 s, which could stutter on phones). <b>Track colors</b> now follow what each track is: Lead Vocals purple, Backing Vocals violet, Drums red, Percussion gold, Bass fiery orange, Brass copper, Guitar aqua, Keyboard green, Strings blue, Woodwinds golden brown, Synth pink, FX lemon, Other silvery blue, your own tracks kiwi, sky blue, then yellow-green, tone tracks ultraviolet, noise soft yellow, and the whole mix silver-white. While the master plays, the EQ picture still draws each track's colored line.</li>
       <li><b>Version 57.1:</b> Fixed: undoing a change now also takes its time back off Settings summary → By time, so the list always matches the settings you have.</li>
@@ -966,7 +968,12 @@ function baseColor(t){
   const own=tracks.filter(x=>!x.tone && !TCOL.some(([re])=>re.test(String(x.name||'').replace(/^\s*\d+\s*/,''))));
   const i=Math.max(0,own.indexOf(t)); return OWN[i%OWN.length]; }
 // the palette was chosen for dark mode; in light mode the same hues are deepened so they stay readable on white
-function trackColor(t){ const c=baseColor(t); if(!isLightTheme()) return c;
+// colors are worked out once per track name and theme (not every frame), so drawing stays light on the phone
+const TC_CACHE=new Map(); let TC_LIGHT=null, TC_AT=0;
+function trackColor(t){ const now=performance.now(); if(now-TC_AT>1500){ TC_AT=now; const l=isLightTheme(); if(l!==TC_LIGHT){ TC_LIGHT=l; TC_CACHE.clear(); } }
+  const key=t.id+'|'+(t.name||'')+'|'+tracks.length+'|'+(t.tone?1:0), hit=TC_CACHE.get(key); if(hit) return hit;
+  const v=trackColorRaw(t); TC_CACHE.set(key,v); return v; }
+function trackColorRaw(t){ const c=baseColor(t); if(!TC_LIGHT) return c;
   const n=parseInt(c.slice(1),16), f=0.62, r=Math.round((n>>16&255)*f), g=Math.round((n>>8&255)*f), b=Math.round((n&255)*f);
   return '#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1); }
 function isLightTheme(){ const bg=css('--bg')||'#000'; const m=bg.match(/^#([0-9a-f]{6})$/i); if(!m) return false; const n=parseInt(m[1],16); return ((n>>16&255)+(n>>8&255)+(n&255))/3>150; }
@@ -1316,24 +1323,30 @@ function drawAll(){ drawRuler(); tracks.forEach(drawLane); updateClock(); update
 // so every track's line (after its EQ and effects) shows that exact moment, ready to study or screenshot.
 let outGain=null;
 const SPEC={last:null, snap:false, timer:0, busy:false, at:null};
-function specSnapSoon(){ clearTimeout(SPEC.timer); SPEC.timer=setTimeout(specSnap,250); }
+function specSnapSoon(){ clearTimeout(SPEC.timer); SPEC.timer=setTimeout(specSnap,450); }
+const heavyBusy=()=>($('mRun')&&$('mRun').disabled) || ($('exportWav')&&$('exportWav').disabled) || PV.busy;
 async function specSnap(){
-  if(playing || recording || SPEC.busy || !tracks.some(hasAudio) || !actx || !analyser || !outGain) return;
+  if(playing || recording || SPEC.busy || heavyBusy() || !tracks.some(hasAudio) || !actx || !analyser || !outGain) return;
   const cv=$('spec'); if(!cv || !cv.offsetParent) return;          // only when the EQ picture is on screen
-  SPEC.busy=true; const c=actx, at=playhead;
-  try{ await c.resume(); await prepareFx(c); }catch(e){}
-  if(playing){ SPEC.busy=false; return; }
-  outGain.gain.cancelScheduledValues(0); outGain.gain.setValueAtTime(0,c.currentTime);
-  const t0=c.currentTime+0.05, from=Math.max(0,at-0.12), old=session;
-  const ses=tracks.filter(hasAudio).map(t=>scheduleTrack(c,t,masterGain,from,t0));
-  analyser.smoothingTimeConstant=0; ses.forEach(x=>{ if(x.an) x.an.smoothingTimeConstant=0; });
-  session=ses;
-  await new Promise(r=>setTimeout(r,250));
-  if(!playing && session===ses){ SPEC.snap=true; SPEC.at=at; drawSpec(); SPEC.snap=false; }
-  ses.forEach(x=>x.srcs.forEach(n=>{ try{n.stop();}catch(e){} try{n.disconnect();}catch(e){} }));
-  if(session===ses) session=old;
-  analyser.smoothingTimeConstant=0.75; if(!playing) outGain.gain.setValueAtTime(1,c.currentTime+0.03);
-  SPEC.busy=false; }
+  SPEC.busy=true; const c=actx, at=playhead; let ses=[], old=session;
+  try{
+    if(c.state!=='running') await c.resume();
+    if(playing) return;
+    outGain.gain.cancelScheduledValues(0); outGain.gain.setValueAtTime(0,c.currentTime);
+    const t0=c.currentTime+0.05, from=Math.max(0,at-0.12);
+    // light tracks (EQ, volume, pan) so it doesn't load the phone; only the tracks shown in the picture
+    ses=tracks.filter(hasAudio).filter(t=>show[t.id]!==false).map(t=>scheduleTrack(c,t,masterGain,from,t0,false,true));
+    analyser.smoothingTimeConstant=0; ses.forEach(x=>{ if(x.an) x.an.smoothingTimeConstant=0; });
+    session=ses;
+    await new Promise(r=>setTimeout(r,250));
+    if(!playing && session===ses){ SPEC.snap=true; SPEC.at=at; drawSpec(); SPEC.snap=false; }
+  } catch(e){ SPEC.at=at; }
+  finally{
+    ses.forEach(x=>x.srcs.forEach(n=>{ try{n.stop();}catch(e){} try{n.disconnect();}catch(e){} }));
+    if(session===ses) session=old;
+    if(analyser) analyser.smoothingTimeConstant=0.75;
+    if(!playing && outGain){ outGain.gain.cancelScheduledValues(0); outGain.gain.setValueAtTime(1,c.currentTime+0.03); }   // sound is always restored
+    SPEC.busy=false; } }
 function updateClock(){ $('clock').innerHTML = fmt3(playhead)+' <small>/ '+fmt3(recording?Math.max(projectLen(),playhead):projectLen())+'</small>'; $('clock').classList.toggle('recording',!!recording); }
 function updateSelInfo(){
   const t=activeTrack(); if($('selOn')) $('selOn').textContent = t ? t.name : 'the active track'; const has = sel && t && sel.id===t.id && Math.abs(sel.b-sel.a)>0.01;
@@ -2054,7 +2067,11 @@ function makeChain(c, dest){
 }
 function buildMaster(){
   analyser=actx.createAnalyser(); analyser.fftSize=8192; analyser.smoothingTimeConstant=0.75;
-  outGain=actx.createGain(); analyser.connect(outGain); outGain.connect(actx.destination);   // outGain lets a paused snapshot run silently
+  outGain=actx.createGain(); analyser.connect(outGain);   // outGain lets a paused snapshot run silently
+  // safety limiter on everything you hear: peaks are caught just under full scale instead of clipping into a loud, garbled mess
+  const safe=actx.createDynamicsCompressor(); safe.threshold.value=-1.5; safe.knee.value=0; safe.ratio.value=20; safe.attack.value=0.001; safe.release.value=0.12;
+  const safeMk=actx.createGain(); outGain.connect(safe); safe.connect(safeMk); safeMk.connect(actx.destination);
+  measureCompGain({thr:-1.5, ratio:20, knee:0, att:1, rel:120}).then(v=>{ safeMk.gain.value=dbToGain(-v); }).catch(()=>{});
   const ch=makeChain(actx,analyser); masterGain=ch.input; eqNodes=ch.nodes; mixOut=ch.last; pvStage=null;
 }
 // the live filter nodes for whatever target is being edited
@@ -2231,11 +2248,12 @@ function clipFadeGain(c, cl, dest, at, when0){
 // 'classic' (songs made before Version 57): volume → EQ → noise gate → compressor → other effects → pan → Cleanup → section fixes.
 // Each project remembers its order, so a finished song keeps sounding exactly as it did; Upgrade switches it.
 let procOrder='v2';
-function wireTrack(c, t, input, dest, when0){
+function wireTrack(c, t, input, dest, when0, light){
   const vol=c.createGain(), pan=c.createStereoPanner ? c.createStereoPanner() : null;
   vol.gain.value = audible(t) ? dbToGain(t.gainDb) : 0;
   const teq=makeEqChain(c, eqFor(t.id)), fx=fxFor(t); let out;
-  if(procOrder==='classic'){ input.connect(vol); vol.connect(teq.first); out=makeFx(c, fx, teq.last, when0); }
+  if(light){ input.connect(teq.first); teq.last.connect(vol); out=vol; }        // for the EQ picture only: much lighter on the phone
+  else if(procOrder==='classic'){ input.connect(vol); vol.connect(teq.first); out=makeFx(c, fx, teq.last, when0); }
   else { makeGate(c, fx, input).connect(teq.first); makeFx(c, fx, teq.last, when0, true).connect(vol); out=vol; }
   if(pan){ pan.pan.value=t.pan; out.connect(pan); pan.connect(dest); } else out.connect(dest);
   let an=null;
@@ -2243,10 +2261,10 @@ function wireTrack(c, t, input, dest, when0){
   return {vol, pan, an, eqNodes:teq.nodes};
 }
 // raw=true: only the clips and their fades (for Cleanup to work on first, in the new order)
-function scheduleTrack(c, t, dest, at, when0, raw){
+function scheduleTrack(c, t, dest, at, when0, raw, light){
   const fade=c.createGain();
   let w={vol:null, pan:null, an:null, eqNodes:[]};
-  if(raw) fade.connect(dest); else w=wireTrack(c, t, fade, dest, when0);
+  if(raw) fade.connect(dest); else w=wireTrack(c, t, fade, dest, when0, light);
   const {vol, pan, an}=w, teq={nodes:w.eqNodes};
   const pts=fadePoints(t); fade.gain.setValueAtTime(valueAt(pts,at), when0);
   pts.forEach(([pt,v])=>{ if(pt>at) fade.gain.linearRampToValueAtTime(v, when0+(pt-at)); });
@@ -2306,7 +2324,7 @@ async function play(opts={}){
   if(!opts.recording && listenMaster && masterBuf && masterStale()) goStale();
   const pv = !opts.recording && listenMaster && !masterBuf && canPreview();
   if(pv){ const ok=await pvPrepare(playhead, my); if(!ok || my!==playTicket) return; }
-  stopSources(); setPreviewStage(pv); if(outGain){ outGain.gain.cancelScheduledValues(0); outGain.gain.value=1; }
+  stopSources(); setPreviewStage(pv || (!opts.recording && !!lastM && !(listenMaster && masterBuf))); if(outGain){ outGain.gain.cancelScheduledValues(0); outGain.gain.value=1; }
   // a small head start so every track is set up before the first sound (starting too soon made phones stutter)
   const nT=tracks.filter(hasAudio).length;
   startAt=playhead; startCtxTime=c.currentTime+(opts.delay|| (opts.recording?0.05:Math.min(0.35,0.12+0.02*nT)));
@@ -2316,7 +2334,7 @@ async function play(opts={}){
     session=[{srcs:[src], t:null, vol:null, pan:null, an:null, eqNodes:[]}];
     // run the tracks silently too, only so the EQ picture can draw each track's colored line while the master plays
     const quiet=c.createGain(); quiet.gain.value=0; quiet.connect(c.destination);
-    tracks.filter(hasAudio).filter(audible).forEach(t=>{ const se=scheduleTrack(c,t,quiet,startAt,startCtxTime); se.silent=true; session.push(se); });
+    if($('spec') && $('spec').offsetParent) tracks.filter(hasAudio).filter(audible).filter(t=>show[t.id]!==false).forEach(t=>{ const se=scheduleTrack(c,t,quiet,startAt,startCtxTime,false,true); se.silent=true; session.push(se); });
   } else if(pv){
     session=tracks.filter(hasAudio).map(t=>pvTrack(c,t));
   } else
@@ -3892,7 +3910,7 @@ $('recipeBtn').onclick=()=>{ const b=$('recipeBox'); if(!b.hidden){ b.hidden=tru
 function hideProjSave(){ const b=$('projSaveBtn'); if(!b) return; b.hidden=true; if(b._url){ URL.revokeObjectURL(b._url); b._url=null; } }
 function clearProject(){
   hideProjSave();
-  pause(); tracks=[]; undoStack=[]; redoStack=[]; stamps={}; HS.base=null; SPEC.last=null; SPEC.at=null; clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
+  pause(); tracks=[]; undoStack=[]; redoStack=[]; stamps={}; HS.base=null; SPEC.last=null; SPEC.at=null; lastM=null; PV.cache.clear(); clipboard=null; sel=null; activeClipId=null; masterBuf=null; playhead=0; viewStart=0;
   eqs={mix:{bands:clone(DEFAULT_EQ),bypass:false}}; masterDb=0; if(masterGain) masterGain.gain.value=1; sources.clear(); cleans={}; secs=[]; clTarget='mix'; lastStems=null; slateBackup=null; try{ ringMarks=[]; helpApplied.clear(); marksHidden=false; syncMarksBtn(); }catch(e){} syncSlate(); renderClean(); renderSecs();
   try{ applyAll(); syncBand(); renderBands(); }catch(e){}
 }
@@ -3902,7 +3920,7 @@ function syncOrder(){ const i=$('orderInfo'); if(!i) return;
     : '<b>Processing order: new.</b> Cleanup first, then noise gate, EQ, compressor, effects, and volume last. See the guide for what that means.';
   $('orderUp').hidden = procOrder!=='classic'; }
 $('orderUp').onclick=()=>{ if(!confirm('Switch this song to the new processing order? It will sound a little different the next time you master it (mostly tracks with a volume change plus a gate or compressor, or Cleanup plus echo). Undo switches it back.')) return;
-  pushUndo('Processing order: new'); procOrder='v2'; syncOrder(); autosaveSoon(); restartIfPlaying(); if(listenMaster && masterBuf) masterOff();
+  pushUndo('Processing order: new'); procOrder='v2'; syncOrder(); autosaveSoon(); if(listenMaster && masterBuf) goStale(); restartIfPlaying();
   toast('Switched to the new order. Master again to hear it; Undo switches back.'); };
 syncOrder();
 $('projNew').onclick=()=>{
