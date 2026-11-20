@@ -346,7 +346,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 59.2</p>
+  <p class="ver">Version 59.3</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -443,6 +443,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 59.3:</b> Fixed: playback that scrambled, stuttered, or showed the playhead moving with no sound, getting worse the longer you worked. Each Play, playhead move, or restart (like after a solo change) built every track’s noise gate and chorus, phaser, or tremolo again, but the old ones never shut off, so they piled up in the background until your phone couldn’t keep up. Now everything made for a playback is shut down the moment it stops. Exports were never affected.</li>
       <li><b>Version 59.2:</b> Safety fix. Switching the processing order (or changing anything) while listening to the master could drop you onto the raw live mix, which on loud songs is far louder than the master and clips into a loud, garbled sound; the live preview could also reuse a different song's mastering level. Now: a safety limiter sits on everything Mixdown plays, so peaks are caught just under full scale instead of clipping; once a song is mastered, its live mix plays at the master's level, so nothing jumps up in volume when you switch away from the master; and the mastering level used by the preview belongs to the song it came from.</li>
       <li><b>Version 59.1:</b> Fixed: no sound and stuttering. The paused EQ picture and the colored lines under the master now use a light version of each track (EQ, volume and pan only, and only tracks shown in the picture), wait until you stop moving the playhead, never run while mastering or exporting, and always turn the sound back on. Track colors are worked out once instead of every frame.</li>
       <li><b>Version 59:</b> <b>Paused EQ picture:</b> pausing keeps every colored line on screen, and moving the playhead while paused shows that exact moment (Mixdown plays a fifth of a second silently to read it). Study it or screenshot it without the glitching. <b>Video look:</b> new <b>Layout</b> (art above, smaller art with a bigger EQ, the whole art behind the visuals, dimmed with soft edges, or no art with the EQ at double height) and <b>Background</b> (your website's midnight indigo with soft glows, midnight blue, or black), remembered on your phone. The EQ in videos now has electric track lines (thin, full color, double glow), the whole mix as a thicker silver-white line underneath, dB numbers on both sides every 12 dB, and halfway grid lines. The whole-song waveform's played part glows like the other rows, and the part still to come shows at half strength.</li>
@@ -1342,7 +1343,7 @@ async function specSnap(){
     if(!playing && session===ses){ SPEC.snap=true; SPEC.at=at; drawSpec(); SPEC.snap=false; }
   } catch(e){ SPEC.at=at; }
   finally{
-    ses.forEach(x=>x.srcs.forEach(n=>{ try{n.stop();}catch(e){} try{n.disconnect();}catch(e){} }));
+    ses.forEach(endEntry);
     if(session===ses) session=old;
     if(analyser) analyser.smoothingTimeConstant=0.75;
     if(!playing && outGain){ outGain.gain.cancelScheduledValues(0); outGain.gain.setValueAtTime(1,c.currentTime+0.03); }   // sound is always restored
@@ -1669,8 +1670,8 @@ const FX=[
     {k:'size',l:'Length',min:0.3,max:8,step:0.1,u:'s',d:2.2},{k:'mix',l:'Mix',min:0,max:100,step:1,u:'%',d:25}]}
 ];
 function fxFor(t){ if(!t.fx){ t.fx={}; FX.forEach(e=>{ const o={on:false}; e.p.forEach(p=>o[p.k]=p.d); if(e.k==='comp') o.honest=true; t.fx[e.k]=o; }); } return t.fx; }
-const GATE_SRC=`class Gate extends AudioWorkletProcessor{constructor(o){super();const p=o.processorOptions||{};this.thr=Math.pow(10,(p.thr||-50)/20);this.rel=Math.exp(-1/((p.rel||120)/1000*sampleRate));this.att=Math.exp(-1/(0.001*sampleRate));this.env=0;this.g=0;this.hold=0;this.holdN=Math.round(0.02*sampleRate);}
-process(ins,outs){const i=ins[0],o=outs[0];if(!i||!i.length){return true;}const n=i[0].length;for(let s=0;s<n;s++){let m=0;for(let c=0;c<i.length;c++){const v=Math.abs(i[c][s]);if(v>m)m=v;}
+const GATE_SRC=`class Gate extends AudioWorkletProcessor{constructor(o){super();const p=o.processorOptions||{};this.thr=Math.pow(10,(p.thr||-50)/20);this.rel=Math.exp(-1/((p.rel||120)/1000*sampleRate));this.att=Math.exp(-1/(0.001*sampleRate));this.env=0;this.g=0;this.hold=0;this.holdN=Math.round(0.02*sampleRate);this.live=true;this.port.onmessage=()=>{this.live=false;};}
+process(ins,outs){if(!this.live)return false;const i=ins[0],o=outs[0];if(!i||!i.length){return true;}const n=i[0].length;for(let s=0;s<n;s++){let m=0;for(let c=0;c<i.length;c++){const v=Math.abs(i[c][s]);if(v>m)m=v;}
 this.env=m>this.env?m:this.env*0.999;let open=this.env>this.thr;if(open)this.hold=this.holdN;else if(this.hold>0){this.hold--;open=true;}
 const tgt=open?1:0;this.g=tgt>this.g?tgt+(this.g-tgt)*this.att:tgt+(this.g-tgt)*this.rel;for(let c=0;c<o.length;c++){o[c][s]=(i[Math.min(c,i.length-1)][s])*this.g;}}return true;}}
 registerProcessor('mixdown-gate',Gate);`;
@@ -1698,14 +1699,17 @@ const satCurves={};
 function satCurve(drive){ const k=1+drive/100*24, key=Math.round(k*10); if(satCurves[key]) return satCurves[key];
   const n=2048, cv=new Float32Array(n), norm=Math.tanh(k); for(let i=0;i<n;i++){ const x=i/(n-1)*2-1; cv[i]=Math.tanh(k*x)/norm; } satCurves[key]=cv; return cv; }
 // Build the effect chain. Returns {out, lfos:[osc]} — LFOs must be started.
+// Gates and LFOs run until they're told to stop, so everything made for live playback is collected here and shut down
+// when that playback ends (Version 59.3). Before, every Play, seek or restart left a full set running in the background.
+let WIRE_BAG=null;
 function makeGate(c, fx, input){
-  if(fx.gate.on && gateOK.get(c)){ const g=new AudioWorkletNode(c,'mixdown-gate',{processorOptions:{thr:fx.gate.thr,rel:fx.gate.rel},outputChannelCount:[2]}); input.connect(g); return g; }
+  if(fx.gate.on && gateOK.get(c)){ const g=new AudioWorkletNode(c,'mixdown-gate',{processorOptions:{thr:fx.gate.thr,rel:fx.gate.rel},outputChannelCount:[2]}); input.connect(g); if(WIRE_BAG) WIRE_BAG.push(g); return g; }
   return input; }
 function makeFx(c, fx, input, when0, noGate){
   let node=input; const lfos=[];
   const wetDry=(build,mixPct)=>{ const dry=c.createGain(), wet=c.createGain(), sum=c.createGain(); dry.gain.value=1-mixPct/100*(mixPct>50?1:0.5); wet.gain.value=mixPct/100;
     node.connect(dry); dry.connect(sum); const w=build(node); w.connect(wet); wet.connect(sum); node=sum; };
-  const lfo=(rate,amount,target)=>{ const o=c.createOscillator(), g=c.createGain(); o.frequency.value=rate; g.gain.value=amount; o.connect(g); g.connect(target); lfos.push(o); };
+  const lfo=(rate,amount,target)=>{ const o=c.createOscillator(), g=c.createGain(); o.frequency.value=rate; g.gain.value=amount; o.connect(g); g.connect(target); lfos.push(o); if(WIRE_BAG) WIRE_BAG.push(o); };
   if(!noGate) node=makeGate(c, fx, node);
   if(fx.comp.on){ const cp=c.createDynamicsCompressor(); cp.threshold.value=fx.comp.thr; cp.ratio.value=fx.comp.ratio; cp.knee.value=6; cp.attack.value=fx.comp.att/1000; cp.release.value=fx.comp.rel/1000;
     // the browser's compressor quietly adds its own makeup gain (about +7 dB at the defaults); "honest" compressors take it back out,
@@ -2249,6 +2253,9 @@ function clipFadeGain(c, cl, dest, at, when0){
 // Each project remembers its order, so a finished song keeps sounding exactly as it did; Upgrade switches it.
 let procOrder='v2';
 function wireTrack(c, t, input, dest, when0, light){
+  const bag=[], prevBag=WIRE_BAG; if(c===actx) WIRE_BAG=bag;
+  try{ return wireTrack0(c, t, input, dest, when0, light, bag); } finally{ WIRE_BAG=prevBag; } }
+function wireTrack0(c, t, input, dest, when0, light, bag){
   const vol=c.createGain(), pan=c.createStereoPanner ? c.createStereoPanner() : null;
   vol.gain.value = audible(t) ? dbToGain(t.gainDb) : 0;
   const teq=makeEqChain(c, eqFor(t.id)), fx=fxFor(t); let out;
@@ -2258,14 +2265,15 @@ function wireTrack(c, t, input, dest, when0, light){
   if(pan){ pan.pan.value=t.pan; out.connect(pan); pan.connect(dest); } else out.connect(dest);
   let an=null;
   if(c===actx){ an=c.createAnalyser(); an.fftSize=4096; an.smoothingTimeConstant=0.75; (pan||out).connect(an); const z=c.createGain(); z.gain.value=0; an.connect(z); z.connect(c.destination); }
-  return {vol, pan, an, eqNodes:teq.nodes};
+  if(c===actx) bag.push(input);
+  return {vol, pan, an, eqNodes:teq.nodes, kill:bag};
 }
 // raw=true: only the clips and their fades (for Cleanup to work on first, in the new order)
 function scheduleTrack(c, t, dest, at, when0, raw, light){
   const fade=c.createGain();
   let w={vol:null, pan:null, an:null, eqNodes:[]};
   if(raw) fade.connect(dest); else w=wireTrack(c, t, fade, dest, when0, light);
-  const {vol, pan, an}=w, teq={nodes:w.eqNodes};
+  const {vol, pan, an}=w, teq={nodes:w.eqNodes}, kill=w.kill||[]; if(c===actx && raw) kill.push(fade);
   const pts=fadePoints(t); fade.gain.setValueAtTime(valueAt(pts,at), when0);
   pts.forEach(([pt,v])=>{ if(pt>at) fade.gain.linearRampToValueAtTime(v, when0+(pt-at)); });
   const srcs=[];
@@ -2280,7 +2288,7 @@ function scheduleTrack(c, t, dest, at, when0, raw, light){
     src.start(when0+Math.max(0,it.startT-at), it.srcStart+skip, it.endT-it.startT-skip); srcs.push(src);
   }
   for(const cl of t.clips) delete cl._cg;
-  return {srcs, vol, pan, t, an, eqNodes:teq.nodes};
+  return {srcs, vol, pan, t, an, eqNodes:teq.nodes, kill};
 }
 // Every edge where audio starts or stops gets a tiny 3 ms fade, so splits and cuts never click.
 // Where two pieces are really one continuous stretch of the same recording (a plain split), they overlap by
@@ -2341,7 +2349,11 @@ async function play(opts={}){
   session = (opts.recording && !opts.playAlong) ? [] : tracks.filter(hasAudio).map(t=>scheduleTrack(c,t,masterGain,startAt,startCtxTime));
   playing=true; $('play').textContent='Pause'; requestAnimationFrame(tick);
 }
-function stopSources(){ if(session) session.forEach(s=>s.srcs.forEach(x=>{ try{x.stop();}catch(e){} try{x.disconnect();}catch(e){} })); session=null; }
+function endEntry(s){ if(!s) return;
+  (s.srcs||[]).forEach(x=>{ try{x.stop();}catch(e){} try{x.disconnect();}catch(e){} });
+  (s.kill||[]).forEach(n=>{ try{ if(n.port) n.port.postMessage(0); }catch(e){} try{ if(n.stop) n.stop(); }catch(e){} try{n.disconnect();}catch(e){} });
+  [s.inp, s.vol, s.pan, s.an].forEach(n=>{ if(n) try{n.disconnect();}catch(e){} }); s.srcs=[]; s.kill=[]; }
+function stopSources(){ if(session) session.forEach(endEntry); session=null; }
 function pause(){ if(recording){ stopRecording(); return; } playTicket++; if(playing){ playhead=curTime(); } stopSources(); playing=false; $('play').textContent='Play'; drawAll(); drawSpec(); }
 function curTime(){ return playing ? startAt + Math.max(0, actx.currentTime-startCtxTime) : playhead; }
 function seek(t){ if(recording) return; playhead=Math.max(0,Math.min(t,projectLen())); if(playing){ stopSources(); playing=false; play(); } else drawAll(); }
