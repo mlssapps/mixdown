@@ -346,7 +346,7 @@ body.force2 .cols > .panel{margin-top:14px}
 <body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h1>Mixdown</h1><span style="display:flex;gap:8px;align-items:center"><button id="installBtn" hidden>Install app</button></span></div>
-  <p class="ver">Version 59.3</p>
+  <p class="ver">Version 59.4</p>
   <div class="restorebox" id="restoreBox" hidden><b>Pick up where you left off?</b> <span id="restoreInfo"></span> <span class="hint" style="display:block;margin-top:4px">Auto-save turns back on once you choose.</span>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="primary small" id="restoreGo">Restore</button><button class="small" id="restoreNo">Start fresh</button></div></div>
   <div class="viewrow2"><div class="layoutseg" role="group" aria-label="Layout"><span>Layout</span><button type="button" data-v="one">1 column</button><button type="button" data-v="two">2 columns</button><button type="button" data-v="auto">Auto</button></div><div class="layoutseg sizeseg" role="group" aria-label="View size"><span>Size</span><button type="button" data-z="0.5">50%</button><button type="button" data-z="0.75">75%</button><button type="button" data-z="1">100%</button><button type="button" data-z="0">Auto</button></div></div>
@@ -443,6 +443,7 @@ body.force2 .cols > .panel{margin-top:14px}
     <p>Made by MLSS · built with Claude by Anthropic. MP4 and M4A export use <b>mp4-muxer</b> by Vanilagy (MIT License), and project and stem zips use <b>JSZip</b> (MIT License).</p>
     <h3>What's new</h3>
     <ul>
+      <li><b>Version 59.4:</b> New in Cleanup: <b>T and D tamer</b>. In a close, quiet vocal, every T, D, and K can bite. This turns each one down only for the split second it hits (about 3–9 kHz), then lets go, so the rest of the voice keeps its clarity and air. Nothing else changed.</li>
       <li><b>Version 59.3:</b> Fixed: playback that scrambled, stuttered, or showed the playhead moving with no sound, getting worse the longer you worked. Each Play, playhead move, or restart (like after a solo change) built every track’s noise gate and chorus, phaser, or tremolo again, but the old ones never shut off, so they piled up in the background until your phone couldn’t keep up. Now everything made for a playback is shut down the moment it stops. Exports were never affected.</li>
       <li><b>Version 59.2:</b> Safety fix. Switching the processing order (or changing anything) while listening to the master could drop you onto the raw live mix, which on loud songs is far louder than the master and clips into a loud, garbled sound; the live preview could also reuse a different song's mastering level. Now: a safety limiter sits on everything Mixdown plays, so peaks are caught just under full scale instead of clipping; once a song is mastered, its live mix plays at the master's level, so nothing jumps up in volume when you switch away from the master; and the mastering level used by the preview belongs to the song it came from.</li>
       <li><b>Version 59.1:</b> Fixed: no sound and stuttering. The paused EQ picture and the colored lines under the master now use a light version of each track (EQ, volume and pan only, and only tracks shown in the picture), wait until you stop moving the playhead, never run while mastering or exporting, and always turn the sound back on. Track colors are worked out once instead of every frame.</li>
@@ -2735,6 +2736,7 @@ function limiterGain(p, sr, gain, set, out, work){
 const CLEAN=[
   {k:'ring', name:'Ring tamer', hint:'Finds up to three notes that ring out here and dips each one, narrowly, only at the moments it sticks out, easing in and out. The rest of the time those notes are left alone, so try this before an EQ cut. It listens after this track’s EQ, so notes you already cut there count less.'},
   {k:'deess', name:'De-esser', hint:'Turns down harsh S, SH, and T sounds when they spike (about 5–9 kHz). Best on a vocal track.', f:6500, q:1.0, pct:75, att:1, rel:60, max:10},
+  {k:'tdtame', name:'T and D tamer', hint:'Turns down hard T, D, and K bursts (about 3–9 kHz) the instant they hit, then lets go right away, so the words between them stay clear. Made for close, quiet, breathy vocals. Best on a vocal track.', f:5000, q:0.6, hi:3000, pct:90, att:0.5, rel:40, max:12},
   {k:'hiss', name:'Hiss quieter', hint:'Lowers hiss above about 4.5 kHz only in quiet gaps between phrases. The music itself passes through.'},
   {k:'shimmer', name:'Shimmer tamer', hint:'Smooths swirly, metallic high end (about 8–16 kHz) when it flares up.', f:11500, q:0.7, pct:70, att:5, rel:120, max:8},
   {k:'harsh', name:'Harsh tamer', hint:'Eases piercing upper mids (about 2.5–5 kHz) in vocals and guitars when they get sharp.', f:3500, q:1.0, pct:80, att:5, rel:100, max:6},
@@ -2755,7 +2757,10 @@ function follow(sigs,sr,attMs,relMs){ const n=sigs[0].length, e=new Float32Array
 function pctDb(e,p){ const v=[]; for(let i=0;i<e.length;i+=64){ const d=20*Math.log10(e[i]+1e-12); if(d>-80) v.push(d); } if(!v.length) return -80; v.sort((a,b)=>a-b); return v[Math.min(v.length-1,Math.floor(p/100*v.length))]; }
 // a peaking cut that only dips when its band rises above the song's own usual level
 function dynCut(chs,sr,m,amt){
-  const c=bqc('bp',m.f,m.q,sr), b=chs.map(x=>bqRun(x,c)), e=follow(b,sr,m.att,m.rel);
+  // m.hi: work on everything above that frequency (the signal minus its low-passed copy, so the two halves always add back
+  // to the original and a cut lands fully across the whole top, not just at one center frequency). Otherwise one band-pass.
+  const c=bqc('bp',m.f,m.q,sr), lpc=m.hi?bqc('lp',m.hi,0.707,sr):null;
+  const b=chs.map(x=>{ if(!lpc) return bqRun(x,c); const l=bqRun(x,lpc), h=new Float32Array(x.length); for(let i=0;i<x.length;i++) h[i]=x[i]-l[i]; return h; }), e=follow(b,sr,m.att,m.rel);
   const thr=pctDb(e,m.pct)+4-amt*6, slope=1-1/(2+amt*6), maxCut=m.max*amt, n=chs[0].length;
   // gain moves no faster than the module's own attack (low bands move slower, so a cut never clicks); look ahead by the same time so it still lands on the spike
   const attS=Math.max(0.001,m.att/1000), LA=Math.round(sr*attS*1.5);
